@@ -3,6 +3,7 @@ package applications.exampleapplication.widgets;
 import Roman.Roman;
 import applications.exampleapplication.models.ExampleModel;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import selenium.AbstractPage;
 import selenium.AbstractWidget;
@@ -29,8 +30,7 @@ public class ExampleWidget extends AbstractWidget {
         click(FieldToClick);
         sendKeys(OtherField,model.Name);
         stepPassedWithScreenshot("Hooray");
-        Assert.assertTrue("Validation Element not found",validateElement_Displayed(ValidationElement));
-
+        Assertions.assertTrue(validateElement_Displayed(ValidationElement),"Validation Element not found");
     }
 
 

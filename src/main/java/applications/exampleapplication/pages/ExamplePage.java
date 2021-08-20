@@ -3,6 +3,7 @@ package applications.exampleapplication.pages;
 import Roman.Roman;
 import applications.exampleapplication.models.ExampleModel;
 import applications.exampleapplication.widgets.ExampleWidget;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import selenium.AbstractPage;
 
@@ -20,10 +21,11 @@ public class ExamplePage extends AbstractPage {
         return "SomeURL";
     }
 
+
     public void someAction(ExampleModel model)
     {
         navigateTo();
-        waitForDisplayed();
+        Assertions.assertTrue(waitForDisplayed(),"Some message");
         click(Navigator);
         exampleWidget.useWidget(model);
     }

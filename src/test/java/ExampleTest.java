@@ -1,7 +1,8 @@
 import Roman.RomanBase;
+import applications.bankingapplication.BankingApplication;
 import applications.exampleapplication.ExampleApplication;
 import applications.exampleapplication.models.ExampleModel;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ExampleTest extends RomanBase {
 
@@ -14,5 +15,15 @@ public class ExampleTest extends RomanBase {
         ExampleModel model = ExampleModel.getExampleModel();
 
         exampleApplication.examplePage.someAction(model);
+    }
+
+    @Test
+    public void depositTest()
+    {
+        roman()._driver = roman().selenium.getChromeDriver();
+        BankingApplication bankingApp = new BankingApplication(roman());
+
+        bankingApp.loginPage.login("Harry Potter");
+        bankingApp.accountDashboardPage.depositAndValidate("1004", "12345");
     }
 }
