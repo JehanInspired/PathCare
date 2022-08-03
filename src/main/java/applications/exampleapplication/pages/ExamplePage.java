@@ -1,6 +1,7 @@
-package applications.exampleapplication.pages;
+/*package applications.exampleapplication.pages;
 
 import Roman.Roman;
+import applications.exampleapplication.models.AutomationUser;
 import applications.exampleapplication.models.ExampleModel;
 import applications.exampleapplication.widgets.ExampleWidget;
 import org.junit.jupiter.api.Assertions;
@@ -22,7 +23,7 @@ public class ExamplePage extends AbstractPage {
     }
 
 
-    public void someAction(ExampleModel model)
+    public void someAction(AutomationUser model)
     {
         navigateTo();
         Assertions.assertTrue(waitForDisplayed(),"Some message");
@@ -33,4 +34,4 @@ public class ExamplePage extends AbstractPage {
     public boolean waitForDisplayed() {
         return validateElement_Displayed(Navigator);
     }
-}
+}*/

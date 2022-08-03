@@ -1,29 +1,26 @@
 import Roman.RomanBase;
-import applications.bankingapplication.BankingApplication;
-import applications.exampleapplication.ExampleApplication;
-import applications.exampleapplication.models.ExampleModel;
+import applications.PathCareapplication.PathCareApplication;
+
+import applications.PathCareapplication.models.AutomationUserModel;
 import org.junit.jupiter.api.Test;
 
 public class ExampleTest extends RomanBase {
 
-    @Test
-    public void firstTest() throws Exception
-    {
-        //Given
-        roman()._driver = roman().selenium.getChromeDriver();
-        ExampleApplication exampleApplication = new ExampleApplication(roman());
-        ExampleModel model = ExampleModel.getExampleModel();
-
-        exampleApplication.examplePage.someAction(model);
-    }
 
     @Test
-    public void depositTest()
-    {
+    public void Test_4() throws Exception {
         roman()._driver = roman().selenium.getChromeDriver();
-        BankingApplication bankingApp = new BankingApplication(roman());
+        PathCareApplication pathCare = new PathCareApplication(roman());
+        AutomationUserModel model = AutomationUserModel.getExampleModel();
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pathCareDashboardPage.preAnalytical();
+        pathCare.pathCareScratch.patientdetails("Milly", "Simeily", "11/12/2002","Male");
+        pathCare.pathCareScratch.DoctorSelection();
+        pathCare.pathCareScratch.Collectiondetailnew("n-1","urea");
 
-        bankingApp.loginPage.login("Harry Potter");
-        bankingApp.accountDashboardPage.depositAndValidate("1004", "12345");
+
+
+
     }
 }

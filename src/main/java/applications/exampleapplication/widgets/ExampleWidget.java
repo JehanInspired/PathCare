@@ -1,11 +1,9 @@
-package applications.exampleapplication.widgets;
+/*package applications.exampleapplication.widgets;
 
 import Roman.Roman;
-import applications.exampleapplication.models.ExampleModel;
-import org.junit.Assert;
+import applications.PathCareapplication.models.AutomationUserModel;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
-import selenium.AbstractPage;
 import selenium.AbstractWidget;
 
 public class ExampleWidget extends AbstractWidget {
@@ -25,10 +23,10 @@ public class ExampleWidget extends AbstractWidget {
         return By.id("Scope");
     }
 
-    public void useWidget(ExampleModel model)
+    public void useWidget(AutomationUserModel model)
     {
         click(FieldToClick);
-        sendKeys(OtherField,model.Name);
+        sendKeys(OtherField,model.username);
         stepPassedWithScreenshot("Hooray");
         Assertions.assertTrue(validateElement_Displayed(ValidationElement),"Validation Element not found");
     }
@@ -38,3 +36,4 @@ public class ExampleWidget extends AbstractWidget {
         return validateElement_Displayed(FieldToClick);
     }
 }
+*/

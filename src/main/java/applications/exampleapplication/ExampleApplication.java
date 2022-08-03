@@ -1,7 +1,7 @@
-package applications.exampleapplication;
+/*package applications.exampleapplication;
 
 import Roman.Roman;
-import applications.exampleapplication.pages.ExamplePage;
+
 
 public class ExampleApplication {
 
@@ -12,3 +12,4 @@ public class ExampleApplication {
         examplePage = new ExamplePage(roman);
     }
 }
+*/
