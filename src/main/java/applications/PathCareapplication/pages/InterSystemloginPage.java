@@ -10,12 +10,24 @@ public class InterSystemloginPage extends AbstractPage {
     private By passwordtext = By.xpath("//input[@name='PASSWORD']");
     private By loginBtn = By.xpath("//button[@type='submit']");
 
+    private By changeUser = By.xpath("//a[@title='Open Profile Panel']");
+    private By locationchange = By.xpath("//a[@title='Change your logon location']");
+
+
+
+
+    private String location = "";
+
     //Need to change
-    private  By location = By.xpath("//a[text()='National Log Pool']");
+    private  By AccessProfile;
 
 
     public InterSystemloginPage(Roman roman) {
         super(roman);
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     @Override
@@ -30,13 +42,18 @@ public class InterSystemloginPage extends AbstractPage {
         sendKeys(usernametext,username);
         sendKeys(passwordtext,password);
         click(loginBtn);
-        stepInfoWithScreenshot("User is directed to User Profile screen");
+        stepPassedWithScreenshot("User is directed to User Profile screen");
+    }
+
+    public void changelocation(){
+        click(changeUser);
+        click(locationchange);
     }
 
     public void userselection(){
-        waitForDisplayed();
-        click(location);
-        stepInfoWithScreenshot("Lab queues screen");
+        AccessProfile = By.xpath("//span[text()='%s']".replace("%s",location));
+        click(AccessProfile);
+        stepPassedWithScreenshot("Lab queues screen");
     }
 
     public boolean waitForDisplayed() {

@@ -2,6 +2,7 @@ package applications.PathCareapplication.pages;
 
 import Roman.Roman;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import selenium.AbstractPage;
 
 public class PathCareScratch extends AbstractPage {
@@ -24,17 +25,19 @@ public class PathCareScratch extends AbstractPage {
 
     private By collectionTime =By.xpath("//input[@name='LBEPCollectionTime']");
     private By testSetCollection = By.xpath("//input[@name='TestSetSuperset']");
+    private By labEspiodeNum = By.xpath("//div[contains(text(),'Lab Episode Number:')]");
 
     private  By updatebuton = By.xpath("//button[@type='submit']");
 
-    public void Collectiondetailnew(String collectiontime, String testsetcollection){
+    public String collectiondetailnew(String collectiontime, String testsetcollection){
         click(iconPatientSearch);
         click(patienSearchSelect);
-        sendKeys(collectionTime,collectiontime);
-        sendKeys(testSetCollection,testsetcollection);
+        findOne(collectionTime,collectiontime);
+        findOne(testSetCollection,testsetcollection);
         stepPassedWithScreenshot("The correct Test Set is appears under Tests");
         click(updatebuton);
         stepPassedWithScreenshot("Label printed successfully");
+        return getText(labEspiodeNum,5).replace("Lab Episode Number: ","");
 
     }
 
@@ -44,14 +47,12 @@ public class PathCareScratch extends AbstractPage {
         click(findbutton);
         stepPassedWithScreenshot("The Patient list screen appears with no list");
         click(newbutton);
-        stepPassedWithScreenshot("User is directed to Patient Registration screen");
-        sendKeys(gendertextbox,gender);
-        click(gendertextbox);
-        sendKeys(DateofBirth,dateofBirth);
+        findOne(gendertextbox,gender);
+        findOne(DateofBirth,dateofBirth);
         click(DateofBirth);
         stepPassedWithScreenshot("User is directed to Lab Episode screen");
         click(updateButton);
-        stepPassedWithScreenshot("Succesfully User is directed to Patient Registration screen" );
+        stepPassedWithScreenshot("Successfully User is directed to Patient Registration screen" );
 
     }
 
@@ -63,10 +64,10 @@ public class PathCareScratch extends AbstractPage {
     }
 
 
-
-
-
-
+    public void findOne(By by,String input) {
+        super.findOne(by).sendKeys(input);
+        super.findOne(by).sendKeys( Keys.ENTER);
+    }
 
     public PathCareScratch(Roman roman) {
         super(roman);
