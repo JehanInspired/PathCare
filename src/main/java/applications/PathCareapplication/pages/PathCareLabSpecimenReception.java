@@ -5,33 +5,55 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import selenium.AbstractPage;
 
+import java.util.Arrays;
+
 public class PathCareLabSpecimenReception extends AbstractPage {
 
 
-    private By specimenNumberText = By.xpath("//input[@name='SpecimenNumber']");
-    private By SpecimenNumberUpdateButton = By.xpath("//input[@name='update']");
+    private final By specimenNumberText = By.xpath(" //td/input[@id='SpecimenNumber']");
+    private final By specimenNumberUpdateButton = By.xpath("//input[@name='update']");
 
-    private By textEpisode = By.xpath("//label[@name='LabEpisodeNumber']");
+    private final By specimenNumberStatus = By.xpath("//label[@name='Status']");
 
-
-
-
-    public String entryLabspecimenReceptionNoepisode(String labspecnumber){
-
-        //javaScriptExecutor("document.getElementByName=('SpecimenNumber').value ="+labspecnumber+"-1");
-
-        sendKeys(specimenNumberText,labspecnumber,true,true);
-        click(specimenNumberText);
-        click(SpecimenNumberUpdateButton);
-        return getText(textEpisode);
+    private final By specimenframe = By.xpath("//iframe[@id='TRAK_main']");
+    private final By textEpisode = By.xpath("//label[@name='LabEpisodeNumber']");
 
 
+
+
+
+    public String entryMultipleLabspecimenReception(String labspecnumber,int number){
+        switchToFrame(specimenframe);
+        String[] values = new String[number];
+        for( int x=1;x<=number;x++) {
+
+            String[] split = labspecnumber.split("-");
+            String value = split[0].concat("-".concat(String .valueOf(x)));
+            findOne(specimenNumberText,value);
+            stepPassedWithScreenshot("Successfully updated Lab Specimen under Lab episode: " + value);
+            values[x-1]=value;
+
+        }
+        click(specimenNumberUpdateButton);
+        for(String value:values){
+        redoentryLabspecimen(value);
+        stepPassedWithScreenshot( value);
+        }
+        return getText(specimenNumberStatus).replace(" "+values[Arrays.asList(values).size()-1],"");
+
+    }
+
+    public void redoentryLabspecimen(String labspecnumber){
+        findOne(specimenNumberText,labspecnumber);
+        click(specimenNumberUpdateButton);
     }
 
 
 
 
     public void findOne(By by,String input) {
+        super.findOne(by).click();
+        super.findOne(by).clear();
         super.findOne(by).sendKeys(input);
         super.findOne(by).sendKeys( Keys.TAB);
     }
@@ -47,6 +69,8 @@ public class PathCareLabSpecimenReception extends AbstractPage {
 
     @Override
     public boolean waitForDisplayed() {
-        return false;
+        return validateElement_Enabled_Displayed(specimenNumberText,15);
     }
+
+
 }

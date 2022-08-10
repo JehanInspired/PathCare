@@ -2,7 +2,6 @@ package applications.PathCareapplication.pages;
 
 import Roman.Roman;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import selenium.AbstractPage;
 
 public class PathCareScratch extends AbstractPage {
@@ -12,32 +11,40 @@ public class PathCareScratch extends AbstractPage {
     private final By findbutton = By.xpath("//button[text()='Find']");
     private final By newbutton = By.xpath("//a[text()='New']");
     private final By gendertextbox = By.xpath("//input[@name='CTSEXDesc']");
-    //need to change
-    private final By selectGender = By.xpath("//span[text()='Indeterminate']");
     //dd/mm/yyyy
     private final By DateofBirth = By.xpath("//input[@name='PAPERDob']");
     private final By updateButton = By.xpath("//button[text()='Update']");
-    private By iconDoctorSearch = By.xpath("//md-icon[@id='LBEpisode_Edit_0-item-LBEPReferringDoctorDR-lookupIcon']");
+    private final By iconDoctorSearch = By.xpath("//md-icon[@id='LBEpisode_Edit_0-item-LBEPReferringDoctorDR-lookupIcon']");
 
-    private By firstrowdoctorsearch  = By.xpath("//a[@id='PACRefDoctor_CustomFind_0-row-0-item-FullDoctorName-link']");
-    private By iconPatientSearch = By.xpath("//md-icon[@id='LBEpisode_Edit_0-item-LBEPPatientLocationDR-lookupIcon']");
-    private By patienSearchSelect = By.xpath("//span[@id='LBEpisode_Edit_0-item-LBEPPatientLocationDR-lookupRow-0-value-0']");
+    private final By firstrowdoctorsearch  = By.xpath("//a[@id='PACRefDoctor_CustomFind_0-row-0-item-FullDoctorName-link']");
+    private final By iconPatientSearch = By.xpath("//md-icon[@id='LBEpisode_Edit_0-item-LBEPPatientLocationDR-lookupIcon']");
+    private final By patienSearchSelect = By.xpath("//span[@id='LBEpisode_Edit_0-item-LBEPPatientLocationDR-lookupRow-0-value-0']");
+    private final By testSetLink = By.xpath("//span[text()='Test Set Link']");
+    private final By collectionTime =By.xpath("//input[@name='LBEPCollectionTime']");
+    private final By testSetCollection = By.xpath("//input[@name='TestSetSuperset']");
+    private final By labEspiodeNum = By.xpath("//div[contains(text(),'Lab Episode Number:')]");
 
-    private By collectionTime =By.xpath("//input[@name='LBEPCollectionTime']");
-    private By testSetCollection = By.xpath("//input[@name='TestSetSuperset']");
-    private By labEspiodeNum = By.xpath("//div[contains(text(),'Lab Episode Number:')]");
+    private final  By updatebuton = By.xpath("//button[@type='submit']");
+    private By testCode = By.xpath("//span[text()='%s']");
 
-    private  By updatebuton = By.xpath("//button[@type='submit']");
+    public  String testset ="";
 
-    public String collectiondetailnew(String collectiontime, String testsetcollection){
+    public String collectiondetailnew(String collectiontime, String[] testsetcollection)  {
         click(iconPatientSearch);
         click(patienSearchSelect);
         findOne(collectionTime,collectiontime);
-        findOne(testSetCollection,testsetcollection);
-        stepPassedWithScreenshot("The correct Test Set is appears under Tests");
+        for (String testset:testsetcollection) {
+            setTestset(testset);
+            testCode = By.xpath("//span[text()='%s']".replace("%s",testset));
+            sendKeys(testSetCollection,testset);
+            click(testCode);
+            validateElement_Enabled_Displayed(testSetLink,10);
+            stepPassedWithScreenshot("The correct Test Set is appears under Tests : "+testset);
+        }
+
         click(updatebuton);
-        stepPassedWithScreenshot("Label printed successfully");
-        return getText(labEspiodeNum,5).replace("Lab Episode Number: ","");
+        stepPassedWithScreenshot("Label printed successfully " +getText(labEspiodeNum,10).replace("Lab Episode Number: ",""));
+        return getText(labEspiodeNum,10).replace("Lab Episode Number: ","");
 
     }
 
@@ -57,16 +64,22 @@ public class PathCareScratch extends AbstractPage {
     }
 
     public void DoctorSelection(){
-        click(iconDoctorSearch);
-        click(firstrowdoctorsearch);
+        click(iconDoctorSearch,10);
+        click(firstrowdoctorsearch,10);
 
 
     }
 
 
     public void findOne(By by,String input) {
-        super.findOne(by).sendKeys(input);
-        super.findOne(by).sendKeys( Keys.ENTER);
+
+        validateElement_Enabled_Displayed(by,10);
+        super.sendKeys(by,input,5);
+        super.findOne(by).click();
+
+    }
+    private void setTestset(String testset) {
+        this.testset = testset;
     }
 
     public PathCareScratch(Roman roman) {
@@ -80,6 +93,6 @@ public class PathCareScratch extends AbstractPage {
 
     @Override
     public boolean waitForDisplayed() {
-        return false;
+        return validateElement_Enabled_Displayed(iconDoctorSearch,15);
     }
 }
