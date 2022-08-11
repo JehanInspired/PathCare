@@ -18,28 +18,37 @@ public class PathCareLabSpecimenReception extends AbstractPage {
     private final By specimenframe = By.xpath("//iframe[@id='TRAK_main']");
     private final By textEpisode = By.xpath("//label[@name='LabEpisodeNumber']");
 
+    public String[] specimenNumbers;
+
 
 
 
 
     public String entryMultipleLabspecimenReception(String labspecnumber,int number){
         switchToFrame(specimenframe);
-        String[] values = new String[number];
+        specimenNumbers = new String[number];
         for( int x=1;x<=number;x++) {
 
-            String[] split = labspecnumber.split("-");
-            String value = split[0].concat("-".concat(String .valueOf(x)));
+
+            String value = labspecnumber.concat("-".concat(String .valueOf(x)));
             findOne(specimenNumberText,value);
             stepPassedWithScreenshot("Successfully updated Lab Specimen under Lab episode: " + value);
-            values[x-1]=value;
+            specimenNumbers[x-1]=value;
 
         }
+
         click(specimenNumberUpdateButton);
-        for(String value:values){
+        for(String value:specimenNumbers){
         redoentryLabspecimen(value);
         stepPassedWithScreenshot( value);
         }
-        return getText(specimenNumberStatus).replace(" "+values[Arrays.asList(values).size()-1],"");
+        return getText(specimenNumberStatus).replace(" "+specimenNumbers[Arrays.asList(specimenNumbers).size()-1],"");
+
+    }
+
+
+    public void switchtoMainiFrame(){
+        super.switchToDefaultContext();
 
     }
 

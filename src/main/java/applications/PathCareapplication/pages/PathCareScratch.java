@@ -37,13 +37,13 @@ public class PathCareScratch extends AbstractPage {
             setTestset(testset);
             testCode = By.xpath("//span[text()='%s']".replace("%s",testset));
             sendKeys(testSetCollection,testset);
-            click(testCode);
+            click(testCode,10);
             validateElement_Enabled_Displayed(testSetLink,10);
             stepPassedWithScreenshot("The correct Test Set is appears under Tests : "+testset);
         }
 
         click(updatebuton);
-        stepPassedWithScreenshot("Label printed successfully " +getText(labEspiodeNum,10).replace("Lab Episode Number: ",""));
+        stepPassedWithScreenshot("Label printed successfully " +getText(labEspiodeNum,20).replace("Lab Episode Number: ",""));
         return getText(labEspiodeNum,10).replace("Lab Episode Number: ","");
 
     }
