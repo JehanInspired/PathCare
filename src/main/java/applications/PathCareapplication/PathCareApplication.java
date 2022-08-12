@@ -9,6 +9,8 @@ public class PathCareApplication
 
     public WorkAreaReceptionPage workAreaReceptionPage;
 
+    public PathCareDashboardPage pathCareDashboardPage;
+
     public PathCareLabSpecimenReception pathCareLabSpecimenReception;
     public InterSystemloginPage interSystemloginPage;
 
@@ -19,6 +21,7 @@ public class PathCareApplication
     public PathCareApplication(Roman roman)
     {
         workAreaReceptionPage = new WorkAreaReceptionPage(roman);
+        pathCareDashboardPage = new PathCareDashboardPage(roman);
         pathCareLabSpecimenReception = new PathCareLabSpecimenReception(roman);
         pathCareScratch = new PathCareScratch(roman);
         interSystemloginPage = new InterSystemloginPage(roman);

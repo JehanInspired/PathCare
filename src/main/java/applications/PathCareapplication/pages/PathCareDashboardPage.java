@@ -6,8 +6,14 @@ import selenium.AbstractPage;
 
 public class PathCareDashboardPage extends AbstractPage {
 
-  private By mainmenu = By.xpath("//md-icon[@title='Main Menu']");
-  private By subselectionPreAnalyical = By.xpath("//span[text()='Pre-Analytical']");
+  private final By mainmenu = By.xpath("//md-icon[@title='Main Menu']");
+  private final By preAnalyicalbuttonmenu = By.xpath("//span[text()='Pre-Analytical']");
+  private final By resultEntrybuttonmenu = By.xpath("//span[text()='Result Entry']");
+
+  private final By findbutton = By.xpath("//input[@name='find1']");
+
+  private final By analyticalbuttonmenu = By.xpath("//span[text()='Analytical']");
+
 
 
     public PathCareDashboardPage(Roman roman) {
@@ -19,13 +25,22 @@ public class PathCareDashboardPage extends AbstractPage {
         return null;
     }
 
-   /* public void preAnalytical()
+    public Boolean sideMenusCheckingResultsAnalystical()
     {
         click(mainmenu);
-        stepPassedWithScreenshot("Menu options are presented to the user");
-        click(subselectionPreAnalyical);
+        if(validateElement_Displayed(analyticalbuttonmenu,10)){
+            click(analyticalbuttonmenu,10);
+            if(!validateElement_Enabled_Displayed(resultEntrybuttonmenu,5)){
+                stepPassedWithScreenshot("Not Able to reach Result entry.");
+                validateElement_Enabled_Displayed(findbutton,5);
+                return true;
+            }
 
-    }*/
+        }
+
+        return false;
+
+    }
 
 
 
@@ -38,14 +53,7 @@ public class PathCareDashboardPage extends AbstractPage {
     }
 
 
-    public void choice(String stage, String Selection){
-        switch (stage) {
-            case "Pre-Analytical":
 
-                if (Selection.contentEquals("Registration")){
 
-                }
-        }
-    }
 
 }

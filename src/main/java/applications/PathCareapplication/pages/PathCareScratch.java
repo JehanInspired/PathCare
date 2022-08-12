@@ -13,7 +13,7 @@ public class PathCareScratch extends AbstractPage {
     private final By gendertextbox = By.xpath("//input[@name='CTSEXDesc']");
     //dd/mm/yyyy
     private final By DateofBirth = By.xpath("//input[@name='PAPERDob']");
-    private final By updateButton = By.xpath("//button[text()='Update']");
+    private final By saveAndclose = By.xpath("//button[text()='Save & Close']");
     private final By iconDoctorSearch = By.xpath("//md-icon[@id='LBEpisode_Edit_0-item-LBEPReferringDoctorDR-lookupIcon']");
 
     private final By firstrowdoctorsearch  = By.xpath("//a[@id='PACRefDoctor_CustomFind_0-row-0-item-FullDoctorName-link']");
@@ -24,8 +24,10 @@ public class PathCareScratch extends AbstractPage {
     private final By testSetCollection = By.xpath("//input[@name='TestSetSuperset']");
     private final By labEspiodeNum = By.xpath("//div[contains(text(),'Lab Episode Number:')]");
 
+    private final By testsetrequimenttext = By.xpath("//span[text()='At least one test set is required']");
+
     private final  By updatebuton = By.xpath("//button[@type='submit']");
-    private By testCode = By.xpath("//span[text()='%s']");
+    private  By testCode = By.xpath("//span[text()='%s']");
 
     public  String testset ="";
 
@@ -47,23 +49,36 @@ public class PathCareScratch extends AbstractPage {
         return getText(labEspiodeNum,10).replace("Lab Episode Number: ","");
 
     }
+    public Boolean updatewithoutTestCollection(String collectiontime){
+        click(iconPatientSearch);
+        click(patienSearchSelect);
+        findOne(collectionTime,collectiontime);
+        click(updatebuton);
+         if(validateElement_Displayed(testsetrequimenttext,5)){
 
-    public void patientdetails(String name, String surname, String dateofBirth, String gender){
+             validateElement_Displayed(findbutton,4);
+             stepPassedWithScreenshot("Successfully displayed: Error message appears  \"At least one test set is required\"");
+             return true;
+         }
+         return false;
+    }
+
+    public void patientdetails(String name, String surname, String dateBirth, String gender){
         sendKeys(surnametextbox,name);
         sendKeys(givennametextbox,surname);
         click(findbutton);
         stepPassedWithScreenshot("The Patient list screen appears with no list");
         click(newbutton);
         findOne(gendertextbox,gender);
-        findOne(DateofBirth,dateofBirth);
+        findOne(DateofBirth,dateBirth);
         click(DateofBirth);
         stepPassedWithScreenshot("User is directed to Lab Episode screen");
-        click(updateButton);
+        click(saveAndclose);
         stepPassedWithScreenshot("Successfully User is directed to Patient Registration screen" );
 
     }
 
-    public void DoctorSelection(){
+    public void doctorSelection(){
         click(iconDoctorSearch,10);
         click(firstrowdoctorsearch,10);
 
