@@ -37,12 +37,12 @@ public class WorkAreaReceptionPage extends AbstractPage {
         switchToFrame(workAreaReceptionframe);
     }
 
-    public List <TestDataModel> setupdata(String[] departments,String[] testcollections,String[] specimenNumbers){
+    public List <TestDataModel> setupdata(String[] departments,String[] testcollections,List<String> specimenNumbers){
         List<TestDataModel> testDataModelList = new ArrayList<>();
 
-        for(int x =0;x<=specimenNumbers.length-1;x++){
+        for(int x =0;x<=specimenNumbers.size()-1;x++){
 
-            testDataModelList.add( new TestDataModel(specimenNumbers[x],testcollections[x],"g",departments[x]));
+            testDataModelList.add( new TestDataModel(specimenNumbers.get(x),testcollections[x],"g",departments[x]));
         }
         return testDataModelList;
 
@@ -64,7 +64,7 @@ public class WorkAreaReceptionPage extends AbstractPage {
         }*/
     public boolean departmentWorkArea(List<TestDataModel> data, boolean checking){
 
-        Boolean checkingout =false;
+        boolean checkingout =false;
         for(TestDataModel dataModel: data){
 
                     sendKeys(departmentText, dataModel.department);
@@ -99,12 +99,12 @@ public class WorkAreaReceptionPage extends AbstractPage {
 
 
 
-     public boolean checkout_reset(String[] departments,String[] testcollections,String[] specimenNumbers){
+     public boolean checkout_reset(String[] departments,String[] testcollections,List<String> specimenNumbers){
 
         boolean condition = false;
         super.findOne(workArea).clear();
 
-         for( int x=0;x<=specimenNumbers.length-1;x++) {
+         for( int x=0;x<=specimenNumbers.size()-1;x++) {
              departmentWorkArea(setupdata(departments,testcollections,specimenNumbers),false);
 
 

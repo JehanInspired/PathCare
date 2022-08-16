@@ -6,12 +6,12 @@ import selenium.AbstractPage;
 
 public class InterSystemloginPage extends AbstractPage {
 
-    private By usernametext = By.xpath("//input[@name='USERNAME']");
-    private By passwordtext = By.xpath("//input[@name='PASSWORD']");
-    private By loginBtn = By.xpath("//button[@type='submit']");
+    private final By usernametext = By.xpath("//input[@name='USERNAME']");
+    private final By passwordtext = By.xpath("//input[@name='PASSWORD']");
+    private final By loginBtn = By.xpath("//button[@type='submit']");
 
-    private By changeUser = By.xpath("//a[@title='Open Profile Panel']");
-    private By locationchange = By.xpath("//a[@title='Change your logon location']");
+    private final By changeUser = By.xpath("//a[@title='Open Profile Panel']");
+    private final By locationchange = By.xpath("//a[@title='Change your logon location']");
 
 
 
@@ -51,7 +51,7 @@ public class InterSystemloginPage extends AbstractPage {
     }
 
     public void userselection(){
-        AccessProfile = By.xpath("//span[text()='%s']".replace("%s",location));
+        AccessProfile = By.xpath("//span[contains(text(),'%s')]".replace("%s",location));
         click(AccessProfile);
         stepPassedWithScreenshot("Lab queues screen");
     }

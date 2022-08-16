@@ -1,0 +1,83 @@
+{
+  "nameOfdepartment": [{
+      "name": "Andrology",
+      "acronym": "Y"
+    },
+    {
+      "name": "Biochemistry",
+      "acronym": "B"
+    },
+    {
+      "name": "Bone Marrow",
+      "acronym": "DD"
+    },
+    {
+      "name": "Cytogenetics",
+      "acronym": "G"
+    },
+    {
+      "name": "Cytopathology: Gynaegological",
+      "acronym": "AG"
+    },
+    {
+      "name": "Cytopathology: Non-Gynaegological",
+      "acronym": "AN"
+    },
+    {
+      "name": "Endocrinology",
+      "acronym": "E"
+    },
+    {
+      "name": "Environmental",
+      "acronym": "N"
+    },
+    {
+      "name": "Haematology",
+      "acronym": "H"
+    },
+    {
+      "name": "Histopathology",
+      "acronym": "AH"
+    },
+    {
+      "name": "Immunology",
+      "acronym": "I"
+    },
+    {
+      "name": "Insurance",
+      "acronym": "R"
+    },
+    {
+      "name": "Interfaces",
+      "acronym": "INT"
+    },
+    {
+      "name": "Microbiology",
+      "acronym": "M"
+    },
+    {
+      "name": "Molecular",
+      "acronym": "P"
+    },
+    {
+      "name": "POCT- Point of Care Testing1",
+      "acronym": "POCT"
+    },
+    {
+      "name": "Serology",
+      "acronym": "S"
+    },
+    {
+      "name": "Veterinary",
+      "acronym": "Z"
+    },
+    {
+      "name": "Veterinary Cytology",
+      "acronym": "ZC"
+    },
+    {
+      "name": "Veterinary Histology",
+      "acronym": "ZH"
+    }
+  ]
+}

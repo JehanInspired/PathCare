@@ -9,8 +9,14 @@ public class Pre_Analytical extends AbstractPage {
     private final By pre_Analytical   = By.xpath("//span[text()='Pre-Analytical']");
     private final By specimenRecived = By.xpath("//span[text()='Specimen Receive']");
     private final By workAreaReceive = By.xpath("//span[text()='Work Area Receive']");
+
     private final By findbutton = By.xpath("//input[@name='find1']");
     private final By subregistation = By.xpath("//span[text()='Registration']");
+
+
+    private final By logisticsMenubutton = By.xpath("//li//span[text()='Transfer Logistics']");
+
+    private final By transferbutton = By.xpath("//span[text()='Transfers']");
     private final By mainmenu = By.xpath("//a//md-icon[@title='Main Menu']");
 
 
@@ -28,7 +34,7 @@ public class Pre_Analytical extends AbstractPage {
 
             validateElement_Enabled_Displayed(findbutton,10);
             click(mainmenu,15);
-            if(validateElement_Displayed(pre_Analytical)){
+            if(validateElement_Displayed(pre_Analytical,10)){
                 click(pre_Analytical);
                 click(specimenRecived,10);
             }else{
@@ -37,6 +43,11 @@ public class Pre_Analytical extends AbstractPage {
 
 
             stepPassedWithScreenshot("Navigated to specimen received");
+
+    }
+
+    public void switchtoMainiFrame(){
+        super.switchToDefaultContext();
 
     }
 
@@ -54,6 +65,20 @@ public class Pre_Analytical extends AbstractPage {
         stepPassedWithScreenshot("Navigated to Work Received");
     }
 
+    public void navigateTransfer(){
+        validateElement_Enabled_Displayed(findbutton,10);
+        click(mainmenu,10);
+        if(validateElement_Enabled_Displayed(transferbutton)){
+            click(transferbutton,10);
+        }else{
+            click(pre_Analytical);
+            click(transferbutton,10);
+        }
+
+
+        stepPassedWithScreenshot("Navigated to Transfers");
+    }
+
 
 
     public void navigateRegistration(){
@@ -63,6 +88,19 @@ public class Pre_Analytical extends AbstractPage {
         stepPassedWithScreenshot("Patient Episode Search Menu appears");
 
     }
+
+
+    public void navigateLogistics(){
+        click(mainmenu);
+        if(validateElement_Enabled_Displayed(logisticsMenubutton)){
+            click(logisticsMenubutton,10);
+        }else{
+            click(pre_Analytical);
+            click(logisticsMenubutton,10);
+        }
+
+    }
+
 
 
     @Override

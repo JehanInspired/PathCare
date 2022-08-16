@@ -5,7 +5,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import selenium.AbstractPage;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PathCareLabSpecimenReception extends AbstractPage {
 
@@ -18,7 +19,8 @@ public class PathCareLabSpecimenReception extends AbstractPage {
     private final By specimenframe = By.xpath("//iframe[@id='TRAK_main']");
     private final By textEpisode = By.xpath("//label[@name='LabEpisodeNumber']");
 
-    public String[] specimenNumbers;
+    private final By tobereceivedcontain = By.xpath("//label[@id='SpecimenNumberTBRz1']");
+    public List<String> specimenNumbers = new ArrayList<>();
 
 
 
@@ -26,31 +28,32 @@ public class PathCareLabSpecimenReception extends AbstractPage {
 
     public String entryMultipleLabspecimenReception(String labspecnumber,int number){
         switchToFrame(specimenframe);
-        specimenNumbers = new String[number];
-        for( int x=1;x<=number;x++) {
 
+        for(int x=1;x<=number;x++) {
 
             String value = labspecnumber.concat("-".concat(String .valueOf(x)));
-            findOne(specimenNumberText,value);
-            stepPassedWithScreenshot("Successfully updated Lab Specimen under Lab episode: " + value);
-            specimenNumbers[x-1]=value;
 
+            findOne(specimenNumberText,value);
+            stepPassedWithScreenshot("Successfully Entered Lab Specimen under Lab episode: " + value);
+            if(!validateElement_Enabled_Displayed(tobereceivedcontain)){
+                specimenNumbers.add(value);
+                break;
+            }
+            specimenNumbers.add(value);
         }
 
         click(specimenNumberUpdateButton);
         for(String value:specimenNumbers){
         redoentryLabspecimen(value);
-        stepPassedWithScreenshot( value);
+        validateElement_Enabled_Displayed(textEpisode,5);
+        stepPassedWithScreenshot(value);
         }
-        return getText(specimenNumberStatus).replace(" "+specimenNumbers[Arrays.asList(specimenNumbers).size()-1],"");
+        return getText(specimenNumberStatus).replace(" "+specimenNumbers.get(specimenNumbers.size()-1),"");
 
     }
 
 
-    public void switchtoMainiFrame(){
-        super.switchToDefaultContext();
 
-    }
 
     public void redoentryLabspecimen(String labspecnumber){
         findOne(specimenNumberText,labspecnumber);
