@@ -21,6 +21,10 @@ public class PathCareApplication
 
     public Pre_Analytical pre_analytical;
 
+    public ResultEntry resultEntry;
+
+    public Analytical analytical;
+
     public PathCareApplication(Roman roman)
     {
         workAreaReceptionPage = new WorkAreaReceptionPage(roman);
@@ -31,6 +35,8 @@ public class PathCareApplication
         pathCareScratch = new PathCareScratch(roman);
         interSystemloginPage = new InterSystemloginPage(roman);
         pre_analytical = new Pre_Analytical(roman);
+        analytical = new Analytical(roman);
+        resultEntry = new ResultEntry(roman);
 
     }
 }

@@ -1,6 +1,7 @@
 package applications.PathCareapplication.pages;
 
 import Roman.Roman;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import selenium.AbstractPage;
 
@@ -9,6 +10,7 @@ public class InterSystemloginPage extends AbstractPage {
     private final By usernametext = By.xpath("//input[@name='USERNAME']");
     private final By passwordtext = By.xpath("//input[@name='PASSWORD']");
     private final By loginBtn = By.xpath("//button[@type='submit']");
+    private final By nextPage = By.xpath("//a[text()='Next >']");
 
     private final By changeUser = By.xpath("//a[@title='Open Profile Panel']");
     private final By locationchange = By.xpath("//a[@title='Change your logon location']");
@@ -52,8 +54,13 @@ public class InterSystemloginPage extends AbstractPage {
 
     public void userselection(){
         AccessProfile = By.xpath("//span[contains(text(),'%s')]".replace("%s",location));
-        click(AccessProfile);
-        stepPassedWithScreenshot("Lab queues screen");
+        while(!validateElement_Displayed(AccessProfile,10)){
+            scrollToElement(nextPage,5);
+            click(nextPage);
+        }
+        scrollToElement(nextPage,10);
+        click(AccessProfile,10);
+        stepPassedWithScreenshot("Lab queues screen "+location);
     }
 
     public boolean waitForDisplayed() {

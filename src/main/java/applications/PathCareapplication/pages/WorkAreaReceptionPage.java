@@ -6,8 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import selenium.AbstractPage;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class WorkAreaReceptionPage extends AbstractPage {
 
@@ -25,6 +24,7 @@ public class WorkAreaReceptionPage extends AbstractPage {
 
     private final By checkin = By.xpath("//input[@id='update']");
     private final By reset = By.xpath("//input[@id='reset']");
+    private  final By workAreaSearchbutton = By.xpath("//img[@id='ld8066iWorkArea']");
 
     private  final By workAreaReceptionframe = By.xpath("//iframe[@id='TRAK_main']");
 
@@ -37,31 +37,32 @@ public class WorkAreaReceptionPage extends AbstractPage {
         switchToFrame(workAreaReceptionframe);
     }
 
-    public List <TestDataModel> setupdata(String[] departments,String[] testcollections,List<String> specimenNumbers){
+    public List <TestDataModel> setupdata(String[] departments, String[] testcollections, List<String> specimenNumbers){
         List<TestDataModel> testDataModelList = new ArrayList<>();
 
         for(int x =0;x<=specimenNumbers.size()-1;x++){
 
-            testDataModelList.add( new TestDataModel(specimenNumbers.get(x),testcollections[x],"g",departments[x]));
+            testDataModelList.add(new TestDataModel(specimenNumbers.get(x),testcollections[x],"g",departments[x]));
         }
         return testDataModelList;
 
         }
-//Data get test data from test cases
-    /*public void departmentWorkArea(List<NameOfdepartmentItem> department, String[] testset){
-        HashMap<String, String> collectsDepartment = new HashMap<>();
-         for(String test: testset) {
-             char results = test.charAt(0);
-             for (NameOfdepartmentItem list : department) {
-                 if (list.getAcronym().contentEquals(results)){
-                    collectsDepartment.put(list.getName(),list.getAcronym());
-                 }
 
-             }
-         }*/
-        /*for () {
-            sendKeys(departmentText, )
-        }*/
+    public List <TestDataModel> setupdataMultiple(String[] departments, String[] testcollections, Collection<ArrayList<String>> specimenNumbers){
+        List<TestDataModel> testDataModelList = new ArrayList<>();
+
+        //2
+
+        for(ArrayList specimen :specimenNumbers) {
+            for (int x = 0; x <= specimen.size() - 1; x++) {
+
+                testDataModelList.add(new TestDataModel(specimen.get(x), testcollections[x], "g", departments[x]));
+            }
+        }
+        return testDataModelList;
+
+    }
+
     public boolean departmentWorkArea(List<TestDataModel> data, boolean checking){
 
         boolean checkingout =false;
@@ -71,11 +72,12 @@ public class WorkAreaReceptionPage extends AbstractPage {
 
                     click(lookuprowselection);
                     if (validateElement_Enabled_Displayed(workArea, 10)) {
-                        sendKeys(workArea, dataModel.workArea);
+                        //sendKeys(workArea, dataModel.workArea);
+                        click(workAreaSearchbutton);
                     }
-
                     click(lookuprowselection);
-                    findOne(specimenNumberText, dataModel.labespode);
+                    findOne(specimenNumberText, (String)dataModel.labespode);
+                    acceptAlert();
                     if(checking && !checkingout) {
                         stepPassedWithScreenshot("Successfully updated Lab Specimen under Lab episode: " + dataModel.labespode);
                         click(checkin);
@@ -119,7 +121,7 @@ public class WorkAreaReceptionPage extends AbstractPage {
 
 
 
-    public void findOne(By by,String input) {
+    public void findOne(By by, String input) {
         super.findOne(by).click();
         super.findOne(by).clear();
         super.findOne(by).sendKeys(input);

@@ -1,10 +1,18 @@
 package applications.PathCareapplication.pages;
 
 import Roman.Roman;
+import com.github.javafaker.Faker;
+import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import selenium.AbstractPage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PathCareScratch extends AbstractPage {
+
+    private final By switchiFrame = By.xpath("//iframe[@name='TRAK_main']");
 
     private final By surnametextbox = By.xpath("//input[@name='PAPERName']");
     private final By givennametextbox = By.xpath("//input[@name='PAPERName2']");
@@ -22,9 +30,19 @@ public class PathCareScratch extends AbstractPage {
     private final By testSetLink = By.xpath("//span[text()='Test Set Link']");
     private final By collectionTime =By.xpath("//input[@name='LBEPCollectionTime']");
     private final By testSetCollection = By.xpath("//input[@name='TestSetSuperset']");
+    private final By backtoLabEpisodeNav = By.xpath("//a[text()='Back to: Lab Episode']");
     private final By labEspiodeNum = By.xpath("//div[contains(text(),'Lab Episode Number:')]");
+    private final By specimensearch = By.xpath("//md-icon[@id='LBSpecimenContainer_Msg_Edit_0-item-LBSPCSpecimenDR-lookupIcon']");
 
+    private final By applybuttonSpecimenContainer = By.xpath("//button[text()='Accept']");
+    private final By specimenLookup = By.xpath("//span[@id='LBSpecimenContainer_Msg_Edit_0-item-LBSPCSpecimenDR-lookupRow-0-value-1']");
+
+    private final By specimenContainerlookup = By.xpath("//span[@id='LBSpecimenContainer_Msg_Edit_0-item-LBSPCContainerDR-lookupRow-0-value-1']");
+    private final By specimenContainerSearch = By.xpath("//md-icon[@id='LBSpecimenContainer_Msg_Edit_0-item-LBSPCContainerDR-lookupIcon']");
+    private final By specimenContainer = By.xpath("//div[@id=LBSpecimenContainer_Msg_Edit_0-item-LBSPCContainerDR-matchesWrapper']");
     private final By testsetrequimenttext = By.xpath("//span[text()='At least one test set is required']");
+    private final By selectlinkSpecimen = By.xpath("//a[text()='Select']");
+    private final By acceptButton = By.xpath("//input[@name='accept1']");
 
     private final  By updatebuton = By.xpath("//button[@type='submit']");
     private  By testCode = By.xpath("//span[text()='%s']");
@@ -39,9 +57,25 @@ public class PathCareScratch extends AbstractPage {
             setTestset(testset);
             testCode = By.xpath("//span[text()='%s']".replace("%s",testset));
             sendKeys(testSetCollection,testset);
-            click(testCode,10);
+            super._driver.findElement(testSetCollection).sendKeys(Keys.TAB);
+            if(validateElement_Displayed(backtoLabEpisodeNav)){
+                click(specimensearch);
+                click(specimenLookup);
+                click(specimenContainerSearch);
+                click(specimenContainerlookup);
+
+                Assert.assertTrue(validateElement_Enabled_Displayed(applybuttonSpecimenContainer));
+                click(applybuttonSpecimenContainer);
+                if(validateElement_Enabled_Displayed(selectlinkSpecimen)){
+                    click(selectlinkSpecimen);
+                    switchToFrame(switchiFrame);
+                    click(acceptButton);
+                    switchToDefaultContext();
+                }
+
+            }
             validateElement_Enabled_Displayed(testSetLink,10);
-            stepPassedWithScreenshot("The correct Test Set is appears under Tests : "+testset);
+            stepPassedWithScreenshot("The correct Test Set appears under Tests : "+testset);
         }
 
         click(updatebuton);
@@ -79,9 +113,21 @@ public class PathCareScratch extends AbstractPage {
     }
 
     public void doctorSelection(){
-        click(iconDoctorSearch,10);
+        click(iconDoctorSearch,15);
         click(firstrowdoctorsearch,10);
 
+    }
+
+
+    public List<String> mutiplePatient(Faker faker,String[] testcollection, int numberPatient){
+        List<String> labEspideonumber = new ArrayList<>();
+        for(int x=0;x<=numberPatient-1;x++){
+            patientdetails(faker.name().name(), faker.name().lastName(), "11/12/2002",faker.demographic().sex());
+            doctorSelection();
+            labEspideonumber.add(collectiondetailnew("n-1",testcollection));
+        }
+
+        return labEspideonumber;
 
     }
 

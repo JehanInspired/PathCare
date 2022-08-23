@@ -23,8 +23,12 @@ public class PathCareLabTransferList extends AbstractPage {
   private final By shipmentbutton = By.xpath("//input[@id='CreateShipment']");
   private  final By addshipmentcontainerbutton = By.xpath("//a[@id='AddShipmentContainer']");
   private final By shipmentnumbertext = By.xpath("//label[@name='LBSHCNumberz1']");
+
+  private final By status = By.xpath("//label[@id='LBTRStatusz1']");
   private final By packSpecimenNumber = By.xpath("//input[@id='SpecimenNumber']");
   private final By closedbutton = By.xpath("//a[@id='Closez1']");
+
+  private final By receiveButton = By.xpath("//input[@id='BulkReceive']");
 
   private final By closeShipment =  By.xpath("//a[@id='Closez1']");
   private  final By closepacksession = By.xpath("//input[@id='close1']");
@@ -34,20 +38,65 @@ public class PathCareLabTransferList extends AbstractPage {
 
   public void tranferlistLabepisode(String text){
       switchToFrame(switchiFrame);
-      sendKeys(labEpisode,text);
+      sendKeys(labEpisode,text,10);
+      if(validateElement_Enabled_Displayed(findbutton,10)){
       click(findbutton,10);
       stepPassedWithScreenshot("Successfully Entered lab Episode");
+      }
   }
 
+    public void tranferlistLabepisodewithoutframe(String text){
+        sendKeys(labEpisode,text,10);
+        if(validateElement_Enabled_Displayed(findbutton,10)){
+            click(findbutton,10);
+            stepPassedWithScreenshot("Successfully Entered lab Episode");
+        }
+    }
+
+
   public Boolean checknumbersTransfer(String labepisode, List<String> specimennumbers){
+      boolean checker = false;
       listTransfer = By.xpath("//label[text()='%s']".replace("%s",labepisode));
-      stepPassedWithScreenshot("Able to view package In Transit ");
-      return getAllElementText(listTransfer).size()==specimennumbers.size();
+
+      if(getAllElementText(listTransfer).size()==specimennumbers.size()) {
+          stepPassedWithScreenshot("Able to view package In Transit ");
+          checker =true;
+      }
+        return checker;
   }
     public Boolean checknumbersDelivery(String labepisode, List<String> specimennumbers){
+        boolean checker =false;
         listTransfer = By.xpath("//label[text()='%s']".replace("%s",labepisode));
-        stepPassedWithScreenshot("Able to view package In Transit ");
-        return getAllElementText(listTransfer).size()==specimennumbers.size();
+        if(getAllElementText(listTransfer).size()==specimennumbers.size()) {
+            stepPassedWithScreenshot("Able to view package In Transit ");
+            checker = true;
+        }
+        return checker;
+    }
+
+    public Boolean checknumbersPackage(String labepisode, List<String> specimennumbers){
+      boolean checker =false;
+        listTransfer = By.xpath("//label[text()='%s']".replace("%s",labepisode));
+        if(getAllElementText(listTransfer).size()==specimennumbers.size()) {
+            stepPassedWithScreenshot("Able to view Packaged ");
+            checker =true;
+        }
+        return checker ;
+    }
+
+    public Boolean checknumbersReceived(String labepisode, List<String> specimennumbers){
+        boolean checker =false;
+        listTransfer = By.xpath("//label[text()='%s']".replace("%s",labepisode));
+        if(getAllElementText(listTransfer).size()==specimennumbers.size() && getAllElementText(status).contains("Received")) {
+            stepPassedWithScreenshot("Able to view Received ");
+            checker =true;
+        }
+        return checker ;
+    }
+    public void receiceiveShipment(){
+        click(selectallspecimen);
+      click(receiveButton);
+
     }
 
   public void createShipment(List<String> specimennumbers){

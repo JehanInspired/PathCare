@@ -1,22 +1,11 @@
 package applications.PathCareapplication.models;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import static org.apache.poi.xssf.usermodel.XSSFWorkbookType.XLSX;
 
 public class TestDataModel {
-    public String labespode;
+    public Object labespode;
     public String Stage;
     public String code;
     public String site;
@@ -26,7 +15,7 @@ public class TestDataModel {
     public String department;
     public String workArea;
 
-    public TestDataModel(String labespodespecimen, String testset, String workArea,String department)
+    public TestDataModel(Object labespodespecimen, String testset, String workArea, String department)
     {
         this.labespode = labespodespecimen;
         this.testset = testset;
