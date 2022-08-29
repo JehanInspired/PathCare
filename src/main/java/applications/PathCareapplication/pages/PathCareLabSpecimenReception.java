@@ -68,11 +68,7 @@ public class PathCareLabSpecimenReception extends AbstractPage {
                 String lapnumberspecimen = labepsiode.concat("-".concat(String.valueOf(x)));
                 findOne(specimenNumberText, lapnumberspecimen);
                 stepPassedWithScreenshot("Successfully Entered Lab Specimen under Lab episode: " + lapnumberspecimen);
-                if (!validateElement_Enabled_Displayed(tobereceivedcontain)) {
-                    specimenNumbers.add(lapnumberspecimen);
-                } else {
-                    specimenNumbers.add(lapnumberspecimen);
-                }
+                specimenNumbers.add(lapnumberspecimen);
 
                 if (validateElement_Enabled_Displayed(specimenNumberUpdateButton)) {
                     click(specimenNumberUpdateButton);
@@ -81,9 +77,10 @@ public class PathCareLabSpecimenReception extends AbstractPage {
                 }
 
                 mutlipleSpeicmen.put(labepsiode, specimenNumbers);
-                specimenNumbers = new ArrayList<>();
+
 
             }
+            specimenNumbers = new ArrayList<>();
         }
 
         for(String value:specimenNumbers){

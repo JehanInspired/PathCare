@@ -5,7 +5,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import selenium.AbstractPage;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 
 public class PathCareLabTransferList extends AbstractPage {
 
@@ -33,6 +36,18 @@ public class PathCareLabTransferList extends AbstractPage {
   private final By closeShipment =  By.xpath("//a[@id='Closez1']");
   private  final By closepacksession = By.xpath("//input[@id='close1']");
   private By listTransfer = By.xpath("//label[text()='%s']");
+
+  private By fromLabSite = By.name("FromSite");
+
+  private By toLabsite = By.name("ToSite");
+
+  private By saveSearchResult = By.id("SaveSearch");
+
+  private By descriptionSaveSearch = By.id("SRCHDesc");
+  private By updatebutton = By.id("update1");
+  private By savedSearches = By.id("SavedSearches");
+  private By getDescriptionSaveSearchfromlist ;
+  private By iframeSaveSearch = By.name("TRAK_info");
 
   public String shipmentNumber = "";
 
@@ -99,7 +114,7 @@ public class PathCareLabTransferList extends AbstractPage {
 
     }
 
-  public void createShipment(List<String> specimennumbers){
+  public void createShipment(ArrayList<String> specimennumbers){
       click(selectallspecimen);
       click(shipmentbutton);
       click(addshipmentcontainerbutton,10);
@@ -118,10 +133,67 @@ public class PathCareLabTransferList extends AbstractPage {
 
   }
 
+    public void createShipment(Collection<ArrayList<String>> specimenNumbers){
+        click(selectallspecimen);
+        click(shipmentbutton);
+        click(addshipmentcontainerbutton,10);
+        if(validateElement_Displayed(shipmentnumbertext,10)){
+            shipmentNumber = getText(shipmentnumbertext,10);
+
+            stepPassedWithScreenshot("Able to receive a shipment container number "+ shipmentNumber);
+        }
+
+        for(ArrayList<String> values:specimenNumbers) {
+            for(String value:values) {
+                findOne(packSpecimenNumber, value);
+            }
+        }
+        click(closeShipment,5);
+        acceptAlert();
+        stepPassedWithScreenshot("Successfully clicked closed shipment");
+
+    }
+
   public void closePackage(){
     click(closepacksession);
     acceptAlert();
   }
+
+  //Save Searches
+    public Boolean labSearches(){
+
+      String description ="From PathCare Park Reference Lab to George Laboratory Lab Transfer "+ new Random().nextDouble();
+      switchToFrame(switchiFrame);
+      findOne(fromLabSite,"PathCare Park Reference Lab");
+      findOne(toLabsite,"George Laboratory");
+      click(findbutton);
+      stepPassedWithScreenshot("Able to view Search results ");
+      if(validateElement_Enabled_Displayed(saveSearchResult,10)){
+          click(saveSearchResult,5);
+
+      }
+
+      switchToDefaultContext();
+      switchToFrame(iframeSaveSearch);
+      findOne(descriptionSaveSearch,description);
+      stepPassedWithScreenshot("Successfully entered "+description);
+      click(updatebutton);
+      switchToDefaultContext();
+      switchToFrame(switchiFrame);
+      click(savedSearches);
+
+        switchToDefaultContext();
+        switchToFrame(iframeSaveSearch);
+        getDescriptionSaveSearchfromlist = By.xpath("//a[contains(text(),'%s')]".replace("%s",description));
+        if(getText(getDescriptionSaveSearchfromlist).contains(description)){
+            stepPassedWithScreenshot("Able to view Saved Search Results");
+            return true;
+        }
+
+
+
+    return false;
+    }
 
     public void findOne(By by,String input) {
         super.findOne(by).click();

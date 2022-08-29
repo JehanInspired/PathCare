@@ -1,7 +1,6 @@
 package applications.PathCareapplication.pages;
 
 import Roman.Roman;
-import org.junit.Assert;
 import org.openqa.selenium.By;
 import selenium.AbstractPage;
 
@@ -14,6 +13,7 @@ public class InterSystemloginPage extends AbstractPage {
 
     private final By changeUser = By.xpath("//a[@title='Open Profile Panel']");
     private final By locationchange = By.xpath("//a[@title='Change your logon location']");
+    private final By logoffbutton = By.xpath("//button[@aria-label='Logout']");
 
 
 
@@ -45,6 +45,11 @@ public class InterSystemloginPage extends AbstractPage {
         sendKeys(passwordtext,password);
         click(loginBtn);
         stepPassedWithScreenshot("User is directed to User Profile screen");
+    }
+    public void logoff(){
+        click(changeUser);
+        click(logoffbutton);
+
     }
 
     public void changelocation(){

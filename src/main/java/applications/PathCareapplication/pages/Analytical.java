@@ -34,6 +34,6 @@ public class Analytical extends AbstractPage {
 
     @Override
     public boolean waitForDisplayed() {
-        return false;
+       return false;
     }
 }
