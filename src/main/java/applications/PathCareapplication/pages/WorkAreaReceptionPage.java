@@ -2,11 +2,13 @@ package applications.PathCareapplication.pages;
 
 import Roman.Roman;
 import applications.PathCareapplication.models.TestDataModel;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+
 import selenium.AbstractPage;
 
 import java.util.*;
+
 
 public class WorkAreaReceptionPage extends AbstractPage {
 
@@ -37,7 +39,7 @@ public class WorkAreaReceptionPage extends AbstractPage {
         switchToFrame(workAreaReceptionframe);
     }
 
-    public List <TestDataModel> setupdata(String[] departments, String[] testcollections, List<String> specimenNumbers){
+    public List <TestDataModel> setupdata(String[] departments, String[] testcollections,  List<String> specimenNumbers){
         List<TestDataModel> testDataModelList = new ArrayList<>();
 
         for(int x =0;x<=specimenNumbers.size()-1;x++){
@@ -56,7 +58,8 @@ public class WorkAreaReceptionPage extends AbstractPage {
         for(ArrayList specimen :specimenNumbers) {
             for (int x = 0; x <= specimen.size() - 1; x++) {
 
-                testDataModelList.add(new TestDataModel(specimen.get(x), testcollections[x], "g", departments[x]));
+
+                testDataModelList.add(new TestDataModel(specimen.get(x), testcollections.length<=specimen.size() ? testcollections[0]:testcollections[x], "g", testcollections.length<=specimen.size() ? departments[0]:departments[x]));
             }
         }
         return testDataModelList;
@@ -68,7 +71,7 @@ public class WorkAreaReceptionPage extends AbstractPage {
         boolean checkingout =false;
         for(TestDataModel dataModel: data){
 
-                    sendKeys(departmentText, dataModel.department);
+                    sendKeys(departmentText, dataModel.department,10);
 
                     click(lookuprowselection);
                     if (validateElement_Enabled_Displayed(workArea, 10)) {
@@ -77,8 +80,15 @@ public class WorkAreaReceptionPage extends AbstractPage {
                     }
                     click(lookuprowselection);
                     findOne(specimenNumberText, (String)dataModel.labespode);
-                    acceptAlert();
-                    if(checking && !checkingout) {
+
+
+                if(ExpectedConditions.alertIsPresent() != null){
+                    try {
+                        acceptAlert();
+                    }catch (NoAlertPresentException var){
+                    }
+                }
+            if(checking && !checkingout) {
                         stepPassedWithScreenshot("Successfully updated Lab Specimen under Lab episode: " + dataModel.labespode);
                         click(checkin);
                     }else{

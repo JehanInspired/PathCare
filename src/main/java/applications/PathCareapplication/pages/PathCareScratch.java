@@ -26,7 +26,7 @@ public class PathCareScratch extends AbstractPage {
 
     private final By firstrowdoctorsearch  = By.xpath("//a[@id='PACRefDoctor_CustomFind_0-row-0-item-FullDoctorName-link']");
     private final By iconPatientSearch = By.xpath("//md-icon[@id='LBEpisode_Edit_0-item-LBEPPatientLocationDR-lookupIcon']");
-    private final By patienSearchSelect = By.xpath("//span[@id='LBEpisode_Edit_0-item-LBEPPatientLocationDR-lookupRow-0-value-0']");
+    private final By patientSearchSelect = By.xpath("//input[@name= 'LBEPPatientLocationDR' ]");
     private final By testSetLink = By.xpath("//span[text()='Test Set Link']");
     private final By collectionTime =By.xpath("//input[@name='LBEPCollectionTime']");
     private final By testSetCollection = By.xpath("//input[@name='TestSetSuperset']");
@@ -50,8 +50,9 @@ public class PathCareScratch extends AbstractPage {
     public  String testset ="";
 
     public String collectiondetailnew(String collectiontime, String[] testsetcollection)  {
-        click(iconPatientSearch);
-        click(patienSearchSelect);
+       //click(iconPatientSearch);
+        sendKeys(patientSearchSelect,"2100");
+        super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
         findOne(collectionTime,collectiontime);
         for (String testset:testsetcollection) {
             setTestset(testset);
@@ -85,7 +86,7 @@ public class PathCareScratch extends AbstractPage {
     }
     public Boolean updatewithoutTestCollection(String collectiontime){
         click(iconPatientSearch);
-        click(patienSearchSelect);
+        click(patientSearchSelect);
         findOne(collectionTime,collectiontime);
         click(updatebuton);
          if(validateElement_Displayed(testsetrequimenttext,5)){

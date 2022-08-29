@@ -3,9 +3,8 @@ import applications.PathCareapplication.PathCareApplication;
 import applications.PathCareapplication.models.AutomationUserModel;
 import applications.PathCareapplication.models.TestSetResults;
 import com.github.javafaker.Faker;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.chrome.ChromeOptions;
 
@@ -17,12 +16,12 @@ import static reporting.ExtentReport.get_reportDir;
 public class MultiDisciplineTestCase extends RomanBase {
 
 
-    @AfterEach
+   /* @AfterEach
     public void cleanUp(){
-
+        PathCareApplication pathCare = new PathCareApplication(roman());
+        pathCare.interSystemloginPage.logoff();
         roman()._driver.close();
-
-    }
+    }*/
 
     @Test
     public void TP_7() throws Exception {
@@ -143,6 +142,9 @@ public class MultiDisciplineTestCase extends RomanBase {
         Assertions.assertTrue(pathCare.pathCareDashboardPage.sideMenusCheckingResultsAnalystical());
 
     }
+
+
+
 
     @Test
     public void TP_110() throws Exception {
@@ -324,7 +326,6 @@ public class MultiDisciplineTestCase extends RomanBase {
 
     @Test
     public void TP_25() throws Exception {
-
         Faker faker = new Faker();
         String dir = get_reportDir();
         String[] testcollection = new String[]{"HCOLDAGG"};
@@ -349,20 +350,20 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker, testcollection, 2);
         pathCare.interSystemloginPage.changelocation();
-        pathCare.interSystemloginPage.setLocation("PC Med Lab Professional RL Haem 1");
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
         pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides, testcollection.length);
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.changelocation();
-        pathCare.interSystemloginPage.setLocation(model.accessProfile);
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateWorkRecived();
         pathCare.workAreaReceptionPage.labworkareaswitch();
         pathCare.workAreaReceptionPage.departmentWorkArea(pathCare.workAreaReceptionPage.setupdataMultiple(dapartments, testcollection, pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.values()), true);
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.changelocation();
-        pathCare.interSystemloginPage.setLocation("PC MLP George C3");
+        pathCare.interSystemloginPage.setLocation("PC Med Lab Professional RL Haem 1");
         pathCare.interSystemloginPage.userselection();
         pathCare.analytical.navigateResultEntry();
 
@@ -391,7 +392,6 @@ public class MultiDisciplineTestCase extends RomanBase {
         chromeOptionsMap.put("download.default_directory", dir);
         options.setExperimentalOption("prefs", chromeOptionsMap);
         roman()._driver = roman().selenium.getChromeDriver(options);
-
         PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
@@ -406,7 +406,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides,testcollection.length);
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.changelocation();
-        pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL");
+        pathCare.interSystemloginPage.setLocation("PC Med Lab Professional RL Chem");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateWorkRecived();
         pathCare.workAreaReceptionPage.labworkareaswitch();
@@ -418,19 +418,64 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.analytical.navigateResultEntry();
 
         TestSetResults ca199 = TestSetResults.getExampleModel("CA199");
-        pathCare.resultEntry.singleTestsetComment(labespides.get(labespides.size()-1),ca199.testresult2,"Result has been checked in dilution, 1:50 onboard dilution",dir);
+        pathCare.resultEntry.singleTestsetComment(labespides.get(labespides.size()-1),ca199.testresult2,"Result has been checked in dilution, 1:50 onboard dilution");
         Assertions.assertEquals(1, pathCare.resultEntry.fileChecker(dir));
 
     }
 
 
     @Test
+    public void TP_19() throws Exception{
+
+        Faker faker = new Faker();
+        String dir = get_reportDir();
+        String[] testcollection = new String[]{"HGRPCOOMBS"};
+        String[] dapartments = new String[]{"Haematology"};
+        ChromeOptions options = new ChromeOptions();
+        HashMap<String, Object> chromeOptionsMap = new HashMap<>();
+        chromeOptionsMap.put("plugins.plugins_disabled", new String[] { "Chrome PDF Viewer" });
+        chromeOptionsMap.put("plugins.always_open_pdf_externally", true);
+        chromeOptionsMap.put("download.open_pdf_in_system_reader",false);
+        chromeOptionsMap.put("download.prompt_for_download",false);
+        chromeOptionsMap.put("profile.default_content_settings.popups ",0);
+        chromeOptionsMap.put("download.extensions_to_open ","applications/pdf");
+        chromeOptionsMap.put("download.default_directory", dir);
+        options.setExperimentalOption("prefs", chromeOptionsMap);
+        roman()._driver = roman().selenium.getChromeDriver(options);
+        PathCareApplication pathCare = new PathCareApplication(roman());
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateRegistration();
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,3);
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigatespecimenRecived();
+        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides,2);//two specimens
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateWorkRecived();
+        pathCare.workAreaReceptionPage.labworkareaswitch();
+        pathCare.workAreaReceptionPage.departmentWorkArea(pathCare.workAreaReceptionPage.setupdataMultiple(dapartments,testcollection,pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.values()),true);
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.pre_analytical.navigateTransfer();
+        pathCare.pathCareLabTransferList.tranferlistLabepisode(labespides.get(0));
+        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.specimenNumbers);
+        pathCare.pathCareLabTransferList.closePackage();
+
+    }
+
+
+    @Test
     public void TP_32() throws Exception{
-        //isssue on item TP_32
+
         Faker faker = new Faker();
         String dir = get_reportDir();
         String[] testcollection = new String[]{"PBARTON"};
-        String[] dapartments = new String[]{"Molecular"};
         ChromeOptions options = new ChromeOptions();
         HashMap<String, Object> chromeOptionsMap = new HashMap<>();
         chromeOptionsMap.put("plugins.plugins_disabled", new String[] { "Chrome PDF Viewer" });
@@ -459,13 +504,150 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pathCareLabTransferList.tranferlistLabepisode(labespides.get(0));
         pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.specimenNumbers);
         pathCare.pathCareLabTransferList.closePackage();
+        //Pick Up
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.pre_analytical.navigateLogistics();
-        pathCare.transferLogistics.dropOffShipmentValid(labespides.get(0));
+        pathCare.transferLogistics.pickUpShipmentValid(pathCare.pathCareLabTransferList.shipmentNumber);
+        //Received
+        pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.pre_analytical.navigateTransfer();
         pathCare.pathCareLabTransferList.tranferlistLabepisode(labespides.get(0));
         pathCare.pathCareLabTransferList.receiceiveShipment();
         pathCare.pathCareLabTransferList.checknumbersReceived(labespides.get(0), pathCare.pathCareLabSpecimenReception.specimenNumbers);
 
     }
+
+
+    @Test
+    public void TP_108() throws Exception{
+        roman()._driver = roman().selenium.getChromeDriver();
+        PathCareApplication pathCare = new PathCareApplication(roman());
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.interSystemloginPage.setLocation("PC MLP George C3");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.labQueues.querySearchSave("Verification Queue","Biochemistry", model.location);
+        pathCare.analytical.navigateResultEntry();
+        pathCare.resultEntry.querysearchLabResults(model.location);
+        pathCare.pre_analytical.navigateTransfer();
+       Assertions.assertTrue(pathCare.pathCareLabTransferList.labSearches());
+
+
+
+
+    }
+
+    @Test
+    public void TP_109() throws Exception{
+        roman()._driver = roman().selenium.getChromeDriver();
+        PathCareApplication pathCare = new PathCareApplication(roman());
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.interSystemloginPage.setLocation("PC MLP George C3");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.labQueues.queuesSelectResult("Verification Queue","Biochemistry", model.location);
+        pathCare.analytical.navigateResultEntry();
+        pathCare.resultEntry.labResultsSelectResult(model.location);
+       /* pathCare.pre_analytical.navigateTransfer();
+        Assert.assertTrue(pathCare.pathCareLabTransferList.labSearches());*/
+
+
+
+
+    }
+
+
+    @Test
+    public void TP_29() throws Exception{
+        
+        Faker faker = new Faker();
+        String dir = get_reportDir();
+        String[] testcollection = new String[]{"ECA199R"};
+        String[] dapartments = new String[]{"Biochemistry"};
+        ChromeOptions options = new ChromeOptions();
+        HashMap<String, Object> chromeOptionsMap = new HashMap<>();
+        chromeOptionsMap.put("plugins.plugins_disabled", new String[] { "Chrome PDF Viewer" });
+        chromeOptionsMap.put("plugins.always_open_pdf_externally", true);
+        chromeOptionsMap.put("download.open_pdf_in_system_reader",false);
+        chromeOptionsMap.put("download.prompt_for_download",false);
+        chromeOptionsMap.put("profile.default_content_settings.popups ",0);
+        chromeOptionsMap.put("download.extensions_to_open ","applications/pdf");
+        chromeOptionsMap.put("download.default_directory", dir);
+        options.setExperimentalOption("prefs", chromeOptionsMap);
+        roman()._driver = roman().selenium.getChromeDriver(options);
+        PathCareApplication pathCare = new PathCareApplication(roman());
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateRegistration();
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,1);
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC MLP George C1");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigatespecimenRecived();
+        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides,testcollection.length);
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateWorkRecived();
+        pathCare.workAreaReceptionPage.labworkareaswitch();
+        pathCare.workAreaReceptionPage.departmentWorkArea(pathCare.workAreaReceptionPage.setupdataMultiple( dapartments,testcollection,pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.values()),true);
+
+        //Positive pack
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
+        pathCare.interSystemloginPage.userselection();
+        //pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.pre_analytical.navigateTransfer();
+        pathCare.pathCareLabTransferList.tranferlistLabepisode(labespides.get(0));
+        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.values());
+        pathCare.pathCareLabTransferList.closePackage();
+
+        //transfer pick up
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.pre_analytical.navigateLogistics();
+        pathCare.transferLogistics.pickUpShipmentValid(pathCare.pathCareLabTransferList.shipmentNumber);
+
+        //Drop Off
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.pre_analytical.navigateLogistics();
+        pathCare.transferLogistics.dropOffShipmentValid(pathCare.pathCareLabTransferList.shipmentNumber);
+
+        //Specimen Receive
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigatespecimenRecived();
+        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides,testcollection.length);
+
+        //Results Entry
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Med Lab Professional RL Chem/Endo 1");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.analytical.navigateResultEntry();
+        TestSetResults ca199 = TestSetResults.getExampleModel("CA199");
+        pathCare.resultEntry.singleTestsetCommentWithoutReport(labespides.get(labespides.size()-1),ca199.testresult2,"Result has been checked in dilution, 1:50 onboard dilution");
+
+        //logout
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.logoff();
+
+        //login
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.interSystemloginPage.setLocation("PC Med Lab Professional RL Chem/Endo 3");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.labQueues.searchResults("Verification Queue","Endocrinology");
+
+        //result
+        Assertions.assertEquals(labespides.get(0), pathCare.labQueues.findlastresultlist(labespides.get(0)));
+    }
+
 }

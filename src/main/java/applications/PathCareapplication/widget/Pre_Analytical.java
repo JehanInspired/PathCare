@@ -32,14 +32,13 @@ public class Pre_Analytical extends AbstractPage {
 
     public void navigatespecimenRecived() {
 
-            validateElement_Enabled_Displayed(findbutton,10);
             click(mainmenu,15);
-            if(validateElement_Displayed(pre_Analytical,10)){
-                click(pre_Analytical);
-                click(specimenRecived,10);
-            }else{
-                logFailure("Unable to select "+pre_Analytical);
-            }
+        if(validateElement_Enabled_Displayed(specimenRecived)){
+            click(specimenRecived,10);
+        }else{
+            click(pre_Analytical);
+            click(specimenRecived,10);
+        }
 
 
             stepPassedWithScreenshot("Navigated to specimen received");

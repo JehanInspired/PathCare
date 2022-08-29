@@ -19,6 +19,8 @@ public class PathCareApplication
 
     public PathCareScratch pathCareScratch;
 
+    public LabQueues labQueues;
+
     public Pre_Analytical pre_analytical;
 
     public ResultEntry resultEntry;
@@ -27,6 +29,7 @@ public class PathCareApplication
 
     public PathCareApplication(Roman roman)
     {
+        labQueues = new LabQueues(roman);
         workAreaReceptionPage = new WorkAreaReceptionPage(roman);
         pathCareLabTransferList = new PathCareLabTransferList(roman);
         pathCareDashboardPage = new PathCareDashboardPage(roman);

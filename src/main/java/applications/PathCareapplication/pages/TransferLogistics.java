@@ -42,7 +42,7 @@ public class TransferLogistics extends AbstractPage {
         findOne(dropShipmentContainerNumbertext,shipContainerNumber);
 
         if(validateElement_Displayed(updatebutton,10)){
-            stepPassedWithScreenshot("Successfully Delivered Drop Off"+ shipContainerNumber);
+            stepPassedWithScreenshot("Successfully Delivered Drop Off "+ shipContainerNumber);
             click(updatebutton);
             return true;
         }
