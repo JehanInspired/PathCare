@@ -7,6 +7,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import selenium.AbstractPage;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -123,7 +124,7 @@ public class PathCareScratch extends AbstractPage {
     public List<String> mutiplePatient(Faker faker,String[] testcollection, int numberPatient){
         List<String> labEspideonumber = new ArrayList<>();
         for(int x=0;x<=numberPatient-1;x++){
-            patientdetails(faker.name().name(), faker.name().lastName(), "11/12/2002",faker.demographic().sex());
+            patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
             doctorSelection();
             labEspideonumber.add(collectiondetailnew("n-1",testcollection));
         }

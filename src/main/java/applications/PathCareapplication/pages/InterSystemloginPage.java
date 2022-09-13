@@ -59,12 +59,15 @@ public class InterSystemloginPage extends AbstractPage {
 
     public void userselection(){
         AccessProfile = By.xpath("//span[contains(text(),'%s')]".replace("%s",location));
-        while(!validateElement_Displayed(AccessProfile,10)){
-            scrollToElement(nextPage,5);
+
+      scrollToElement(nextPage);
+
+        while(!validateElement_Enabled_Displayed(AccessProfile)){
             click(nextPage);
         }
-        scrollToElement(nextPage,10);
-        click(AccessProfile,10);
+
+        scrollToElement(AccessProfile);
+        click(AccessProfile);
         stepPassedWithScreenshot("Lab queues screen "+location);
     }
 

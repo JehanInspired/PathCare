@@ -9,6 +9,8 @@ public class PathCareApplication
 
     public WorkAreaReceptionPage workAreaReceptionPage;
     public TransferLogistics transferLogistics;
+    public PathCareProcessingPage pathCareProcessingPage;
+    public SingleProcess singleProcess;
 
     public PathCareLabTransferList pathCareLabTransferList;
 
@@ -20,6 +22,8 @@ public class PathCareApplication
     public PathCareScratch pathCareScratch;
 
     public LabQueues labQueues;
+
+    public PathCareLabIntrumentResultGeneratorPage pathCareLabIntrumentResultGeneratorpage;
 
     public Pre_Analytical pre_analytical;
 
@@ -40,6 +44,9 @@ public class PathCareApplication
         pre_analytical = new Pre_Analytical(roman);
         analytical = new Analytical(roman);
         resultEntry = new ResultEntry(roman);
+        pathCareProcessingPage = new PathCareProcessingPage(roman);
+        pathCareLabIntrumentResultGeneratorpage = new PathCareLabIntrumentResultGeneratorPage(roman);
+        singleProcess = new SingleProcess(roman);
 
     }
 }

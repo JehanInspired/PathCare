@@ -8,6 +8,7 @@ public class Pre_Analytical extends AbstractPage {
 
     private final By pre_Analytical   = By.xpath("//span[text()='Pre-Analytical']");
     private final By specimenRecived = By.xpath("//span[text()='Specimen Receive']");
+
     private final By workAreaReceive = By.xpath("//span[text()='Work Area Receive']");
 
     private final By findbutton = By.xpath("//input[@name='find1']");
@@ -44,6 +45,8 @@ public class Pre_Analytical extends AbstractPage {
             stepPassedWithScreenshot("Navigated to specimen received");
 
     }
+
+
 
     public void switchtoMainiFrame(){
         super.switchToDefaultContext();
@@ -82,8 +85,12 @@ public class Pre_Analytical extends AbstractPage {
 
     public void navigateRegistration(){
         click(mainmenu);
-        click(pre_Analytical);
-        click(subregistation);
+        if(validateElement_Enabled_Displayed(subregistation)){
+            click(subregistation,10);
+        }else{
+            click(pre_Analytical);
+            click(subregistation,10);
+        }
         stepPassedWithScreenshot("Patient Episode Search Menu appears");
 
     }

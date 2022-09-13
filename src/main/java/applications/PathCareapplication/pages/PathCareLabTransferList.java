@@ -46,8 +46,11 @@ public class PathCareLabTransferList extends AbstractPage {
   private By descriptionSaveSearch = By.id("SRCHDesc");
   private By updatebutton = By.id("update1");
   private By savedSearches = By.id("SavedSearches");
+  private By descriptiontextbox = By.xpath("//input[@id='Description']");
   private By getDescriptionSaveSearchfromlist ;
   private By iframeSaveSearch = By.name("TRAK_info");
+    private final By searchResultTitle = By.xpath("//label[@id='SRCHDesc']");
+    private String description= "";
 
   public String shipmentNumber = "";
 
@@ -89,12 +92,22 @@ public class PathCareLabTransferList extends AbstractPage {
         return checker;
     }
 
+    public Boolean checknumbersWaiting(String labepisode, List<String> specimennumbers){
+        boolean checker =false;
+        listTransfer = By.xpath("//label[text()='%s']".replace("%s",labepisode));
+        if(getAllElementText(listTransfer).size()==specimennumbers.size() && getAllElementText(status).contains("Waiting")) {
+            stepPassedWithScreenshot("Able to view Waiting ");
+            checker =true;
+        }
+        return checker ;
+    }
+
     public Boolean checknumbersPackage(String labepisode, List<String> specimennumbers){
       boolean checker =false;
         listTransfer = By.xpath("//label[text()='%s']".replace("%s",labepisode));
-        if(getAllElementText(listTransfer).size()==specimennumbers.size()) {
+        if(getAllElementText(listTransfer).size()==specimennumbers.size() && getAllElementText(status).contains("Packed")) {
             stepPassedWithScreenshot("Able to view Packaged ");
-            checker =true;
+            checker = true;
         }
         return checker ;
     }
@@ -162,7 +175,7 @@ public class PathCareLabTransferList extends AbstractPage {
   //Save Searches
     public Boolean labSearches(){
 
-      String description ="From PathCare Park Reference Lab to George Laboratory Lab Transfer "+ new Random().nextDouble();
+       description ="From PathCare Park Reference Lab to George Laboratory Lab Transfer "+ new Random().nextDouble();
       switchToFrame(switchiFrame);
       findOne(fromLabSite,"PathCare Park Reference Lab");
       findOne(toLabsite,"George Laboratory");
@@ -185,14 +198,28 @@ public class PathCareLabTransferList extends AbstractPage {
         switchToDefaultContext();
         switchToFrame(iframeSaveSearch);
         getDescriptionSaveSearchfromlist = By.xpath("//a[contains(text(),'%s')]".replace("%s",description));
+        sendKeys(descriptiontextbox,description);
         if(getText(getDescriptionSaveSearchfromlist).contains(description)){
             stepPassedWithScreenshot("Able to view Saved Search Results");
             return true;
         }
 
-
-
     return false;
+    }
+    public boolean queuesSelectResult(){
+
+      if(labSearches()){
+
+        click(getDescriptionSaveSearchfromlist);
+        switchToDefaultContext();
+        switchToFrame(switchiFrame);
+        if(getText(searchResultTitle).contentEquals(description)){
+            stepPassedWithScreenshot("Able to view Save Search of "+description);
+            return true;
+        }
+
+      }
+      return false;
     }
 
     public void findOne(By by,String input) {

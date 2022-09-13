@@ -70,6 +70,11 @@ public class PathCareLabSpecimenReception extends AbstractPage {
                 stepPassedWithScreenshot("Successfully Entered Lab Specimen under Lab episode: " + lapnumberspecimen);
                 specimenNumbers.add(lapnumberspecimen);
 
+                if (!validateElement_Enabled_Displayed(tobereceivedcontain)) {
+                    click(specimenNumberUpdateButton);
+                    mutlipleSpeicmen.put(labepsiode, specimenNumbers);
+                    break;
+                }
                 if (validateElement_Enabled_Displayed(specimenNumberUpdateButton)) {
                     click(specimenNumberUpdateButton);
                 } else {

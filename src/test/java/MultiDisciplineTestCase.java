@@ -1,13 +1,15 @@
+import Roman.Roman;
 import Roman.RomanBase;
 import applications.PathCareapplication.PathCareApplication;
 import applications.PathCareapplication.models.AutomationUserModel;
 import applications.PathCareapplication.models.TestSetResults;
 import com.github.javafaker.Faker;
 import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,20 +17,44 @@ import static reporting.ExtentReport.get_reportDir;
 
 public class MultiDisciplineTestCase extends RomanBase {
 
+  public ChromeOptions options = new ChromeOptions();
+  public Roman roman = super.roman();
+  public PathCareApplication pathCare = null;
+  public String dir = " ";
 
-   /* @AfterEach
+    @BeforeEach
+    public void startup(){
+         dir = get_reportDir();
+         options = new ChromeOptions();
+        HashMap<String, Object> chromeOptionsMap = new HashMap<>();
+        chromeOptionsMap.put("plugins.plugins_disabled", new String[] { "Chrome PDF Viewer" });
+        chromeOptionsMap.put("plugins.always_open_pdf_externally", true);
+        chromeOptionsMap.put("download.open_pdf_in_system_reader",false);
+        chromeOptionsMap.put("download.prompt_for_download",false);
+        chromeOptionsMap.put("profile.default_content_settings.popups ",0);
+        chromeOptionsMap.put("download.extensions_to_open ","applications/pdf");
+        chromeOptionsMap.put("download.default_directory", dir);
+        options.setExperimentalOption("prefs", chromeOptionsMap);
+        roman._driver = roman().selenium.getChromeDriver(options);
+        pathCare = new PathCareApplication(roman);
+
+
+
+    }
+
+  /* @AfterEach
     public void cleanUp(){
-        PathCareApplication pathCare = new PathCareApplication(roman());
+        pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.logoff();
         roman()._driver.close();
     }*/
+
+
 
     @Test
     public void TP_7() throws Exception {
         Faker faker = new Faker();
         String[] testcollection = new String[]{"HCD4"};
-        roman()._driver = roman().selenium.getChromeDriver();
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
@@ -47,8 +73,6 @@ public class MultiDisciplineTestCase extends RomanBase {
     public void TP_4() throws Exception {
         Faker faker = new Faker();
         String[] testcollection = new String[]{"HCD4"};
-        roman()._driver = roman().selenium.getChromeDriver();
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
@@ -65,8 +89,6 @@ public class MultiDisciplineTestCase extends RomanBase {
     public void TP_18() throws Exception {
         Faker faker = new Faker();
         String[] testcollection = new String[]{"HCD4", "BUCE"};
-        roman()._driver = roman().selenium.getChromeDriver();
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
@@ -87,8 +109,6 @@ public class MultiDisciplineTestCase extends RomanBase {
     public void TP_111() throws Exception {
         Faker faker = new Faker();
         String[] testcollection = new String[]{"HCD4", "BUCE"};
-        roman()._driver = roman().selenium.getChromeDriver();
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
@@ -106,8 +126,6 @@ public class MultiDisciplineTestCase extends RomanBase {
         Faker faker = new Faker();
         String[] testcollection = new String[]{"HFBC", "BUCE"};
         String[] dapartments = new String[]{"Haematology", "Biochemistry"};
-        roman()._driver = roman().selenium.getChromeDriver();
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
@@ -133,8 +151,6 @@ public class MultiDisciplineTestCase extends RomanBase {
 
     @Test
     public void TP_23() throws Exception {
-        roman()._driver = roman().selenium.getChromeDriver();
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
@@ -149,8 +165,6 @@ public class MultiDisciplineTestCase extends RomanBase {
     @Test
     public void TP_110() throws Exception {
         Faker faker = new Faker();
-        roman()._driver = roman().selenium.getChromeDriver();
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
@@ -167,15 +181,6 @@ public class MultiDisciplineTestCase extends RomanBase {
     public void TP_13() throws Exception {
         Faker faker = new Faker();
         String[] testcollection = new String[]{"HCD4", "BAA1", "IIGAM", "IIGGSUB", "HLUPUS", "HVWILL", "HPC", "HFPSAG", "HATIII"};
-        ChromeOptions options = new ChromeOptions();
-        HashMap<String, Object> chromeOptionsMap = new HashMap<>();
-        chromeOptionsMap.put("plugins.plugins_disabled", new String[]{"Chrome PDF Viewer"});
-        chromeOptionsMap.put("plugins.always_open_pdf_externally", true);
-        chromeOptionsMap.put("download.default_directory", "C:\\");
-        options.setExperimentalOption("prefs", chromeOptionsMap);
-
-        roman()._driver = roman().selenium.getChromeDriver(options);
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
@@ -205,15 +210,6 @@ public class MultiDisciplineTestCase extends RomanBase {
     public void TP_14() throws Exception {
         Faker faker = new Faker();
         String[] testcollection = new String[]{"HCD4", "BAA1", "IIGAM", "IIGGSUB", "HLUPUS", "HVWILL", "HPC", "HFPSAG", "HATIII"};
-        ChromeOptions options = new ChromeOptions();
-        HashMap<String, Object> chromeOptionsMap = new HashMap<>();
-        chromeOptionsMap.put("plugins.plugins_disabled", new String[]{"Chrome PDF Viewer"});
-        chromeOptionsMap.put("plugins.always_open_pdf_externally", true);
-        chromeOptionsMap.put("download.default_directory", "C:\\");
-        options.setExperimentalOption("prefs", chromeOptionsMap);
-
-        roman()._driver = roman().selenium.getChromeDriver(options);
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
@@ -248,14 +244,6 @@ public class MultiDisciplineTestCase extends RomanBase {
     public void TP_16() throws Exception {
         Faker faker = new Faker();
         String[] testcollection = new String[]{"HCD4", "BAA1", "IIGAM", "IIGGSUB", "HLUPUS", "HVWILL", "HPC", "HFPSAG", "HATIII"};
-        ChromeOptions options = new ChromeOptions();
-        HashMap<String, Object> chromeOptionsMap = new HashMap<>();
-        chromeOptionsMap.put("plugins.plugins_disabled", new String[]{"Chrome PDF Viewer"});
-        chromeOptionsMap.put("plugins.always_open_pdf_externally", true);
-        chromeOptionsMap.put("download.default_directory", "C:\\");
-        options.setExperimentalOption("prefs", chromeOptionsMap);
-        roman()._driver = roman().selenium.getChromeDriver(options);
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
@@ -289,8 +277,6 @@ public class MultiDisciplineTestCase extends RomanBase {
 
     @Test
     public void TP_17() throws Exception {
-        roman()._driver = roman().selenium.getChromeDriver();
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation(model.accessProfile);
@@ -306,14 +292,12 @@ public class MultiDisciplineTestCase extends RomanBase {
 
         Faker faker = new Faker();
         String[] testcollection = new String[]{"HFBC", "BUCE"};
-        roman()._driver = roman().selenium.getChromeDriver();
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        pathCare.pathCareScratch.patientdetails(faker.name().name(), faker.name().lastName(), "11/12/2002", "Male");
+        pathCare.pathCareScratch.patientdetails(faker.name().name(), faker.name().lastName(),  new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)), faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
         String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection);
         pathCare.interSystemloginPage.changelocation();
@@ -326,23 +310,11 @@ public class MultiDisciplineTestCase extends RomanBase {
 
     @Test
     public void TP_25() throws Exception {
+
         Faker faker = new Faker();
         String dir = get_reportDir();
         String[] testcollection = new String[]{"HCOLDAGG"};
         String[] dapartments = new String[]{"Haematology"};
-        ChromeOptions options = new ChromeOptions();
-        HashMap<String, Object> chromeOptionsMap = new HashMap<>();
-        chromeOptionsMap.put("plugins.plugins_disabled", new String[]{"Chrome PDF Viewer"});
-        chromeOptionsMap.put("plugins.always_open_pdf_externally", true);
-        chromeOptionsMap.put("download.open_pdf_in_system_reader", false);
-        chromeOptionsMap.put("download.prompt_for_download", false);
-        chromeOptionsMap.put("profile.default_content_settings.popups ", 0);
-        chromeOptionsMap.put("download.extensions_to_open ", "applications/pdf");
-        chromeOptionsMap.put("download.default_directory", dir);
-        options.setExperimentalOption("prefs", chromeOptionsMap);
-        roman()._driver = roman().selenium.getChromeDriver(options);
-
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
@@ -381,18 +353,6 @@ public class MultiDisciplineTestCase extends RomanBase {
         String dir = get_reportDir();
         String[] testcollection = new String[]{"ECA199R"};
         String[] dapartments = new String[]{"Biochemistry"};
-        ChromeOptions options = new ChromeOptions();
-        HashMap<String, Object> chromeOptionsMap = new HashMap<>();
-        chromeOptionsMap.put("plugins.plugins_disabled", new String[] { "Chrome PDF Viewer" });
-        chromeOptionsMap.put("plugins.always_open_pdf_externally", true);
-        chromeOptionsMap.put("download.open_pdf_in_system_reader",false);
-        chromeOptionsMap.put("download.prompt_for_download",false);
-        chromeOptionsMap.put("profile.default_content_settings.popups ",0);
-        chromeOptionsMap.put("download.extensions_to_open ","applications/pdf");
-        chromeOptionsMap.put("download.default_directory", dir);
-        options.setExperimentalOption("prefs", chromeOptionsMap);
-        roman()._driver = roman().selenium.getChromeDriver(options);
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
@@ -431,17 +391,6 @@ public class MultiDisciplineTestCase extends RomanBase {
         String dir = get_reportDir();
         String[] testcollection = new String[]{"HGRPCOOMBS"};
         String[] dapartments = new String[]{"Haematology"};
-        ChromeOptions options = new ChromeOptions();
-        HashMap<String, Object> chromeOptionsMap = new HashMap<>();
-        chromeOptionsMap.put("plugins.plugins_disabled", new String[] { "Chrome PDF Viewer" });
-        chromeOptionsMap.put("plugins.always_open_pdf_externally", true);
-        chromeOptionsMap.put("download.open_pdf_in_system_reader",false);
-        chromeOptionsMap.put("download.prompt_for_download",false);
-        chromeOptionsMap.put("profile.default_content_settings.popups ",0);
-        chromeOptionsMap.put("download.extensions_to_open ","applications/pdf");
-        chromeOptionsMap.put("download.default_directory", dir);
-        options.setExperimentalOption("prefs", chromeOptionsMap);
-        roman()._driver = roman().selenium.getChromeDriver(options);
         PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
@@ -476,18 +425,6 @@ public class MultiDisciplineTestCase extends RomanBase {
         Faker faker = new Faker();
         String dir = get_reportDir();
         String[] testcollection = new String[]{"PBARTON"};
-        ChromeOptions options = new ChromeOptions();
-        HashMap<String, Object> chromeOptionsMap = new HashMap<>();
-        chromeOptionsMap.put("plugins.plugins_disabled", new String[] { "Chrome PDF Viewer" });
-        chromeOptionsMap.put("plugins.always_open_pdf_externally", true);
-        chromeOptionsMap.put("download.open_pdf_in_system_reader",false);
-        chromeOptionsMap.put("download.prompt_for_download",false);
-        chromeOptionsMap.put("profile.default_content_settings.popups ",0);
-        chromeOptionsMap.put("download.extensions_to_open ","applications/pdf");
-        chromeOptionsMap.put("download.default_directory", dir);
-        options.setExperimentalOption("prefs", chromeOptionsMap);
-        roman()._driver = roman().selenium.getChromeDriver(options);
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
@@ -520,13 +457,11 @@ public class MultiDisciplineTestCase extends RomanBase {
 
     @Test
     public void TP_108() throws Exception{
-        roman()._driver = roman().selenium.getChromeDriver();
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC MLP George C3");
         pathCare.interSystemloginPage.userselection();
-        pathCare.labQueues.querySearchSave("Verification Queue","Biochemistry", model.location);
+        pathCare.labQueues.querySearchSave("Verification Queue","Biochemistry","", model.location);
         pathCare.analytical.navigateResultEntry();
         pathCare.resultEntry.querysearchLabResults(model.location);
         pathCare.pre_analytical.navigateTransfer();
@@ -539,17 +474,15 @@ public class MultiDisciplineTestCase extends RomanBase {
 
     @Test
     public void TP_109() throws Exception{
-        roman()._driver = roman().selenium.getChromeDriver();
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC MLP George C3");
         pathCare.interSystemloginPage.userselection();
-        pathCare.labQueues.queuesSelectResult("Verification Queue","Biochemistry", model.location);
+        pathCare.labQueues.queuesSelectResult("Verification Queue","Biochemistry","", model.location);
         pathCare.analytical.navigateResultEntry();
         pathCare.resultEntry.labResultsSelectResult(model.location);
-       /* pathCare.pre_analytical.navigateTransfer();
-        Assert.assertTrue(pathCare.pathCareLabTransferList.labSearches());*/
+        pathCare.pre_analytical.navigateTransfer();
+        Assert.assertTrue(pathCare.pathCareLabTransferList.queuesSelectResult());
 
 
 
@@ -559,23 +492,11 @@ public class MultiDisciplineTestCase extends RomanBase {
 
     @Test
     public void TP_29() throws Exception{
-        
+
         Faker faker = new Faker();
         String dir = get_reportDir();
         String[] testcollection = new String[]{"ECA199R"};
         String[] dapartments = new String[]{"Biochemistry"};
-        ChromeOptions options = new ChromeOptions();
-        HashMap<String, Object> chromeOptionsMap = new HashMap<>();
-        chromeOptionsMap.put("plugins.plugins_disabled", new String[] { "Chrome PDF Viewer" });
-        chromeOptionsMap.put("plugins.always_open_pdf_externally", true);
-        chromeOptionsMap.put("download.open_pdf_in_system_reader",false);
-        chromeOptionsMap.put("download.prompt_for_download",false);
-        chromeOptionsMap.put("profile.default_content_settings.popups ",0);
-        chromeOptionsMap.put("download.extensions_to_open ","applications/pdf");
-        chromeOptionsMap.put("download.default_directory", dir);
-        options.setExperimentalOption("prefs", chromeOptionsMap);
-        roman()._driver = roman().selenium.getChromeDriver(options);
-        PathCareApplication pathCare = new PathCareApplication(roman());
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
@@ -644,10 +565,152 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Med Lab Professional RL Chem/Endo 3");
         pathCare.interSystemloginPage.userselection();
-        pathCare.labQueues.searchResults("Verification Queue","Endocrinology");
+        pathCare.labQueues.searchResults("Verification Queue","Endocrinology","");
 
         //result
-        Assertions.assertEquals(labespides.get(0), pathCare.labQueues.findlastresultlist(labespides.get(0)));
+        Assertions.assertEquals(labespides.get(0), pathCare.labQueues.findlastresultlist(labespides.get(0),false,1));
     }
+
+    @Test//Being fixed
+    public void TP_34() throws Exception{
+
+        Faker faker = new Faker();
+        String dir = get_reportDir();
+        String[] testcollection = new String[]{"MGCPE"};
+        String[] dapartments = new String[]{"Biochemistry"};
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
+
+        //Registration
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateRegistration();
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,1);
+
+        //Specimen received and work area received
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigatespecimenRecived();
+        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides,testcollection.length);
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.pre_analytical.navigateWorkRecived();
+        pathCare.workAreaReceptionPage.labworkareaswitch();
+        pathCare.workAreaReceptionPage.departmentWorkArea(pathCare.workAreaReceptionPage.setupdataMultiple( dapartments,testcollection,pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.values()),true);
+
+
+        //Phone Queue
+        pathCare.pre_analytical.switchtoMainiFrame();
+        //pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Help Desk Operator RL");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.labQueues.queuesSelectResult("Phone Queue","Microbiology","Authorised","");
+        pathCare.labQueues.findlastresultlist("22004434",false,1);
+
+
+
+
+
+
+
+    }
+
+    @Test
+    public void TP_127() throws Exception
+    {
+        Faker faker = new Faker();
+        String dir = get_reportDir();
+        String[] testcollection = new String[]{"HCD4"};
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
+
+        //Registration
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateRegistration();
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,1);
+
+        //specimen Receive
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigatespecimenRecived();
+        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides,testcollection.length);
+
+
+        //Transfer
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.pre_analytical.navigateTransfer();
+        pathCare.pathCareLabTransferList.tranferlistLabepisode(labespides.get(0));
+        Assert.assertTrue(pathCare.pathCareLabTransferList.checknumbersWaiting(labespides.get(0),labespides));
+
+        //Shipment
+        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.values());
+        pathCare.pathCareLabTransferList.closePackage();
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.pathCareLabTransferList.tranferlistLabepisode(labespides.get(0));
+        Assert.assertTrue(pathCare.pathCareLabTransferList.checknumbersPackage(labespides.get(0),labespides));
+
+    }
+
+    @Test
+    public void TP_30() throws Exception {
+
+
+        Faker faker = new Faker();
+        String dir = get_reportDir();
+        String[] testcollection = new String[]{"ECA199R","BUCE"};
+        String[] dapartments = new String[]{"Biochemistry"};
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateRegistration();
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,1);
+
+        //Specimen Recieve
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigatespecimenRecived();
+        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides,testcollection.length);
+
+        //Work Recieve
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL Chem");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateWorkRecived();
+        pathCare.workAreaReceptionPage.labworkareaswitch();
+        pathCare.workAreaReceptionPage.departmentWorkArea(pathCare.workAreaReceptionPage.setupdataMultiple( dapartments,testcollection,pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.values()),true);
+
+        //Results Entry
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Med Lab Professional RL Chem/Endo 1");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.analytical.navigateResultEntry();
+        pathCare.resultEntry.singleTestsetCommentWithoutReport(labespides.get(labespides.size()-1),TestSetResults.getExampleModel("CA199").testresult2,"Result has been checked in dilution, 1:50 onboard dilution");
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.resultEntry.backtoTestSetList();
+        pathCare.resultEntry.mutipleTestsetCommentWithoutReport(labespides.get(labespides.size()-1), TestSetResults.getExampleModel("BUCE").testresult.split(","),"Test",true);
+
+
+        //logout
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.logoff();
+
+        //login
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.interSystemloginPage.setLocation("PC Pathologist Chemistry");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.labQueues.searchResults("","Endocrinology","Entered");
+
+        //result
+        Assertions.assertEquals(labespides.get(0), pathCare.labQueues.findlastresultlist(labespides.get(0),true,1));
+
+    }
+
+
 
 }

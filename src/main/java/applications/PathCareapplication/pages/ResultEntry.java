@@ -3,6 +3,7 @@ package applications.PathCareapplication.pages;
 import Roman.Roman;
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
@@ -36,6 +37,9 @@ public class ResultEntry extends AbstractPage {
     private final  By testSetComments = By.xpath("//a[@id='LBTSCommentsLink']");
 
     private final By inputTestresults = By.xpath("//input[contains(@id,'Value')]");
+    private final By pinserttestreults = By.xpath("//*[contains(@id,'Value')]/p");
+    private final By searchinput = By.xpath("//img[contains(@id,'Value')]");
+    private final By inputTestresult = By.xpath("//td/span/input");
 
     private final By testSetCommentsTextboxiFrame = By.xpath("//iframe[@id='TRAK_info']");
 
@@ -56,7 +60,16 @@ public class ResultEntry extends AbstractPage {
 
     private By savedResults = By.xpath("//a[text()='%s']");
 
+    private By testsetlistTitle = By.xpath("//span[text()='%s']");
+
+    private final  By footer = By.xpath("//div[@id='tc_Footer']");
+    private final  By nextpage = By.xpath("//a[text()='Next >']");
+    private final By requiredfield = By.xpath("//span[@class='clsColourTab clsResultRequired']");
+
+    private final By receivedTestList = By.xpath("//span[text()='Received']");
+
     private By  episodeNumber;
+   private  String desc = "";
 
     public String dir;
     public int numberfiles;
@@ -70,10 +83,18 @@ public class ResultEntry extends AbstractPage {
 
         }
     }
+    public void testSetListMultiple(String labespide) {
+        episodeNumber = By.xpath("//span[contains(text(),'%s')]".replace("%s", labespide));
+
+        if (validateElement_Displayed(episodeNumber) && validateElement_Enabled_Displayed(receivedTestList)) {
+            stepPassedWithScreenshot("Able to view testset " + getText(episodeNumber));
+            click(receivedTestList);
+
+        }
+    }
     public void LabResultsEntry(String labespide){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate todaydate = LocalDate.now();
-        Date newdate = new Date();
             sendKeys(labEpisode,labespide);
             sendKeys(reportCollectionDate, dtf.format(todaydate));
             click(findButton,10);
@@ -93,23 +114,39 @@ public class ResultEntry extends AbstractPage {
     }
 
 
-    public void labEntryTestSpecialHandlinglist(String[] testresult){
+    public void labEntryTestSpecialHandlinglist(String[] testresult,Boolean extrfield) throws InterruptedException {
         numberfiles = 2;
         switchToFrame(resultEntryiFrame);
         int x =0;
 
-        for(WebElement element:find(searchTestresultEntry,5)){
-            element.click();
-            descriptionSearch  = By.xpath("//td[contains(text(),'%s')]".replace("%s",testresult[x]));
-            click(descriptionSearch);
-            x++;
+        for(WebElement element:find(inputTestresult ,5)){
+            if(element.isEnabled() && element.isDisplayed()) {
+                    element.sendKeys(testresult[x]);
+                    Thread.sleep(2000);
+                        element.sendKeys(Keys.TAB);
+                x++;
+            }
         }
+        if(extrfield) {
+            for (WebElement element1 : find(pinserttestreults, 5)) {
+
+                JavascriptExecutor jExecutor = (JavascriptExecutor) this._driver;
+                jExecutor.executeScript("arguments[0].textContent = arguments[1];", element1, "Absent");
+                element1.click();
+                Thread.sleep(3000);
+                    element1.click();
+                    element1.sendKeys(Keys.TAB);
+
+            }
+        }
+
         stepPassedWithScreenshot("Successfully Entered the Results");
         reportPreview();
 
 
     }
     public void singleTestsetCommentWithoutReport(String singleLabespido, String testresult,String comment){
+
         numberfiles =1;
         LabResultsEntry(singleLabespido);
         testSetListSingle(singleLabespido);
@@ -117,7 +154,20 @@ public class ResultEntry extends AbstractPage {
         switchToFrame(resultEntryiFrame);
         sendKeys(inputTestresults,testresult);
         _driver.findElement(inputTestresults).sendKeys(Keys.TAB);
-       applyResultOnly();
+        applyResultOnly();
+        reportPreview();
+
+    }
+
+    public void mutipleTestsetCommentWithoutReport(String singleLabespido, String[] testresult, String comment, Boolean extrfield) throws InterruptedException {
+
+        numberfiles =1;
+        LabResultsEntry(singleLabespido);
+        testSetListMultiple(singleLabespido);
+        comments(comment);
+        labEntryTestSpecialHandlinglist(testresult,extrfield);
+        switchToFrame(resultEntryiFrame);
+        applyResultOnly();
 
     }
 
@@ -183,7 +233,12 @@ public class ResultEntry extends AbstractPage {
         switchToDefaultContext();
     }
 
-    public void mutlipleLabEntryTestSet(List<String> labespide, String labresults, String labresults2,String dir)  {
+    public void backtoTestSetList(){
+        click(backtotestSetList,10);
+        click(backtotestSetList,10);
+    }
+
+    public void mutlipleLabEntryTestSet(List<String> labespide, String labresults, String labresults2,String dir) throws InterruptedException {
        boolean results = true;
        this.dir =dir;
 
@@ -192,16 +247,14 @@ public class ResultEntry extends AbstractPage {
                     LabResultsEntry(singleLabespido);
                     testSetListSingle(singleLabespido);
                     labEntryTestSpecialHandling(labresults);
-                    click(backtotestSetList,10);
-                    click(backtotestSetList,10);
+                    backtoTestSetList();
                     results = false;
                 }else{
 
                     LabResultsEntry(singleLabespido);
                     testSetListSingle(singleLabespido);
-                    labEntryTestSpecialHandlinglist(labresults2.split(","));
-                    click(backtotestSetList,10);
-                    click(backtotestSetList,10);
+                    labEntryTestSpecialHandlinglist(labresults2.split(","),false);
+                    backtoTestSetList();
             }
         }
 
@@ -209,7 +262,7 @@ public class ResultEntry extends AbstractPage {
 
      public boolean querysearchLabResults(String department){
 
-         String desc = "Reference lab "+department+(new Random().nextDouble() - new Random().nextDouble());;
+         desc = "Reference lab "+department+(new Random().nextDouble() - new Random().nextDouble());
          click(lookupiconbutton);
          click(Firstlistrow);
 
@@ -222,20 +275,33 @@ public class ResultEntry extends AbstractPage {
             click(backtotestSetList);
             if(validateElement_Displayed(savedSearches)){stepPassedWithScreenshot("Successfully reached Lab Results Entry ");}
             click(savedSearches);
-            savedResults = By.xpath("//a[text()='%s']".replace("%s",desc));
-            if(getText(savedResults).contentEquals(desc)){
-                stepPassedWithScreenshot("Successfully received Saved Search on "+desc);
-                return true;
+
+            scrollToElement(footer);
+            savedResults = By.xpath("//a[contains(text(),'%s')]".replace("%s",desc));
+            while(!validateElement_Displayed(savedResults)) {
+
+                click(nextpage);
+                scrollToElement(footer);
             }
+
+             if (getText(savedResults,10).contains(desc)) {
+                 stepPassedWithScreenshot("Successfully received Saved Search on " + desc);
+                 return true;
+             }
         return false;
      }
 
-    public void labResultsSelectResult(String department){
+    public boolean labResultsSelectResult(String department){
         if(querysearchLabResults(department)){
             click(savedResults);
-
+            testsetlistTitle = By.xpath("//span[contains(text(),'%s')]".replace("%s",desc));
+            if(getText(testsetlistTitle).contains(desc)){
+                stepPassedWithScreenshot("Successfully Recieved Test Set List Title "+desc);
+                return true;
+            }
 
         }
+        return false;
     }
 
 
@@ -289,6 +355,15 @@ public class ResultEntry extends AbstractPage {
         return wait.until(EventFiringWebDriver::new).getWindowHandles().size() == 2;
 
     }
+
+   /* public boolean waitforDisplayed(By elment, int index){
+
+        if(find(elment).get(index).isDisplayed()){
+            return true;
+        }
+
+         return false;
+    }*/
 
     public String switchToWindowHandleFirst(Set<String> windows, boolean firstorsecond){
         int counter =0;
