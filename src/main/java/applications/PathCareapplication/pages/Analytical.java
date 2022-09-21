@@ -36,10 +36,12 @@ public class Analytical extends AbstractPage {
             click(processing,10);
         }
 
-
         stepPassedWithScreenshot("Navigated to specimen received");
-
     }
+
+
+
+
 
 
 

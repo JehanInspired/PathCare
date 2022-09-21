@@ -3,14 +3,11 @@ package applications.PathCareapplication.pages;
 import Roman.Roman;
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.WebElement;
 
 import selenium.AbstractPage;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class LabQueues extends AbstractPage {
 
@@ -43,6 +40,10 @@ public class LabQueues extends AbstractPage {
     private  final By totalResults = By.xpath("//a[@id='totalCountz1']");
     private  final By totalResults2 = By.xpath("//a[@id='totalCountz2']");
     private  final By totalResults3 = By.xpath("//a[@id='totalCountz3']");
+    private  final By totalResults4 = By.xpath("//a[@id='totalCountz4']");
+    private  final By maxfailures1 = By.xpath("//a[@id='MaxTimeFailureCountz1']");
+    private  final By maxfailures2 = By.xpath("//a[@id='MaxTimeFailureCountz2']");
+    private  final By maxfailures3 = By.xpath("//a[@id='MaxTimeFailureCountz3']");
     private final By tableSearchResult = By.xpath("//table[@name='tLBVerificationQueueGrid_List']");
     private final By searchResultTitle = By.xpath("//label[@id='SRCHDesc']");
 
@@ -53,11 +54,23 @@ public class LabQueues extends AbstractPage {
     private final By secondrow = By.xpath("//a[text()='Single']");
 
     private final By allsingle = By.xpath("//a[not(@disabled) and(not(contains(@class,'disabled'))) and(not(contains(.,'display: none'))) and (text()='Single')]");
+    private final By allEpisode = By.xpath("//a[not(@disabled) and(not(contains(@class,'disabled'))) and(not(contains(.,'display: none'))) and (text()='Episode')]");
     private final By lastavailable = By.xpath("//a[@id='nextAvailable']");
+    private By elementEpisodeSingle  = By.xpath("//td[following-sibling::td[contains(.,'%s')]]//a[not(@disabled) and text()='Episode']");
+    private By elementSingle  = By.xpath("//td[following-sibling::td[contains(.,'%s')]]//a[not(@disabled) and text()='Episode']");
+
+    private final By tablefield = By.xpath("//tr[contains(@class,'LBVerificationQueueV')]");
 
     private final By rowcount = By.xpath("//label[@name='rowCount']");
 
+    private final By firstrowQueueResult = By.xpath("//tr[contains(@class,'LBVerificationQueueP RowOdd')]//td[not(contains(@style,'display:none'))and not(contains(@class,'clsRowColourTabLBVerificationQueueP')) and  not(contains(@style,'#'))]");
+
+    private boolean recent =false;
+
     private List<String> allSearchelement  =new ArrayList<>();
+    public HashMap<String,String> totalNumber = new HashMap<>();
+    public HashMap<String,String> totalNumber2 = new HashMap<>();
+
     private String desc ="";
 
 
@@ -128,7 +141,9 @@ public class LabQueues extends AbstractPage {
         return false;
     }
 
-    public void searchResults(String queueTypeSelected,String department,String testSetStat){
+    public void searchResults(String queueTypeSelected,String department,String testSetStat) throws InterruptedException {
+        switchToDefaultContext();
+        Thread.sleep(4000);
         switchToFrame(switchiFrame);
 
         if(!queueTypeSelected.isEmpty()) {
@@ -145,19 +160,28 @@ public class LabQueues extends AbstractPage {
 
     }
 
-    public void SelectSecondrow(){
+    public void Selectrow(){
         switchToFrame(switchiFrame);
         click(secondrow);
     }
-
-    public String findlastresultlist(String labespide, Boolean clicklastElementList,int totalrow){
-        switchToFrame(switchiFrame);
-
+    private void  selecSearch(int totalrow){
         switch (totalrow) {
             case 1 -> click(totalResults);
             case 2 -> click(totalResults2);
+            case 3 -> click(totalResults3);
+            case 4 -> click(totalResults4);
+            case 5 -> click(maxfailures1);
+            case 6 -> click(maxfailures2);
+            case 7 -> click(maxfailures3);
             default -> Assert.fail("Unable to find the row");
         }
+    }
+
+    public String findlastresultlist(String labespide, boolean clicklastElementList,int totalrow,boolean single){
+        switchToDefaultContext();
+        switchToFrame(switchiFrame);
+        selecSearch(totalrow);
+
         while(validateElement_Enabled_Displayed(nextpagequeue,5)){
             click(nextpagequeue);
         }
@@ -170,24 +194,149 @@ public class LabQueues extends AbstractPage {
             stepPassedWithScreenshot("Successfully received Episode "+texts.get(0));
             String value = texts.get(0);
             if(clicklastElementList){
-                clickLastElement();
+                clickEspiodeElement(single,texts.get(0));
             }
 
             return value;
         }else{
-            Assert.fail("Unable to view "+labespide +"on lab queues");
+            Assert.fail("Unable to view  "+labespide +"on lab queues");
         }
 
 
         return null;
     }
 
-    public void clickLastElement(){
+    public void clickAnyElementlist(int totalrow, boolean single){
+        selecSearch(totalrow);
+        clickLastElementAny();
+
+    }
+
+    public void phoneQueues(String titleHeader,boolean recent){
+        List<String>  resultslist  = getAllElementText(firstrowQueueResult);
+        boolean found = false;
+
+        structureTotal(resultslist, recent);
+      for(WebElement element:find(firstrowQueueResult)){
+          if(totalNumber.get(titleHeader).isBlank()){
+              stepInfoWithScreenshot(titleHeader+" has no test sets");
+              break;
+          }
+          //Max failures
+          if((!totalNumber.get(titleHeader).isBlank() && totalNumber.get(titleHeader).contentEquals(element.getText())) && !found || totalNumber2.getOrDefault(titleHeader,"").contentEquals(element.getText()) ){
+                if (element.isEnabled()) {
+                    element.click();
+                    found = true;
+                }
+            }
+      }
+      if(found) {
+          clickLastElementAny();
+      }
+
+    }
+
+    public void finaltotal() {
+        List<String> resultlist = getAllElementText(firstrowQueueResult);
+
+
+        for (int x = 0; x <= resultlist.size() - 1; x++) {
+
+            switch (x) {
+                case 0 -> totalNumber2.put("Total Failures", resultlist.get(x));
+                case 1 -> totalNumber2.put("Alert Failures", resultlist.get(x));
+                case 2 -> totalNumber2.put("Max Failures", resultlist.get(x));
+                case 3 -> totalNumber2.put("Total", resultlist.get(x));
+                case 4 -> totalNumber2.put("Stat", resultlist.get(x));
+                case 5 -> totalNumber2.put("Urgent", resultlist.get(x));
+                case 6 -> totalNumber2.put("Routine", resultlist.get(x));
+                case 7 -> totalNumber2.put("Norm", resultlist.get(x));
+                case 8 -> totalNumber2.put("No Priority", resultlist.get(x));
+                default -> Assert.fail("Unable to find the column");
+            }
+
+
+        }
+        stepInfoWithScreenshot("Total Updated "+totalNumber2.toString());
+    }
+
+
+
+    private void structureTotal(List<String> resultlist,Boolean recent){
+
+        if(recent) {
+            for (int x = 0; x <= resultlist.size() - 1; x++) {
+
+                switch (x) {
+                    case 0 -> totalNumber2.put("Total Failures",resultlist.get(x));
+                    case 1 ->  totalNumber2.put("Alert Failures",resultlist.get(x));
+                    case 2 ->  totalNumber2.put("Max Failures", resultlist.get(x));
+                    case 3 ->  totalNumber2.put("Total", resultlist.get(x));
+                    case 4 -> totalNumber2.put("Stat", resultlist.get(x));
+                    case 5 -> totalNumber2.put("Urgent", resultlist.get(x));
+                    case 6 -> totalNumber2.put("Routine", resultlist.get(x));
+                    case 7 -> totalNumber2.put("Norm", resultlist.get(x));
+                    case 8 -> totalNumber2.put("No Priority", resultlist.get(x));
+                    default -> Assert.fail("Unable to find the column");
+                }
+
+            }
+
+            stepInfoWithScreenshot("Total Updated"+totalNumber2.toString());
+        }else {
+
+            for (int x = 0; x <= resultlist.size() - 1; x++) {
+
+                switch (x) {
+                    case 0 -> totalNumber.put("Total Failures", resultlist.get(x));
+                    case 1 -> totalNumber.put("Alert Failures", resultlist.get(x));
+                    case 2 -> totalNumber.put("Max Failures", resultlist.get(x));
+                    case 3 -> totalNumber.put("Total", resultlist.get(x));
+                    case 4 -> totalNumber.put("Stat", resultlist.get(x));
+                    case 5 -> totalNumber.put("Urgent", resultlist.get(x));
+                    case 6 -> totalNumber.put("Routine", resultlist.get(x));
+                    case 7 -> totalNumber.put("Norm", resultlist.get(x));
+                    case 8 -> totalNumber.put("No Priority", resultlist.get(x));
+                    default -> Assert.fail("Unable to find the column");
+                }
+            }
+            stepInfoWithScreenshot("Total 1st "+totalNumber.toString());
+        }
+
+
+
+    }
+
+    public void clickLastElementAny(){
         switchToDefaultContext();
         switchToFrame(switchiFrame);
         List<WebElement> webElementList = find(allsingle);
-        if(webElementList.get(webElementList.size()-1).isEnabled()){
-           webElementList.get(webElementList.size()-1).click();
+        int number = new Random().nextInt(webElementList.size());
+        if(webElementList.get(number).isEnabled()){
+            webElementList.get(number).click();
+        }
+
+
+    }
+
+
+    public void clickEspiodeElement(Boolean single,String episodeNumber){
+
+        switchToDefaultContext();
+        switchToFrame(switchiFrame);
+        if(single) {
+            elementSingle = By.xpath("//td[following-sibling::td[contains(.,'%s')]]//a[not(@disabled) and text()='Single']".replace("%s",episodeNumber));
+            List<WebElement> webElementList = find(elementSingle);
+            if (webElementList.get(webElementList.size() - 1).isEnabled()) {
+                webElementList.get(webElementList.size() - 1).click();
+            }
+        } else {
+            elementEpisodeSingle = By.xpath("//td[following-sibling::td[contains(.,'%s')]]//a[not(@disabled) and text()='Episode']".replace("%s",episodeNumber));
+            List<WebElement> webElementList = find(elementEpisodeSingle);
+            if (webElementList.get(webElementList.size() - 1).isEnabled()) {
+                webElementList.get(webElementList.size() - 1).click();
+            }
+
         }
 
 

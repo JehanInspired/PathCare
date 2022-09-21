@@ -11,10 +11,7 @@ import selenium.AbstractPage;
 
 import java.io.File;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class PathCareProcessingPage extends AbstractPage {
@@ -38,10 +35,13 @@ public class PathCareProcessingPage extends AbstractPage {
     private final By addObervation = By.xpath("//a[contains(@id,'AddObservation')]");
     private final By obervationSelection = By.xpath("//input[contains(@id,'LBPTOObservationDR')]");
 
+    private final By testLinkDepartment = By.xpath("//a[contains(@id,'TabDepartmentID11')]");
+
     private final By pinserttestreults = By.xpath("//img[contains(@id,'Value')]");
     private final By applyTestResult = By.xpath("//input[@id='apply1']");
     private final By updateTestResult = By.xpath("//input[@id='update1']");
     private final By updateObservation = By.xpath("//input[@id='update1']");
+    private final By updatePhoneEvent = By.xpath("//input[@id='update1']");
     private final By testSetCommentsTextbox = By.xpath("//body[@id='CKEditorContentLBTSComments']");
     private final  By testSetComments = By.xpath("//a[@id='LBTSCommentsLink']");
 
@@ -57,20 +57,45 @@ public class PathCareProcessingPage extends AbstractPage {
 
     private By organismText = By.xpath("//div[contains(@id,'LBTSIValue')]/p");
     private By organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']");
-    private By manglass = By.xpath("//img[contains(@id,'lt8560iLBTSI_PathogenGrowthQualifier_DRz1')]");
+    private By LookupTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']");
+
+    private By receipientTypeTextfield = By.xpath("//input[@name='LBEPERecipientID']");
+    private By manglass = By.xpath("//img[contains(@id,'lt8560iLBTSI_Valuez1')]");
     private By antibioticslink = By.xpath("//a[@id='LBTSI_AntibioticPanelLinkz1']");
 
     private By listAntibiotic = By.xpath("//label[contains(@id,'LBTSIANT_Antibiotic_DRz')]");
 
     private By listResult = By.xpath("//input[contains(@id,'LBTSIANT_Result_DRz')]");
 
+    private By redfronts = By.xpath("//font[@color='RED']");
+
     private By etestinputfield = By.xpath("//input[contains(@id,'LBTSIANT_Result_ETestz6')]");
     private By closelookup = By.xpath("//span[@id='OverlayCloseLookupOverlayDiv']");
     private By antibioticsAcceptButton = By.xpath("//input[@id='Accept']");
 
     private By validateButton = By.xpath("//input[@id='validate1']");
+
+    private By organimMaginitglass = By.xpath("//img[@id='lt8560iLBTSI_PathogenGrowthQualifier_DRz1']");
+
+    private By listTestSet = By.xpath("//a[contains(@id,'TabTestSet')]");
+
+    private  By phoneEventlink = By.xpath("//a[contains(@id,'PhoneEventLink')]");
+
+    private By titlePhoneEvent = By.xpath("//h1[text()='Phone Event']");
+    private By reportingRecipientLookUp = By.xpath("//img[contains(@name,'LBEpisodeRep')]");
+    private By phonelist =By.xpath("//select[@name='PhonesList']");
+    private By bussinesoption  = By.xpath("//option[@value='B']");
+
+
+    private By phonenumber = By.xpath("//input[@name='LBEPEPhoneNumber']");
+
+    private By textAreaPhoneComments = By.xpath("//textarea[@name='LBEPEComments']");
+    private  By selectallPhone = By.xpath("//input[@name='SelectAll']");
+
+    private By phonetickbox = By.xpath("//input[contains(@id,'SelectItem')]");
     public String speciemenR = "";
     public String dir ="";
+    public int counter = 0;
 
     public int numberfiles =1;
 
@@ -182,6 +207,65 @@ public class PathCareProcessingPage extends AbstractPage {
         click(completeButton);
     }
 
+    public void phonequeue(){
+        switchToDefaultContext();
+        switchToFrame(iframeProcessing);
+        if(validateElement_Enabled_Displayed(redfronts)){
+            stepPassedWithScreenshot("Able to view warning ");
+        } else{
+            stepInfoWithScreenshot("No warning message");
+            Assert.fail("Unable to view the warning message");
+        }
+        counter = find(listTestSet).size();
+        for(WebElement element : find(listTestSet)){
+            if(element.isEnabled()){
+                element.click();
+                phoneEvent();
+            }
+        }
+        switchToDefaultContext();
+        switchToFrame(iframeProcessing);
+        //checking phone queues
+        for(WebElement element : find(listTestSet)){
+            if(element.isEnabled()){
+                element.click();
+                phoneEvent();
+            }
+        }
+
+    }
+
+    public void phoneEvent(){
+       click(phoneEventlink,5);
+       switchToDefaultContext();
+       switchToFrame(iframeInfoObservation);
+       if(validateElement_Displayed(titlePhoneEvent)) {
+           stepInfoWithScreenshot("Able to view");
+           if(validateElement_Displayed(phonetickbox)) {
+               click(reportingRecipientLookUp);
+               LookupTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s", "Referring Doctor"));
+               click(LookupTextfield);
+
+               stepPassedWithScreenshot("Select Referring Doctor");
+               click(bussinesoption);
+               stepPassedWithScreenshot("Able to view phone number");
+               sendKeys(textAreaPhoneComments, "phoned to doctor");
+               stepPassedWithScreenshot("Entered phone doctor");
+               click(selectallPhone);
+               click(updatePhoneEvent);
+               }else{
+                   stepInfoWithScreenshot( "Successfully removed test set in phone queue");
+               }
+
+       } else{
+           stepInfoWithScreenshot("No warning Phone event widget");
+           Assert.fail("Unable to view the Phone Event");
+       }
+
+
+    }
+
+
     public void SingleProcessingTestSet(String organism,String organisms,String comments, String[] testresults) throws InterruptedException {
       int x= 0;
 
@@ -205,20 +289,35 @@ public class PathCareProcessingPage extends AbstractPage {
             click(organismTextfield);
         }
 
-        if(!organisms.isEmpty()) {
-            click(orgramismText);
-            sendKeys(orgramismText, organisms);
-            super.findOne(orgramismText).sendKeys(Keys.TAB);
+        if (!organisms.isEmpty()){
+            if(validateElement_Displayed(closelookup)){
+                click(closelookup);
+            }
+            if(validateElement_Displayed(manglass)){
+                sendKeys(orgramismText,organisms);
+                if(validateElement_Displayed(closelookup)){
+                    click(closelookup);
+                   // click(manglass);
+                }
+                /*Thread.sleep(4000);
+                organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s", organisms));
+                click(organismTextfield);*/
+                click(applyTestResult);
+                Thread.sleep(3000);
+            }
+
         }
 
-        if (!organism.isEmpty()){
-            click(manglass);
+        if(!organism.isEmpty()) {
+            click(organimMaginitglass);
             organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s", organism));
             click(organismTextfield);
             Thread.sleep(3000);
             click(applyTestResult);
             Thread.sleep(3000);
         }
+
+
             
         stepPassedWithScreenshot("Successfully Entered Results " + organism +" "+organisms);
         
@@ -247,8 +346,8 @@ public class PathCareProcessingPage extends AbstractPage {
 
 
         for(WebElement element:find(pinserttestreults)){
-            element.click();
             Thread.sleep(4000);
+            element.click();
             organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s",testresults[x++]));
             if(x==3) {
                 click(closelookup);
@@ -263,23 +362,31 @@ public class PathCareProcessingPage extends AbstractPage {
 
             if(!validateElement_Enabled_Displayed(organismTextfield, 10)){
                 click(applyTestResult);
-                element.click();
                 Thread.sleep(4000);
+                element.click();
+
             }
+
             click(organismTextfield);
 
-
         }
 
-        if(!organisms.isEmpty()) {
-            click(orgramismText);
-            sendKeys(orgramismText, organisms);
-            super.findOne(orgramismText).sendKeys(Keys.TAB);
-        }
 
-        if (!organism.isEmpty()){
-            click(manglass);
+        if(!organism.isEmpty()) {
+            click(organimMaginitglass);
             organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s", organism));
+            click(organismTextfield);
+            Thread.sleep(3000);
+            click(applyTestResult);
+            Thread.sleep(3000);
+        }
+
+        if (!organisms.isEmpty()){
+            if(validateElement_Displayed(closelookup)){
+                click(closelookup);
+            }
+            click(manglass);
+            organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s", organisms));
             click(organismTextfield);
             Thread.sleep(3000);
             click(applyTestResult);
@@ -366,13 +473,16 @@ public class PathCareProcessingPage extends AbstractPage {
         }
         if(validateElement_Displayed(validateButton)){
             click(validateButton);
+            if(validateElement_Displayed(validateButton)){
+                click(validateButton);
+            }
             stepPassedWithScreenshot("Successfully clicked validate button");
             validateElement_Displayed(reportpreview,10);
             click(reportpreview,10);
-            Set<String> currentWindow =  super._driver.getWindowHandles();
+
 
             if(waitForDisplayed()){
-                _driver.switchTo().window(switchToWindowHandleFirst(currentWindow,false)).close();
+                Set<String> currentWindow =  super._driver.getWindowHandles();
                 _driver.switchTo().window( switchToWindowHandleFirst(currentWindow,true));
 
             }

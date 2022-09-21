@@ -2,6 +2,7 @@ import Roman.Roman;
 import Roman.RomanBase;
 import applications.PathCareapplication.PathCareApplication;
 import applications.PathCareapplication.models.AutomationUserModel;
+import applications.PathCareapplication.models.SuperSetTesCSF;
 import com.github.javafaker.Faker;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
@@ -11,9 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static reporting.ExtentReport.get_reportDir;
 
@@ -48,7 +47,7 @@ public class MircoTestCase extends RomanBase {
     public void cleanUp(){
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.logoff();
-        roman()._driver.close();
+        roman()._driver.quit();
     }
 
     @Test
@@ -63,10 +62,55 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture JEFFREY");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,1);
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,true,1);
+        Assert.assertFalse(labespides.isEmpty());
 
 
     }
+
+    @Test
+    public void TP_52() throws Exception{
+        Faker faker = new Faker();
+        String dir = get_reportDir();
+        SuperSetTesCSF ca199 = new SuperSetTesCSF();
+        HashMap<String, List<String>> values = ca199.value;
+        String[] testcollection = new String[]{"MCCSF","MCCAG","MGSTREPP"};
+
+        String[] dapartments = new String[]{"Microbiology"};
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateRegistration();
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,true,1);
+
+        //Specimen Receive
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigatespecimenRecived();
+        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides,testcollection.length);
+        pathCare.pre_analytical.switchtoMainiFrame();
+
+        //Work Receive
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateWorkRecived();
+        pathCare.workAreaReceptionPage.labworkareaswitch();
+        pathCare.workAreaReceptionPage.departmentWorkArea(pathCare.workAreaReceptionPage.setupdataMultiple( dapartments,testcollection,pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.values()),true);
+
+        //Lab Result
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC MLP George C3");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.analytical.navigateResultEntry();
+       pathCare.resultEntry.mutlipleSuperSetTestSet(labespides.get(0),ca199.value);
+
+    }
+
 
 
 
@@ -82,7 +126,7 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture JEFFREY");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,1);
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,1);
 
         //Specimen Receive
         pathCare.interSystemloginPage.changelocation();
@@ -185,7 +229,7 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.userselection();
 
         //pathCare.labQueues.SelectSecondrow();
-        Assert.assertEquals(labespides.get(0),pathCare.labQueues.findlastresultlist(labespides.get(0),true,2));
+        Assert.assertEquals(labespides.get(0),pathCare.labQueues.findlastresultlist(labespides.get(0),true,2,true));
         pathCare.singleProcess.SingleProcessingTestSet("","",new String[]{"Refer to Lab","Growth present."," "});
 
         //login
@@ -206,10 +250,59 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Pathologist Microbiology");
         pathCare.interSystemloginPage.userselection();
 
-        pathCare.labQueues.findlastresultlist(labespides.get(0),true,2);
+        pathCare.labQueues.findlastresultlist(labespides.get(0),true,2,true);
         pathCare.pathCareProcessingPage.dir=dir;
         pathCare.pathCareProcessingPage.SingleProcessingTestSetWithReport("","","",new String[]{"Final","Growth present."," "});
 
     }
+
+    @Test
+    public void TP_56() throws Exception{
+
+        Faker faker = new Faker();
+        String dir = get_reportDir();
+        String[] testcollection = new String[]{"MGCPE"};
+        String[] dapartments = new String[]{"Microbiology"};
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateRegistration();
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,1);
+
+
+        //Specimen Receive
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigatespecimenRecived();
+        HashMap<String, ArrayList<String>> mutlipleSpeicmen_patientmultiple = pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides,testcollection.length);
+
+
+        //Work Receive
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateWorkRecived();
+        pathCare.workAreaReceptionPage.labworkareaswitch();
+        pathCare.workAreaReceptionPage.departmentWorkArea(pathCare.workAreaReceptionPage.setupdataMultiple( dapartments,testcollection,pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.values()),true);
+
+        //Change User Role
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC MLP George C3");
+        pathCare.interSystemloginPage.userselection();
+
+        //Processing
+        pathCare.analytical.navigateProcessing();
+        pathCare.pathCareProcessingPage.searchSpecimenReceive(mutlipleSpeicmen_patientmultiple.get(labespides.get(0)).get(0));
+        pathCare.pathCareProcessingPage.specimenNumPending(mutlipleSpeicmen_patientmultiple.get(labespides.get(0)).get(0),"CPE Enzyme POSITIVE, no organism id required",false,"",false,"");
+        pathCare.pathCareProcessingPage.specimenCompleteWithoutApplyorUpdate();
+        pathCare.pathCareProcessingPage.numberfiles =1;
+        pathCare.pathCareProcessingPage.dir=get_reportDir();
+        pathCare.pathCareProcessingPage.SingleProcessingTestSetWithReport("","","",new String[]{"Final","Positive: Carbapenamse-producing Enterobacterales (CPE) isolated."," "});
+    }
+
 
 }

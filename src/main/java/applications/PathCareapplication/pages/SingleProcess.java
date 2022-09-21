@@ -55,7 +55,7 @@ public class SingleProcess extends AbstractPage {
             }
 
             if(!validateElement_Enabled_Displayed(organismTextfield, 10)){
-                click(orgramismText);
+                find(pinserttestreults).get(0).click();
                 element.click();
                 Thread.sleep(4000);
             }

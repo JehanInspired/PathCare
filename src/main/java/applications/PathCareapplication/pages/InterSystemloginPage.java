@@ -10,12 +10,10 @@ public class InterSystemloginPage extends AbstractPage {
     private final By passwordtext = By.xpath("//input[@name='PASSWORD']");
     private final By loginBtn = By.xpath("//button[@type='submit']");
     private final By nextPage = By.xpath("//a[text()='Next >']");
-
     private final By changeUser = By.xpath("//a[@title='Open Profile Panel']");
     private final By locationchange = By.xpath("//a[@title='Change your logon location']");
     private final By logoffbutton = By.xpath("//button[@aria-label='Logout']");
-
-
+    private final By footer = By.xpath("//div[@class='footer']");
 
 
     private String location = "";
@@ -59,10 +57,11 @@ public class InterSystemloginPage extends AbstractPage {
 
     public void userselection(){
         AccessProfile = By.xpath("//span[contains(text(),'%s')]".replace("%s",location));
-
-      scrollToElement(nextPage);
-
+       scrollToElement(nextPage);
+       scrollToElement(footer);
         while(!validateElement_Enabled_Displayed(AccessProfile)){
+            scrollToElement(footer);
+            scrollToElement(nextPage);
             click(nextPage);
         }
 

@@ -21,7 +21,7 @@ public class ExampleTest extends RomanBase {
         //pathCare.pathCareDashboardPage.choice();
         pathCare.pathCareScratch.patientdetails(faker.name().name(), faker.name().lastName(), "11/12/2002","Male");
         pathCare.pathCareScratch.doctorSelection();
-        pathCare.pathCareScratch.collectiondetailnew("n-1",testcollection);
+        pathCare.pathCareScratch.collectiondetailnew("n-1",testcollection,true);
 
 
 

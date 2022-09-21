@@ -5,6 +5,7 @@ import com.github.javafaker.Faker;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
 import selenium.AbstractPage;
 
 import java.text.SimpleDateFormat;
@@ -32,10 +33,12 @@ public class PathCareScratch extends AbstractPage {
     private final By collectionTime =By.xpath("//input[@name='LBEPCollectionTime']");
     private final By testSetCollection = By.xpath("//input[@name='TestSetSuperset']");
     private final By backtoLabEpisodeNav = By.xpath("//a[text()='Back to: Lab Episode']");
+    private final By supersetItemSelection = By.xpath("//span[contains(text(),'Superset Item Selection')]");
     private final By labEspiodeNum = By.xpath("//div[contains(text(),'Lab Episode Number:')]");
     private final By specimensearch = By.xpath("//md-icon[@id='LBSpecimenContainer_Msg_Edit_0-item-LBSPCSpecimenDR-lookupIcon']");
 
     private final By applybuttonSpecimenContainer = By.xpath("//button[text()='Accept']");
+    private final By buttonSupersetItemSelectionAccept = By.xpath("//button[contains(text(),'Accept')]");
     private final By specimenLookup = By.xpath("//span[@id='LBSpecimenContainer_Msg_Edit_0-item-LBSPCSpecimenDR-lookupRow-0-value-1']");
 
     private final By specimenContainerlookup = By.xpath("//span[@id='LBSpecimenContainer_Msg_Edit_0-item-LBSPCContainerDR-lookupRow-0-value-1']");
@@ -47,10 +50,15 @@ public class PathCareScratch extends AbstractPage {
 
     private final  By updatebuton = By.xpath("//button[@type='submit']");
     private  By testCode = By.xpath("//span[text()='%s']");
+    private final By linkSelectSpecimen =By.xpath("//a[text()='Select']");
+    private final By tickboxSpecimens = By.xpath("//input[contains(@id,'selectz')]");
+
+    private final By acceptSpecimens = By.xpath("//input[contains(@id,'accept')]");
+
 
     public  String testset ="";
 
-    public String collectiondetailnew(String collectiontime, String[] testsetcollection)  {
+    public String collectiondetailnew(String collectiontime, String[] testsetcollection, Boolean specimenSelect)  {
        //click(iconPatientSearch);
         sendKeys(patientSearchSelect,"2100");
         super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
@@ -60,7 +68,10 @@ public class PathCareScratch extends AbstractPage {
             testCode = By.xpath("//span[text()='%s']".replace("%s",testset));
             sendKeys(testSetCollection,testset);
             super._driver.findElement(testSetCollection).sendKeys(Keys.TAB);
-            if(validateElement_Displayed(backtoLabEpisodeNav)){
+            if(validateElement_Displayed(supersetItemSelection)){
+                stepInfoWithScreenshot("Reach to Superset Item Selection");
+                click(buttonSupersetItemSelectionAccept);
+            } else if (validateElement_Displayed(backtoLabEpisodeNav) && !specimenSelect){
                 click(specimensearch);
                 click(specimenLookup);
                 click(specimenContainerSearch);
@@ -75,6 +86,17 @@ public class PathCareScratch extends AbstractPage {
                     switchToDefaultContext();
                 }
 
+            }else if(specimenSelect){
+                click(backtoLabEpisodeNav);
+                click(linkSelectSpecimen);
+                switchToFrame(switchiFrame);
+               for(WebElement element:find(tickboxSpecimens)){
+                   element.click();
+                   stepPassedWithScreenshot("Selected specimen "+testset);
+               }
+               click(acceptSpecimens);
+                stepPassedWithScreenshot("Accepted specimen "+testset);
+               switchToDefaultContext();
             }
             validateElement_Enabled_Displayed(testSetLink,10);
             stepPassedWithScreenshot("The correct Test Set appears under Tests : "+testset);
@@ -121,12 +143,12 @@ public class PathCareScratch extends AbstractPage {
     }
 
 
-    public List<String> mutiplePatient(Faker faker,String[] testcollection, int numberPatient){
+    public List<String> mutiplePatient(Faker faker,String[] testcollection,Boolean specimenSelect, int numberPatient){
         List<String> labEspideonumber = new ArrayList<>();
         for(int x=0;x<=numberPatient-1;x++){
             patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
             doctorSelection();
-            labEspideonumber.add(collectiondetailnew("n-1",testcollection));
+            labEspideonumber.add(collectiondetailnew("n-1",testcollection,specimenSelect));
         }
 
         return labEspideonumber;

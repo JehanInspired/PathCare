@@ -19,6 +19,7 @@ public class Pre_Analytical extends AbstractPage {
 
     private final By transferbutton = By.xpath("//span[text()='Transfers']");
     private final By mainmenu = By.xpath("//a//md-icon[@title='Main Menu']");
+    private final By homelink = By.xpath("//md-icon[@title='Home']");
 
 
     public Pre_Analytical(Roman roman) {
@@ -105,6 +106,16 @@ public class Pre_Analytical extends AbstractPage {
             click(logisticsMenubutton,10);
         }
 
+    }
+
+    public void navigateMenu(){
+        switchtoMainiFrame();
+        click(mainmenu,15);
+
+    }
+    public void navigatehome(){
+        switchtoMainiFrame();
+        click(homelink);
     }
 
 

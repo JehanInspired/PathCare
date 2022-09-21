@@ -37,6 +37,8 @@ public class ResultEntry extends AbstractPage {
     private final  By testSetComments = By.xpath("//a[@id='LBTSCommentsLink']");
 
     private final By inputTestresults = By.xpath("//input[contains(@id,'Value')]");
+    private final By lookupicon = By.xpath("//img[contains(@id,'Value')]");
+    private final By inputTestresultlast = By.xpath("//input[contains(@id,'0_LBTSIValue')]");
     private final By pinserttestreults = By.xpath("//*[contains(@id,'Value')]/p");
     private final By searchinput = By.xpath("//img[contains(@id,'Value')]");
     private final By inputTestresult = By.xpath("//td/span/input");
@@ -65,8 +67,14 @@ public class ResultEntry extends AbstractPage {
     private final  By footer = By.xpath("//div[@id='tc_Footer']");
     private final  By nextpage = By.xpath("//a[text()='Next >']");
     private final By requiredfield = By.xpath("//span[@class='clsColourTab clsResultRequired']");
+    private By organismText = By.xpath("//div[contains(@id,'LBTSIValue')]/p");
+    private By labresultTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']");
 
     private final By receivedTestList = By.xpath("//span[text()='Received']");
+    private final By pinserttestreult = By.xpath("//img[contains(@id,'Value')]");
+    private By closelookup = By.xpath("//span[@id='OverlayCloseLookupOverlayDiv']");
+
+    private By espiodeNumberLink = By.xpath("//a[@id='LBEPNumber']");
 
     private By  episodeNumber;
    private  String desc = "";
@@ -96,9 +104,10 @@ public class ResultEntry extends AbstractPage {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate todaydate = LocalDate.now();
             sendKeys(labEpisode,labespide);
-            sendKeys(reportCollectionDate, dtf.format(todaydate));
+            //sendKeys(reportCollectionDate, dtf.format(todaydate));
             click(findButton,10);
         }
+
     public void labEntryTestSpecialHandling(String testresult){
         this.numberfiles=1;
         switchToFrame(resultEntryiFrame);
@@ -110,6 +119,24 @@ public class ResultEntry extends AbstractPage {
 
         reportPreview();
 
+    }
+
+    public void labEntryTestFieldMutatable(String[] value,String lasttestvalue)  {
+        switchToFrame(resultEntryiFrame);
+        int x =0;
+        for(WebElement element:find(pinserttestreult)){
+            element.click();
+            labresultTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s",value[x++]));
+
+            if(!validateElement_Enabled_Displayed(labresultTextfield, 10)){
+                element.click();
+            }
+            if(!(x==7)) {
+                click(labresultTextfield);
+          }else{
+                sendKeys(inputTestresultlast,lasttestvalue);
+           }
+        }
 
     }
 
@@ -146,16 +173,104 @@ public class ResultEntry extends AbstractPage {
 
     }
     public void singleTestsetCommentWithoutReport(String singleLabespido, String testresult,String comment){
-
         numberfiles =1;
         LabResultsEntry(singleLabespido);
         testSetListSingle(singleLabespido);
-        comments(comment);
+        if(!comment.isEmpty()||!comment.contentEquals("")){
+            comments(comment);}
         switchToFrame(resultEntryiFrame);
         sendKeys(inputTestresults,testresult);
         _driver.findElement(inputTestresults).sendKeys(Keys.TAB);
         applyResultOnly();
-        reportPreview();
+       // reportPreview();
+
+    }
+    public void selectTestSetResultlist(String testSet){
+        click(By.xpath("//span[text()='%s']".replace("%s", testSet)));
+        stepPassedWithScreenshot("Successfully clicked "+testSet);
+
+    }
+
+    public Boolean checkvaluesTestResults(HashMap<String,String> testlistResult,String testSet){
+        Boolean results =false;
+        click(By.xpath("//span[text()='%s']".replace("%s", testSet)));
+        stepPassedWithScreenshot("Successfully clicked "+testSet);
+        switchToFrame(resultEntryiFrame);
+        for(String testResult:testlistResult.keySet()){
+          By testSetElement = By.xpath("//td[preceding-sibling::td[contains(.,'"+testResult+"')]]//input[contains(@id,'LBTSIValue') and(not(contains(@type,'hidden')))]");
+         String value = findOne(testSetElement).getAttribute("value") ;
+          if(value.isBlank()||value.isEmpty()){
+                return false;
+            }
+            results=true;
+          stepPassed("Successfully checked test set "+testResult+" has test Result "+value);
+        }
+    return results;
+    }
+
+
+
+    public void mutlipleSuperSetTestSet(String singleLabespido,HashMap<String, List<String>> superTestset){
+        LabResultsEntry(singleLabespido);
+        for(String testSet:superTestset.keySet()){
+            int counter =0;
+             click(By.xpath("//span[text()='%s']".replace("%s", testSet)));
+            stepPassedWithScreenshot("Successfully clicked "+testSet);
+            switchToFrame(resultEntryiFrame);
+             for(String testresult:superTestset.get(testSet)) {
+                 if(testSet.contains("CSF Microscopy")||testSet.contains("CSF Macroscopy")||testSet.contains("Cryptococcal Antigen LFA")){
+                    find(lookupicon).get(counter).click();
+                     labresultTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s",testresult));
+                     click(labresultTextfield,10);
+                     stepPassedWithScreenshot("Successfully Selected "+testSet +" value "+testresult);
+                     if (testSet.contains("CSF Microscopy") && counter == 1) {
+                         break;
+                        }
+                 }
+                 boolean b = testSet.contains("CSF Microscopy") || testSet.contains("CSF Macroscopy") || testSet.contains("Cryptococcal Antigen LFA");
+                 if(!b) {
+                     find(inputTestresults).get(counter).sendKeys(testresult);
+                 }
+                 counter++;
+             }
+
+             switchToDefaultContext();
+             switchToFrame(resultEntryiFrame);
+             click(applyTestResult);
+             stepPassedWithScreenshot("Successfully applied "+testSet);
+             if(validateElement_Displayed(validate)){
+                 click(validate,10);
+                 stepPassedWithScreenshot("Successfully Validated "+testSet);
+             }
+            switchToDefaultContext();
+            click(backtotestSetList,10);
+
+
+        }
+    }
+
+    public void mutipleTestsetCommentMutatableWithoutReport(String singleLabespido, String[] testresult,String lasttestvalue, String comment,Boolean clickEspodeNumber)  {
+
+        numberfiles =1;
+        LabResultsEntry(singleLabespido);
+        testSetListMultiple(singleLabespido);
+        if(!comment.isEmpty()||!comment.contentEquals("")){
+            comments(comment);
+        }
+        labEntryTestFieldMutatable(testresult,lasttestvalue);
+        switchToDefaultContext();
+        switchToFrame(resultEntryiFrame);
+        applyResultOnly();
+
+        if(clickEspodeNumber){
+            interactEspiodeNumber();
+            switchToDefaultContext();
+            labEntryTestFieldMutatable(testresult,lasttestvalue);
+        }
+
+        switchToDefaultContext();
+        switchToFrame(resultEntryiFrame);
+        applyResultOnly();
 
     }
 
@@ -164,7 +279,8 @@ public class ResultEntry extends AbstractPage {
         numberfiles =1;
         LabResultsEntry(singleLabespido);
         testSetListMultiple(singleLabespido);
-        comments(comment);
+        if(!comment.isEmpty()||!comment.contentEquals("")){
+        comments(comment);}
         labEntryTestSpecialHandlinglist(testresult,extrfield);
         switchToFrame(resultEntryiFrame);
         applyResultOnly();
@@ -180,7 +296,24 @@ public class ResultEntry extends AbstractPage {
 
     }
 
-    private void reportPreview(){
+  private void interactEspiodeNumber(){
+        click(espiodeNumberLink);
+    }
+    public void  onlyapplyandvalidate(){
+        Assert.assertTrue(validateElement_Displayed(applyTestResult));
+        click(applyTestResult,10);
+        if(validateElement_Displayed(notficationApply,10)){
+            stepPassedWithScreenshot("Successfully received  "+getText(notficationApply));
+        }else{
+            Assert.fail("Unable to receive notification results for Test set");
+        }
+        if(validateElement_Displayed(validate)) {
+            click(validate);
+            stepPassedWithScreenshot("Successfully received  "+getText(notficationApply));
+        }
+    }
+
+    public void reportPreview(){
         Assert.assertTrue(validateElement_Displayed(applyTestResult));
         click(applyTestResult,10);
         if(validateElement_Displayed(notficationApply,10)){
