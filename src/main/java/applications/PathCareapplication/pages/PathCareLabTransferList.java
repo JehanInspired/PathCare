@@ -1,6 +1,7 @@
 package applications.PathCareapplication.pages;
 
 import Roman.Roman;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import selenium.AbstractPage;
@@ -77,7 +78,7 @@ public class PathCareLabTransferList extends AbstractPage {
       listTransfer = By.xpath("//label[text()='%s']".replace("%s",labepisode));
 
       if(getAllElementText(listTransfer).size()==specimennumbers.size()) {
-          stepPassedWithScreenshot("Able to view package In Transit ");
+          stepPassedWithScreenshot("Able to view package In Transit "+labepisode);
           checker =true;
       }
         return checker;
@@ -86,7 +87,7 @@ public class PathCareLabTransferList extends AbstractPage {
         boolean checker =false;
         listTransfer = By.xpath("//label[text()='%s']".replace("%s",labepisode));
         if(getAllElementText(listTransfer).size()==specimennumbers.size()) {
-            stepPassedWithScreenshot("Able to view package In Transit ");
+            stepPassedWithScreenshot("Able to view package In Transit "+labepisode);
             checker = true;
         }
         return checker;
@@ -96,7 +97,7 @@ public class PathCareLabTransferList extends AbstractPage {
         boolean checker =false;
         listTransfer = By.xpath("//label[text()='%s']".replace("%s",labepisode));
         if(getAllElementText(listTransfer).size()==specimennumbers.size() && getAllElementText(status).contains("Waiting")) {
-            stepPassedWithScreenshot("Able to view Waiting ");
+            stepPassedWithScreenshot("Able to view Waiting "+labepisode);
             checker =true;
         }
         return checker ;
@@ -106,7 +107,7 @@ public class PathCareLabTransferList extends AbstractPage {
       boolean checker =false;
         listTransfer = By.xpath("//label[text()='%s']".replace("%s",labepisode));
         if(getAllElementText(listTransfer).size()==specimennumbers.size() && getAllElementText(status).contains("Packed")) {
-            stepPassedWithScreenshot("Able to view Packaged ");
+            stepPassedWithScreenshot("Able to view Packaged "+labepisode);
             checker = true;
         }
         return checker ;
@@ -116,7 +117,7 @@ public class PathCareLabTransferList extends AbstractPage {
         boolean checker =false;
         listTransfer = By.xpath("//label[text()='%s']".replace("%s",labepisode));
         if(getAllElementText(listTransfer).size()==specimennumbers.size() && getAllElementText(status).contains("Received")) {
-            stepPassedWithScreenshot("Able to view Received ");
+            stepPassedWithScreenshot("Able to view Received "+labepisode);
             checker =true;
         }
         return checker ;
@@ -127,14 +128,16 @@ public class PathCareLabTransferList extends AbstractPage {
 
     }
 
-  public void createShipment(ArrayList<String> specimennumbers){
+  public void createShipment(ArrayList<String> specimennumbers) throws InterruptedException {
       click(selectallspecimen);
       click(shipmentbutton);
       click(addshipmentcontainerbutton,10);
       if(validateElement_Displayed(shipmentnumbertext,10)){
           shipmentNumber = getText(shipmentnumbertext,10);
-
           stepPassedWithScreenshot("Able to receive a shipment container number "+ shipmentNumber);
+      } else{
+          stepInfoWithScreenshot("Unable to to receive a shipment container number");
+          Assert.fail("Unable to to receive a shipment container number");
       }
 
       for(String value:specimennumbers) {
@@ -142,6 +145,7 @@ public class PathCareLabTransferList extends AbstractPage {
       }
       click(closeShipment,5);
       acceptAlert();
+      Thread.sleep(3000);
       stepPassedWithScreenshot("Successfully clicked closed shipment");
 
   }

@@ -108,8 +108,8 @@ public class PathCareScratch extends AbstractPage {
 
     }
     public Boolean updatewithoutTestCollection(String collectiontime){
-        click(iconPatientSearch);
-        click(patientSearchSelect);
+        sendKeys(patientSearchSelect,"2100");
+        super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
         findOne(collectionTime,collectiontime);
         click(updatebuton);
          if(validateElement_Displayed(testsetrequimenttext,5)){

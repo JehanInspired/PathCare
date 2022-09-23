@@ -65,6 +65,7 @@ public class InterSystemloginPage extends AbstractPage {
             click(nextPage);
         }
 
+        scrollToElement(footer);
         scrollToElement(AccessProfile);
         click(AccessProfile);
         stepPassedWithScreenshot("Lab queues screen "+location);

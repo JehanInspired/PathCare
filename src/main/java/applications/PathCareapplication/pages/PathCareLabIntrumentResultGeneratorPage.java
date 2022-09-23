@@ -40,11 +40,14 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractPage {
         findOne(resultsTB,results);
         Thread.sleep(3000);
         click(selecttickbox);
-        click(generateButton,10);
 
-       if(!getText(textarea).contains("Test Item:")){
-           stepPassedWithScreenshot("Able to view outputs "+getText(textarea,5));
-       }
+        scrollToElement(generateButton,5);
+        click(generateButton,10);
+        scrollToElement(textarea);
+        if(!getText(textarea,5).isBlank() || !getText(textarea).isEmpty()){
+            stepPassedWithScreenshot("Able to view outputs "+getText(textarea,5));
+        }
+
 
 
     }
@@ -71,7 +74,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractPage {
         Thread.sleep(3000);
 
         for(String value:testitems.keySet()){
-            By testitem = By.xpath("//label[contains(text(),'"+value+"')]");
+            By testitem = By.xpath("//label[text()='"+value+"']");
 
             if(!validateElement_Displayed(testitem)){
                 while(!validateElement_Displayed(testitem)){
@@ -104,10 +107,10 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractPage {
             stepPassedWithScreenshot("Ticked test item "+value);
 
         }
-
+        scrollToElement(generateButton,5);
         click(generateButton,10);
-
-        if(!getText(textarea).contains("Test Item:")){
+        scrollToElement(textarea);
+        if(!getText(textarea,5).isBlank() || !getText(textarea).isEmpty()){
             stepPassedWithScreenshot("Able to view outputs "+getText(textarea,5));
         }
 

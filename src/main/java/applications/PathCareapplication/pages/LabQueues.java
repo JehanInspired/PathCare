@@ -220,9 +220,10 @@ public class LabQueues extends AbstractPage {
       for(WebElement element:find(firstrowQueueResult)){
           if(totalNumber.get(titleHeader).isBlank()){
               stepInfoWithScreenshot(titleHeader+" has no test sets");
+              found = false;
               break;
           }
-          //Max failures
+          //Queues
           if((!totalNumber.get(titleHeader).isBlank() && totalNumber.get(titleHeader).contentEquals(element.getText())) && !found || totalNumber2.getOrDefault(titleHeader,"").contentEquals(element.getText()) ){
                 if (element.isEnabled()) {
                     element.click();

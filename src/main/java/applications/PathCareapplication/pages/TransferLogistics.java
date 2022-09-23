@@ -55,7 +55,7 @@ public class TransferLogistics extends AbstractPage {
         findOne(pickUpShipment,shipContainerNumber);
 
             if(validateElement_Displayed(updatebutton,10)){
-                stepPassedWithScreenshot("Successfully Delivered "+ shipContainerNumber);
+                stepPassedWithScreenshot("Successfully Pick Up "+ shipContainerNumber);
                 click(updatebutton);
                 return true;
             }

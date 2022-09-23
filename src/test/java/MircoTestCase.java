@@ -3,6 +3,7 @@ import Roman.RomanBase;
 import applications.PathCareapplication.PathCareApplication;
 import applications.PathCareapplication.models.AutomationUserModel;
 import applications.PathCareapplication.models.SuperSetTesCSF;
+import applications.PathCareapplication.models.SuperSetTestCSFTestItem;
 import com.github.javafaker.Faker;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
@@ -229,7 +230,7 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.userselection();
 
         //pathCare.labQueues.SelectSecondrow();
-        Assert.assertEquals(labespides.get(0),pathCare.labQueues.findlastresultlist(labespides.get(0),true,2,true));
+        Assert.assertEquals(labespides.get(0),pathCare.labQueues.findlastresultlist(labespides.get(0),true,2,false));
         pathCare.singleProcess.SingleProcessingTestSet("","",new String[]{"Refer to Lab","Growth present."," "});
 
         //login
@@ -253,6 +254,7 @@ public class MircoTestCase extends RomanBase {
         pathCare.labQueues.findlastresultlist(labespides.get(0),true,2,true);
         pathCare.pathCareProcessingPage.dir=dir;
         pathCare.pathCareProcessingPage.SingleProcessingTestSetWithReport("","","",new String[]{"Final","Growth present."," "});
+
 
     }
 
@@ -302,6 +304,117 @@ public class MircoTestCase extends RomanBase {
         pathCare.pathCareProcessingPage.numberfiles =1;
         pathCare.pathCareProcessingPage.dir=get_reportDir();
         pathCare.pathCareProcessingPage.SingleProcessingTestSetWithReport("","","",new String[]{"Final","Positive: Carbapenamse-producing Enterobacterales (CPE) isolated."," "});
+    }
+
+
+    @Test
+    public void TP_53() throws Exception{
+        Faker faker = new Faker();
+        String dir = get_reportDir();
+        SuperSetTesCSF superSetTesCSF = new SuperSetTesCSF();
+        HashMap<String, List<String>> values = superSetTesCSF.value;
+        String[] testcollection = new String[]{"MCCSF","MCCAG","MGSTREPP"};
+
+        String[] dapartments = new String[]{"Microbiology"};
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateRegistration();
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,true,1);
+
+        //Specimen Receive
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigatespecimenRecived();
+        HashMap<String, ArrayList<String>> mutlipleSpeicmen_patientmultiple = pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides,testcollection.length);
+        pathCare.pre_analytical.switchtoMainiFrame();
+
+        //Work Receive
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateWorkRecived();
+        pathCare.workAreaReceptionPage.labworkareaswitch();
+        pathCare.workAreaReceptionPage.departmentWorkArea(pathCare.workAreaReceptionPage.setupdataMultiple( dapartments,testcollection,pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.values()),true);
+
+        //Lab Result
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC MLP George C3");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.analytical.navigateResultEntry();
+        pathCare.resultEntry.mutlipleSuperSetTestSet(labespides.get(0),superSetTesCSF.value);
+
+        //Change User role
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC MLP George C3");
+        pathCare.interSystemloginPage.userselection();
+
+        //Generate Test set
+        pathCare.labQueues.navigatetoToolBox();
+        pathCare.labQueues.navigateTestSet();
+        pathCare.pathCareLabIntrumentResultGeneratorpage.testitemListGroup(new SuperSetTestCSFTestItem().value,"Abbott Alinity ci George","Alinity Tests",mutlipleSpeicmen_patientmultiple.get(labespides.get(0)).get(0));
+
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.labQueues.navigatetoHomepage();
+        pathCare.analytical.navigateResultEntry();
+        pathCare.resultEntry.LabResultsEntry(labespides.get(0));
+        Assert.assertTrue(pathCare.resultEntry.checkvaluesTestResults(new SuperSetTestCSFTestItem().value,"CSF Biochemistry"));
+
+        //Changing role*/
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.labQueues.navigatetoHomepage();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC MLP George C3");
+        pathCare.interSystemloginPage.userselection();
+
+        //Navigate to Processing
+        pathCare.analytical.navigateProcessing();
+        pathCare.pathCareProcessingPage.lookupSinglewithoutOrgnimfield(mutlipleSpeicmen_patientmultiple.get(labespides.get(0)).get(0).concat(".1"),new String[]{"Preliminary","No growth after 24 hours incubation. Further results to follow."," "},true,false);
+
+        //Change role
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.labQueues.navigatetoHomepage();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC MLP George C3");
+        pathCare.interSystemloginPage.userselection();
+
+        //Day 2 Reading
+        pathCare.analytical.navigateProcessing();
+        pathCare.pathCareProcessingPage.lookupSinglewithoutOrgnimfield(mutlipleSpeicmen_patientmultiple.get(labespides.get(0)).get(0).concat(".1"),new String[]{"Preliminary","No growth after 48 hours incubation. Further results to follow."," "},false,true);
+
+
+        //Day 3 Reading
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.labQueues.navigatetoHomepage();
+
+        pathCare.analytical.navigateProcessing();
+        pathCare.pathCareProcessingPage.lookupSinglewithoutOrgnimfield(mutlipleSpeicmen_patientmultiple.get(labespides.get(0)).get(0).concat(".1"),new String[]{"Preliminary","Growth present."," "},false,true);
+
+        pathCare.pathCareProcessingPage.specimenNumPending(mutlipleSpeicmen_patientmultiple.get(labespides.get(0)).get(0),"Vitek ID",false,"",false,"");
+        pathCare.pathCareProcessingPage.specimenComplete(mutlipleSpeicmen_patientmultiple.get(labespides.get(0)).get(0));
+
+        pathCare.pathCareProcessingPage.searchSpecimenReceive(pathCare.pathCareProcessingPage.speciemenR);
+        pathCare.pathCareProcessingPage.specimenNumPending(pathCare.pathCareProcessingPage.speciemenR,"Observation",false,"",false,"organism");
+        pathCare.pathCareProcessingPage.specimenComplete(pathCare.pathCareProcessingPage.speciemenR);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
 

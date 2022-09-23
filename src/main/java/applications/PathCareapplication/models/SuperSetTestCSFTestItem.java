@@ -11,8 +11,8 @@ public class SuperSetTestCSFTestItem {
 
     public SuperSetTestCSFTestItem() throws IOException {
         value.put("CSF Protein","4.63");
-        value.put("CSF Chloride","0.60");
-        value.put("CSF Glucose","118");
+        value.put("CSF Chloride","118");
+        value.put("CSF Glucose","0.60");
 
     }
 }

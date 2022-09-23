@@ -76,6 +76,8 @@ public class ResultEntry extends AbstractPage {
 
     private By espiodeNumberLink = By.xpath("//a[@id='LBEPNumber']");
 
+    private By requiredfieldblackbox = By.xpath("//span[contains(@title,'Required')]");
+
     private By  episodeNumber;
    private  String desc = "";
 
@@ -104,11 +106,11 @@ public class ResultEntry extends AbstractPage {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate todaydate = LocalDate.now();
             sendKeys(labEpisode,labespide);
-            //sendKeys(reportCollectionDate, dtf.format(todaydate));
+            sendKeys(reportCollectionDate, dtf.format(todaydate));
             click(findButton,10);
         }
 
-    public void labEntryTestSpecialHandling(String testresult){
+    public void labEntryTestSpecialHandling(String testresult) throws InterruptedException {
         this.numberfiles=1;
         switchToFrame(resultEntryiFrame);
         descriptionSearch  = By.xpath("//td[contains(text(),'%s')]".replace("%s",testresult));
@@ -148,8 +150,8 @@ public class ResultEntry extends AbstractPage {
 
         for(WebElement element:find(inputTestresult ,5)){
             if(element.isEnabled() && element.isDisplayed()) {
-                    element.sendKeys(testresult[x]);
-                    Thread.sleep(2000);
+                Thread.sleep(5000);
+                element.sendKeys(testresult[x]);
                         element.sendKeys(Keys.TAB);
                 x++;
             }
@@ -199,28 +201,33 @@ public class ResultEntry extends AbstractPage {
         for(String testResult:testlistResult.keySet()){
           By testSetElement = By.xpath("//td[preceding-sibling::td[contains(.,'"+testResult+"')]]//input[contains(@id,'LBTSIValue') and(not(contains(@type,'hidden')))]");
          String value = findOne(testSetElement).getAttribute("value") ;
-          if(value.isBlank()||value.isEmpty()){
+          if(value.isBlank()||value.isEmpty() || Math.abs(Double.valueOf(value)) !=Math.abs(Double.valueOf(testlistResult.get(testResult)))){
+              stepInfo("checked test set " + testResult + " has test Result " + value +" but excepted is "+testlistResult.get(testResult));
                 return false;
             }
-            results=true;
-          stepPassed("Successfully checked test set "+testResult+" has test Result "+value);
+          if(Math.abs(Double.valueOf(value))==Math.abs(Double.valueOf(testlistResult.get(testResult)))) {
+              stepPassed("Successfully checked test set " + testResult + " has test Result " + value);
+              results = true;
+          }
         }
     return results;
     }
 
 
 
-    public void mutlipleSuperSetTestSet(String singleLabespido,HashMap<String, List<String>> superTestset){
+    public void mutlipleSuperSetTestSet(String singleLabespido,HashMap<String, List<String>> superTestset) throws InterruptedException {
         LabResultsEntry(singleLabespido);
         for(String testSet:superTestset.keySet()){
             int counter =0;
-             click(By.xpath("//span[text()='%s']".replace("%s", testSet)));
+
+             click(By.xpath("//span[text()='"+testSet+"']"));
             stepPassedWithScreenshot("Successfully clicked "+testSet);
             switchToFrame(resultEntryiFrame);
              for(String testresult:superTestset.get(testSet)) {
+                 int count = find(requiredfieldblackbox).size();
                  if(testSet.contains("CSF Microscopy")||testSet.contains("CSF Macroscopy")||testSet.contains("Cryptococcal Antigen LFA")){
                     find(lookupicon).get(counter).click();
-                     labresultTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s",testresult));
+                     labresultTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='"+testresult+"']");
                      click(labresultTextfield,10);
                      stepPassedWithScreenshot("Successfully Selected "+testSet +" value "+testresult);
                      if (testSet.contains("CSF Microscopy") && counter == 1) {
@@ -229,7 +236,18 @@ public class ResultEntry extends AbstractPage {
                  }
                  boolean b = testSet.contains("CSF Microscopy") || testSet.contains("CSF Macroscopy") || testSet.contains("Cryptococcal Antigen LFA");
                  if(!b) {
+
                      find(inputTestresults).get(counter).sendKeys(testresult);
+                     find(inputTestresults).get(counter).sendKeys(Keys.TAB);
+                     Thread.sleep(5000);
+                     if(find(requiredfieldblackbox).size() == count){
+                         while(find(requiredfieldblackbox).size() == count){
+                             find(inputTestresults).get(counter).sendKeys(testresult);
+                             find(inputTestresults).get(counter).sendKeys(Keys.TAB);
+                             Thread.sleep(5000);
+                         }
+                     }
+                     count--;
                  }
                  counter++;
              }
@@ -238,6 +256,7 @@ public class ResultEntry extends AbstractPage {
              switchToFrame(resultEntryiFrame);
              click(applyTestResult);
              stepPassedWithScreenshot("Successfully applied "+testSet);
+             Thread.sleep(4000);
              if(validateElement_Displayed(validate)){
                  click(validate,10);
                  stepPassedWithScreenshot("Successfully Validated "+testSet);
@@ -313,7 +332,7 @@ public class ResultEntry extends AbstractPage {
         }
     }
 
-    public void reportPreview(){
+    public void reportPreview() throws InterruptedException {
         Assert.assertTrue(validateElement_Displayed(applyTestResult));
         click(applyTestResult,10);
         if(validateElement_Displayed(notficationApply,10)){
@@ -324,11 +343,16 @@ public class ResultEntry extends AbstractPage {
         if(validateElement_Displayed(validate)){
             click(validate);
             stepPassedWithScreenshot("Successfully clicked validate button");
-            validateElement_Displayed(reportpreview,10);
-            click(reportpreview,10);
-            Set<String> currentWindow =  super._driver.getWindowHandles();
+            if(validateElement_Enabled_Displayed(reportpreview,10)) {
+                click(reportpreview, 10);
+                Thread.sleep(5000);
+            }else{
+                Assert.fail("Unable to click report preview");
+            }
+
 
             if(waitForDisplayed()){
+                Set<String> currentWindow =  super._driver.getWindowHandles();
                 _driver.switchTo().window(switchToWindowHandleFirst(currentWindow,false)).close();
                 _driver.switchTo().window( switchToWindowHandleFirst(currentWindow,true));
 
@@ -338,7 +362,7 @@ public class ResultEntry extends AbstractPage {
         }
     }
 
-    public void singleTestsetComment(String singleLabespido, String testresult,String comment){
+    public void singleTestsetComment(String singleLabespido, String testresult,String comment) throws InterruptedException {
         numberfiles =1;
         LabResultsEntry(singleLabespido);
         testSetListSingle(singleLabespido);

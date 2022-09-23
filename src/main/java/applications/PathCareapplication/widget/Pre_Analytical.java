@@ -42,7 +42,6 @@ public class Pre_Analytical extends AbstractPage {
             click(specimenRecived,10);
         }
 
-
             stepPassedWithScreenshot("Navigated to specimen received");
 
     }
@@ -85,7 +84,7 @@ public class Pre_Analytical extends AbstractPage {
 
 
     public void navigateRegistration(){
-        click(mainmenu);
+        click(mainmenu,10);
         if(validateElement_Enabled_Displayed(subregistation)){
             click(subregistation,10);
         }else{
@@ -105,6 +104,7 @@ public class Pre_Analytical extends AbstractPage {
             click(pre_Analytical);
             click(logisticsMenubutton,10);
         }
+        stepPassedWithScreenshot("Logistics page appears");
 
     }
 
