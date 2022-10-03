@@ -1,11 +1,8 @@
 package applications.PathCareapplication.pages;
 
 import Roman.Roman;
-import org.apache.poi.ss.formula.functions.T;
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import selenium.AbstractPage;
@@ -49,6 +46,7 @@ public class PathCareProcessingPage extends AbstractPage {
     private final By acceptbuttonComment = By.xpath("//input[@id='accept1']");
 
     private final By testCommentswindowiframe = By.xpath("//iframe[@title]");
+    private final By pathogentextbox = By.xpath("//input[contains(@id,'DRz1') and (not(contains(@type,'hidden')))]");
 
     private final By pendingbutton = By.xpath("//input[@id='pending1']");
 
@@ -94,6 +92,12 @@ public class PathCareProcessingPage extends AbstractPage {
     private  By selectallPhone = By.xpath("//input[@name='SelectAll']");
 
     private By phonetickbox = By.xpath("//input[contains(@id,'SelectItem')]");
+
+    private By antibioticsPanel = By.xpath("//img[contains(@id,'AntibioticPanel')]");
+    private By addAntibioticsPanel = By.xpath("//input[contains(@id,'add') and (not(contains(@type,'hidden')))]");
+    private By antibioticsPanelTextbox = By.xpath("//input[contains(@id,'AntibioticPanel') and (not(contains(@type,'hidden'))) ]");
+
+    private By tableListSearch = By.xpath("//table[@id='tblLookup']");
     public String speciemenR = "";
     public String dir ="";
     public int counter = 0;
@@ -143,6 +147,7 @@ public class PathCareProcessingPage extends AbstractPage {
         searchSpecimenReceive(speciemenReceive);
 
         for(WebElement element:find(pinserttestreults)){
+            click(pathogentextbox);
             element.click();
             organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s",testresults[x++]));
             if(x==3) {
@@ -169,6 +174,47 @@ public class PathCareProcessingPage extends AbstractPage {
         findOne(inputScantextfield,specimenReceive);
     }
 
+    public void antibioticsPanel(String value){
+
+        if(validateElement_Displayed(antibioticslink)){
+            click(antibioticslink);
+        }
+        switchToDefaultContext();
+        switchToFrame(iframeInfoObservation);
+        sendKeys(antibioticsPanelTextbox,value);
+        By antibioticsList = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s",value));
+        if(validateElement_Enabled_Displayed(tableListSearch)){
+            click(antibioticsList);
+
+        }else{
+            while (findOne(antibioticsPanelTextbox).getAttribute("value").isBlank()){
+                    sendKeys(antibioticsPanelTextbox,value);
+            }
+            click(antibioticsList);
+        }
+
+            try{
+                acceptAlert();
+                click(addAntibioticsPanel);
+            }catch (NoAlertPresentException ignore){
+                click(addAntibioticsPanel);
+            }
+
+            try {
+                while (!findOne(antibioticsPanelTextbox).getAttribute("value").isBlank()) {
+
+                    acceptAlert();
+                    click(addAntibioticsPanel);
+                }
+                }catch (NoAlertPresentException ignore){
+                    click(addAntibioticsPanel);
+                }
+
+
+
+            stepInfo("Entered Antibiotic Panel "+value);
+    }
+
     public void antibiotics(String[][] antibios,String mic) throws InterruptedException {
         int x= 0;
         Boolean resultfound = false;
@@ -192,7 +238,11 @@ public class PathCareProcessingPage extends AbstractPage {
             }
             x++;
         }
-        sendKeys(etestinputfield,mic,10);
+
+        if(!mic.isBlank()) {
+            sendKeys(etestinputfield, mic, 10);
+        }
+
         stepPassedWithScreenshot("successfully entered Antibiotics "+ Arrays.stream(antibios).toArray().toString());
 
         click(antibioticsAcceptButton);
@@ -222,15 +272,12 @@ public class PathCareProcessingPage extends AbstractPage {
                 _driver.findElement(observationCommentsTextbox).sendKeys(notesvalue);
                 stepPassedWithScreenshot("Successfully added notes Observation "+notesvalue);
             }
-
-
         }
+
         if(addLinkedTest){
             switchToDefaultContext();
             switchToFrame(iframeInfoObservation);
             findOne(linkedTestSetItem,linkedTest);
-
-
         }
 
         switchToDefaultContext();
@@ -245,6 +292,7 @@ public class PathCareProcessingPage extends AbstractPage {
         switchToFrame(iframeProcessing);
         click(completeButton);
     }
+
 
     public void phonequeue() throws InterruptedException {
         switchToDefaultContext();
@@ -306,75 +354,87 @@ public class PathCareProcessingPage extends AbstractPage {
     }
 
 
-    public void SingleProcessingTestSet(String organism,String organisms,String comments, String[] testresults) throws InterruptedException {
+    public void SingleProcessingTestSet(String organism,String organisms,boolean addcomments,String comments, String[] testresults,boolean apply,boolean update) throws InterruptedException {
       int x= 0;
+        Thread.sleep(3000);
+        switchToDefaultContext();
+        switchToFrame(iframeProcessing);
 
-        for(WebElement element:find(organismText)){
-            element.clear();
-        }
+      if(testresults.length!=0) {
 
-        for(WebElement element:find(pinserttestreults)){
-            element.click();
-            Thread.sleep(4000);
-            organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s",testresults[x++]));
-            if(x==3) {
-                click(closelookup);
-                break;
+          for (WebElement element : find(organismText,10)) {
+              element.clear();
+          }
 
-            }
-            if(!validateElement_Enabled_Displayed(organismTextfield, 10)){
-                element.click();
-            }
-            Thread.sleep(4000);
-            click(organismTextfield);
-        }
+          for (WebElement element : find(pinserttestreults)) {
+              click(pathogentextbox);
+              element.click();
+              Thread.sleep(4000);
+              organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s", testresults[x++]));
+              if (x == 3) {
+                  click(closelookup);
+                  break;
+              }
+              while(!validateElement_Enabled_Displayed(organismTextfield, 10)) {
+                  _driver.findElement(pathogentextbox).sendKeys(Keys.TAB);
+                  element.click();
+              }
+              Thread.sleep(3000);
+              click(organismTextfield);
+          }
 
-        if (!organisms.isEmpty()){
-            if(validateElement_Displayed(closelookup)){
-                click(closelookup);
-            }
-            if(validateElement_Displayed(manglass)){
-                sendKeys(orgramismText,organisms);
-                if(validateElement_Displayed(closelookup)){
-                    click(closelookup);
-                   // click(manglass);
-                }
-                /*Thread.sleep(4000);
-                organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s", organisms));
-                click(organismTextfield);*/
-                click(applyTestResult);
-                Thread.sleep(3000);
-            }
+          if (!organisms.isEmpty()) {
+              if (validateElement_Displayed(closelookup)) {
+                  click(closelookup);
+              }
+              if (validateElement_Displayed(manglass)) {
+                  sendKeys(orgramismText, organisms);
+                  if (validateElement_Displayed(closelookup)) {
+                      click(closelookup);
+                      // click(manglass);
+                  }
+//                Thread.sleep(4000);
+//                organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s", organisms));
+//                click(organismTextfield);
+                  click(applyTestResult);
+                  Thread.sleep(3000);
+              }
 
-        }
+          }
+      }
 
         if(!organism.isEmpty()) {
-            click(organimMaginitglass);
+            Thread.sleep(3000);
+            click(pathogentextbox);
+            click(organimMaginitglass,10);
             organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s", organism));
-            click(organismTextfield);
+            click(organismTextfield,10);
             Thread.sleep(3000);
             click(applyTestResult);
-            Thread.sleep(3000);
+
         }
 
-
-            
         stepPassedWithScreenshot("Successfully Entered Results " + organism +" "+organisms);
         
         //Testing Comment
-        if(!comments.isEmpty()) {
+        if(addcomments) {
             testcomment(comments);
-        }else{
+        }else if(addcomments && comments.isEmpty()){
             testcomment("");
         }
-        Thread.sleep(5000);
 
+        Thread.sleep(3000);
 
-        click(applyTestResult);
-        
+        if(validateElement_Displayed(applyTestResult,10) && apply) {
+            click(applyTestResult, 10);
+            stepPassedWithScreenshot("Successfully updated Test Result");
+        }
 
-        click(updateTestResult);
-        stepPassedWithScreenshot("Successfully updated Test Result");
+        if(validateElement_Displayed(updateTestResult,10) && update){
+                click(updateTestResult,10);
+            stepPassedWithScreenshot("Successfully updated Test Result");
+        }
+
     }
 
     public void SingleProcessingTestSetWithReport(String organism,String organisms,String comments, String[] testresults) throws InterruptedException {
@@ -507,6 +567,37 @@ public class PathCareProcessingPage extends AbstractPage {
         speciemenR=specimenReceive.concat(".1");
 
     }
+    public void receiveReport() throws InterruptedException {
+        if(validateElement_Enabled_Displayed(reportpreview,10)) {
+            click(reportpreview, 10);
+            Thread.sleep(5000);
+        }else{
+            Assert.fail("Unable to click report preview");
+        }
+
+        if(waitForDisplayed()){
+            Set<String> currentWindow =  super._driver.getWindowHandles();
+            _driver.switchTo().window( switchToWindowHandleFirst(currentWindow,true));
+            fileChecker(dir);
+        }
+
+    }
+
+    public void applyandvalidateNoReport(){
+        Assert.assertTrue(validateElement_Displayed(applyTestResult));
+        click(applyTestResult,10);
+        if(validateElement_Displayed(notficationApply,10)){
+            stepPassedWithScreenshot("Successfully received  "+getText(notficationApply));
+        }else{
+            Assert.fail("Unable to receive notification results for Test set");
+        }
+
+        if(validateElement_Displayed(validateButton)){
+            click(validateButton);
+            stepPassedWithScreenshot("Successfully clicked validate button");
+
+        }
+    }
 
     private void reportPreview() throws InterruptedException {
         Assert.assertTrue(validateElement_Displayed(applyTestResult));
@@ -530,6 +621,7 @@ public class PathCareProcessingPage extends AbstractPage {
                 if(waitForDisplayed()){
                 Set<String> currentWindow =  super._driver.getWindowHandles();
                 _driver.switchTo().window( switchToWindowHandleFirst(currentWindow,true));
+                fileChecker(this.dir);
 
             }
 

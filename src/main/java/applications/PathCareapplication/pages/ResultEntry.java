@@ -49,6 +49,7 @@ public class ResultEntry extends AbstractPage {
     private final By testCommentswindowiframe = By.xpath("//iframe[@title]");
 
     private final  By acceptCommentbutton = By.xpath("//input[@id='accept1']");
+    private final By authoriseButton = By.xpath("//input[@id='authorise1']");
     private final  By worklistbutton = By.xpath("//button[text()='Work List']");
     private final By saveSearchlink = By.xpath("//a[text()='Save Search']");
     private final By descriptionSaveSearch = By.xpath("//input[@name='SRCHDesc']");
@@ -77,6 +78,8 @@ public class ResultEntry extends AbstractPage {
     private By espiodeNumberLink = By.xpath("//a[@id='LBEPNumber']");
 
     private By requiredfieldblackbox = By.xpath("//span[contains(@title,'Required')]");
+
+    private By selectSingletest= By.xpath("");
 
     private By  episodeNumber;
    private  String desc = "";
@@ -170,9 +173,29 @@ public class ResultEntry extends AbstractPage {
         }
 
         stepPassedWithScreenshot("Successfully Entered the Results");
-        reportPreview();
+        if(!extrfield) {
+            reportPreview();
+        }
+    }
+    public void authorise(){
 
+        switchToDefaultContext();
+        switchToFrame(resultEntryiFrame);
+        if(validateElement_Enabled_Displayed(authoriseButton,10)) {
+            click(authoriseButton);
+            if(validateElement_Displayed(notficationApply,10)){
+                stepPassedWithScreenshot("Successfully received  "+getText(notficationApply));
+            }else{
+                Assert.fail("Unable to receive a notification");
+            }
+        }else{
+            Assert.fail("Unable to click a authorise Button");
+        }
 
+    }
+    public void singleLabResultsTestSetNameEntry(String testSetName){
+        selectSingletest = By.xpath("//span[text()='%s']".replace("%s",testSetName));
+        click(selectSingletest,5);
     }
     public void singleTestsetCommentWithoutReport(String singleLabespido, String testresult,String comment){
         numberfiles =1;
@@ -190,11 +213,10 @@ public class ResultEntry extends AbstractPage {
     public void selectTestSetResultlist(String testSet){
         click(By.xpath("//span[text()='%s']".replace("%s", testSet)));
         stepPassedWithScreenshot("Successfully clicked "+testSet);
-
     }
 
     public Boolean checkvaluesTestResults(HashMap<String,String> testlistResult,String testSet){
-        Boolean results =false;
+        boolean results =false;
         click(By.xpath("//span[text()='%s']".replace("%s", testSet)));
         stepPassedWithScreenshot("Successfully clicked "+testSet);
         switchToFrame(resultEntryiFrame);
@@ -293,7 +315,7 @@ public class ResultEntry extends AbstractPage {
 
     }
 
-    public void mutipleTestsetCommentWithoutReport(String singleLabespido, String[] testresult, String comment, Boolean extrfield) throws InterruptedException {
+    public void mutipleTestsetCommentWithoutReport(String singleLabespido, String[] testresult, String comment, Boolean extrfield,Boolean apply) throws InterruptedException {
 
         numberfiles =1;
         LabResultsEntry(singleLabespido);
@@ -301,12 +323,15 @@ public class ResultEntry extends AbstractPage {
         if(!comment.isEmpty()||!comment.contentEquals("")){
         comments(comment);}
         labEntryTestSpecialHandlinglist(testresult,extrfield);
+        switchToDefaultContext();
         switchToFrame(resultEntryiFrame);
-        applyResultOnly();
+        if(apply) {
+            applyResultOnly();
+        }
 
     }
 
-    private void applyResultOnly(){
+    public void applyResultOnly(){
         Assert.assertTrue(validateElement_Displayed(applyTestResult));
         click(applyTestResult,10);
         if(validateElement_Displayed(notficationApply,10)){
@@ -319,16 +344,22 @@ public class ResultEntry extends AbstractPage {
         click(espiodeNumberLink);
     }
     public void  onlyapplyandvalidate(){
-        Assert.assertTrue(validateElement_Displayed(applyTestResult));
-        click(applyTestResult,10);
-        if(validateElement_Displayed(notficationApply,10)){
-            stepPassedWithScreenshot("Successfully received  "+getText(notficationApply));
-        }else{
-            Assert.fail("Unable to receive notification results for Test set");
+        if(validateElement_Displayed(applyTestResult)) {
+            Assert.assertTrue(validateElement_Displayed(applyTestResult));
+            click(applyTestResult, 10);
+
+            if(validateElement_Displayed(notficationApply,10)){
+                stepPassedWithScreenshot("Successfully received  "+getText(notficationApply));
+            }else{
+                Assert.fail("Unable to receive notification results for Test set");
+            }
         }
-        if(validateElement_Displayed(validate)) {
+
+        if(validateElement_Displayed(validate,10)) {
             click(validate);
-            stepPassedWithScreenshot("Successfully received  "+getText(notficationApply));
+            stepPassedWithScreenshot("Successfully received  "+getText(notficationApply,5));
+        }else{
+            Assert.fail("Unable to receive notification to validate");
         }
     }
 

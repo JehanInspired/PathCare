@@ -23,7 +23,7 @@ public class SingleProcess extends AbstractPage {
     private final By updateTestResult = By.xpath("//input[@id='update1']");
     private final By orgramismText = By.xpath("//input[@id='LBTSI_Valuez1']");
     private final By div = By.xpath("//div");
-
+    private final By pathogentextbox = By.xpath("//input[contains(@id,'DRz1') and (not(contains(@type,'hidden')))]");
     private final By organismText = By.xpath("//div[contains(@id,'LBTSIValue')]/p");
     private By organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']");
     private final By closelookup = By.xpath("//span[@id='OverlayCloseLookupOverlayDiv']");
@@ -39,6 +39,7 @@ public class SingleProcess extends AbstractPage {
         }
 
         for (WebElement element : find(pinserttestreults)) {
+            click(pathogentextbox);
             element.click();
             Thread.sleep(4000);
             organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s", testresults[x++]));

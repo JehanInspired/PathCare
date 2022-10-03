@@ -53,6 +53,8 @@ public class LabQueues extends AbstractPage {
     private final By testSetSingleCollectionSingle = By.xpath("//a[text()='Single']");
     private final By secondrow = By.xpath("//a[text()='Single']");
 
+
+
     private final By allsingle = By.xpath("//a[not(@disabled) and(not(contains(@class,'disabled'))) and(not(contains(.,'display: none'))) and (text()='Single')]");
     private final By allEpisode = By.xpath("//a[not(@disabled) and(not(contains(@class,'disabled'))) and(not(contains(.,'display: none'))) and (text()='Episode')]");
     private final By lastavailable = By.xpath("//a[@id='nextAvailable']");
@@ -187,7 +189,7 @@ public class LabQueues extends AbstractPage {
         }
         switchToDefaultContext();
         switchToFrame(switchiFrame);
-        clinicalResultEpisode = By.xpath("//label[contains(text(),'%s')]".replace("%s",labespide));
+        clinicalResultEpisode = By.xpath("//label[not(@disabled) and text()='%s']".replace("%s",labespide));
         List<String> texts;
         if(validateElement_Displayed(clinicalResultEpisode)) {
             texts = getAllElementText(clinicalResultEpisode, 10);
@@ -199,7 +201,48 @@ public class LabQueues extends AbstractPage {
 
             return value;
         }else{
-            Assert.fail("Unable to view  "+labespide +"on lab queues");
+            Assert.fail("Unable to view  "+labespide +" on lab queues");
+        }
+
+
+        return null;
+    }
+
+    public String findresultonlistsearch(String labespide, boolean clicklastElementList, int totalrow, boolean single){
+        switchToDefaultContext();
+        switchToFrame(switchiFrame);
+        selecSearch(totalrow);
+
+        switchToDefaultContext();
+        switchToFrame(switchiFrame);
+        clinicalResultEpisode = By.xpath("//label[not(@disabled) and text()='%s']".replace("%s",labespide));
+          while(!validateElement_Enabled_Displayed(clinicalResultEpisode)){
+              switchToDefaultContext();
+              switchToFrame(switchiFrame);
+              //next page
+              if(validateElement_Enabled_Displayed(nextpagequeue,5)) {
+                  click(nextpagequeue);
+              }else{
+                  break;
+              }
+              switchToDefaultContext();
+              switchToFrame(switchiFrame);
+            }
+
+        switchToDefaultContext();
+        switchToFrame(switchiFrame);
+
+        List<String> texts;
+        if(validateElement_Displayed(clinicalResultEpisode)) {
+            texts = getAllElementText(clinicalResultEpisode, 10);
+            stepPassedWithScreenshot("Successfully received Episode "+texts.get(0));
+            String value = texts.get(0);
+            if(clicklastElementList){
+                clickEspiodeElement(single,texts.get(0));
+            }
+            return value;
+        }else{
+            Assert.fail("Unable to view  "+labespide +" on lab queues");
         }
 
 
@@ -354,10 +397,10 @@ public class LabQueues extends AbstractPage {
 
     public void navigateTestSet(){
 
-        if(validateElement_Enabled_Displayed(labInstrumentResultGenerator)){
+        if(validateElement_Enabled_Displayed(labInstrumentResultGenerator,10)){
             click(labInstrumentResultGenerator,10);
         }else{
-            click(testmenu);
+            click(testmenu,10);
             click(labInstrumentResultGenerator,10);
         }
 

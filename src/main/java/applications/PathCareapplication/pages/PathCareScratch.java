@@ -58,7 +58,7 @@ public class PathCareScratch extends AbstractPage {
 
     public  String testset ="";
 
-    public String collectiondetailnew(String collectiontime, String[] testsetcollection, Boolean specimenSelect)  {
+    public String collectiondetailnew(String collectiontime, String[] testsetcollection, Boolean specimenSelect) {
        //click(iconPatientSearch);
         sendKeys(patientSearchSelect,"2100");
         super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
@@ -88,7 +88,8 @@ public class PathCareScratch extends AbstractPage {
 
             }else if(specimenSelect){
                 click(backtoLabEpisodeNav);
-                click(linkSelectSpecimen);
+                click(linkSelectSpecimen,10);
+                switchToDefaultContext();
                 switchToFrame(switchiFrame);
                for(WebElement element:find(tickboxSpecimens)){
                    element.click();
@@ -143,7 +144,7 @@ public class PathCareScratch extends AbstractPage {
     }
 
 
-    public List<String> mutiplePatient(Faker faker,String[] testcollection,Boolean specimenSelect, int numberPatient){
+    public List<String> mutiplePatient(Faker faker,String[] testcollection,Boolean specimenSelect, int numberPatient) throws InterruptedException {
         List<String> labEspideonumber = new ArrayList<>();
         for(int x=0;x<=numberPatient-1;x++){
             patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());

@@ -74,11 +74,11 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractPage {
         Thread.sleep(3000);
 
         for(String value:testitems.keySet()){
-            By testitem = By.xpath("//label[text()='"+value+"']");
+            By testitem = By.xpath("//label[contains(text(),'"+value+"')]");
 
             if(!validateElement_Displayed(testitem)){
                 while(!validateElement_Displayed(testitem)){
-                    click(nextpage);
+                    click(nextpage,10);
                 }
             }
 
