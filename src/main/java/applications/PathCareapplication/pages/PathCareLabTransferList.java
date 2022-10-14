@@ -2,14 +2,12 @@ package applications.PathCareapplication.pages;
 
 import Roman.Roman;
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
+import org.openqa.selenium.*;
 import selenium.AbstractPage;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 public class PathCareLabTransferList extends AbstractPage {
 
@@ -52,6 +50,7 @@ public class PathCareLabTransferList extends AbstractPage {
   private By iframeSaveSearch = By.name("TRAK_info");
     private final By searchResultTitle = By.xpath("//label[@id='SRCHDesc']");
     private String description= "";
+    private String url = "";
 
   public String shipmentNumber = "";
 
@@ -149,6 +148,18 @@ public class PathCareLabTransferList extends AbstractPage {
       stepPassedWithScreenshot("Successfully clicked closed shipment");
 
   }
+  public void url(String testName) throws MalformedURLException {
+      try (BufferedInputStream in = new BufferedInputStream(new URL(_driver.getCurrentUrl()).openStream());
+           FileOutputStream fileOutputStream = new FileOutputStream(testName+".pdf")) {
+          byte dataBuffer[] = new byte[1024];
+          int bytesRead;
+          while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+              fileOutputStream.write(dataBuffer, 0, bytesRead);
+          }
+      } catch (IOException e) {
+          // handle exception
+      }
+  }
 
     public void createShipment(Collection<ArrayList<String>> specimenNumbers){
         click(selectallspecimen);
@@ -172,6 +183,7 @@ public class PathCareLabTransferList extends AbstractPage {
     }
 
   public void closePackage(){
+    switchToDefaultContext();
     click(closepacksession);
     acceptAlert();
   }
@@ -246,14 +258,9 @@ public class PathCareLabTransferList extends AbstractPage {
     }
 
 
-
-
-
     public boolean waitForDisplayed() {
         return  false;
     }
-
-
 
 
 

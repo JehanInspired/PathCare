@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
 public class PathCareLabSpecimenReception extends AbstractPage {
 
 
@@ -25,16 +26,13 @@ public class PathCareLabSpecimenReception extends AbstractPage {
     private final By textEpisode = By.xpath("//label[@name='LabEpisodeNumber']");
 
     private final By tobereceivedcontain = By.xpath("//label[@id='SpecimenNumberTBRz1']");
+
     public ArrayList<String> specimenNumbers = new ArrayList<>();
-
     public HashMap<String,ArrayList<String>> mutlipleSpeicmen = new HashMap<>();
-
-
-
-
 
     public String entryMultipleLabspecimenSingleReception(String labspecnumber, int number){
         switchToFrame(specimenframe);
+
             for (int x = 1; x <= number; x++) {
                 String value = labspecnumber.concat("-".concat(String.valueOf(x)));
 
@@ -45,8 +43,8 @@ public class PathCareLabSpecimenReception extends AbstractPage {
                     break;
                 }
                 specimenNumbers.add(value);
-            }
 
+            }
 
         click(specimenNumberUpdateButton);
         for(String value:specimenNumbers){
@@ -59,32 +57,39 @@ public class PathCareLabSpecimenReception extends AbstractPage {
 
     }
 
-    public HashMap<String, ArrayList<String>> mutlipleSpeicmen_Patientmultiple(List<String> labspecnumber, int numtestset){
 
+    public HashMap<String, ArrayList<String>> mutlipleSpeicmen_Patientmultiple(List<String> labspecnumber){
+
+        switchToDefaultContext();
         switchToFrame(specimenframe);
+        int numtestset = 1;
 
         for(String labepsiode : labspecnumber) {
+
             for (int x = 1; x <= numtestset; x++) {
                 String lapnumberspecimen = labepsiode.concat("-".concat(String.valueOf(x)));
                 findOne(specimenNumberText, lapnumberspecimen);
                 stepPassedWithScreenshot("Successfully Entered Lab Specimen under Lab episode: " + lapnumberspecimen);
                 specimenNumbers.add(lapnumberspecimen);
+                int numberSpeicmen = find(By.xpath("//label[contains(text(),'%s')]".replace("%s",labepsiode+"-"))).size();
+                if(numberSpeicmen!=0 && x==1){
+                    numtestset=numberSpeicmen;
+                }
 
-                if (!validateElement_Enabled_Displayed(tobereceivedcontain)) {
+                if(!validateElement_Enabled_Displayed(tobereceivedcontain)) {
                     click(specimenNumberUpdateButton);
                     mutlipleSpeicmen.put(labepsiode, specimenNumbers);
                     break;
                 }
-                if (validateElement_Enabled_Displayed(specimenNumberUpdateButton)) {
-                    click(specimenNumberUpdateButton);
-                } else {
-                    Assert.fail("Unable to Update Update Lab Specimen");
-                }
 
+                if (!validateElement_Enabled_Displayed(specimenNumberUpdateButton)) {
+                    Assert.fail("Unable to Update Lab Specimen");
+                }
+               // specimenNumbers.add(getText(By.xpath("//label[@id='TestSetListz']".replace("TestSetListz","TestSetListz"+x)),10));
                 mutlipleSpeicmen.put(labepsiode, specimenNumbers);
 
-
             }
+
             specimenNumbers = new ArrayList<>();
         }
 
@@ -96,8 +101,6 @@ public class PathCareLabSpecimenReception extends AbstractPage {
 
         return mutlipleSpeicmen;
     }
-
-
 
 
     public void redoentryLabspecimen(String labspecnumber){

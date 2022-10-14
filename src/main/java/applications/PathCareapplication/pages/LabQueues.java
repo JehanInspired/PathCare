@@ -4,9 +4,7 @@ import Roman.Roman;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
 import selenium.AbstractPage;
-
 import java.util.*;
 
 public class LabQueues extends AbstractPage {
@@ -24,7 +22,6 @@ public class LabQueues extends AbstractPage {
     private final By switchiFrame = By.xpath("//iframe[@id='TRAK_main']");
 
     private final By deparmentlist = By.xpath("//select[@id='DepartmentList']");
-    private final By findbutton = By.xpath("//input[@name='find1']");
     private final By testSetLabSite = By.xpath("//input[@id='TestSetLabSite']");
     private final By findbuttonLab = By.xpath("//input[@id='find1']");
     private final By saveSearch = By.xpath("//a[@id='SaveSearch']");
@@ -41,16 +38,13 @@ public class LabQueues extends AbstractPage {
     private  final By totalResults2 = By.xpath("//a[@id='totalCountz2']");
     private  final By totalResults3 = By.xpath("//a[@id='totalCountz3']");
     private  final By totalResults4 = By.xpath("//a[@id='totalCountz4']");
+    private  final By totalResults5 = By.xpath("//a[@id='totalCountz4']");
+    private final By totalResults6 = By.xpath("//a[@id='totalCountz6']");
     private  final By maxfailures1 = By.xpath("//a[@id='MaxTimeFailureCountz1']");
     private  final By maxfailures2 = By.xpath("//a[@id='MaxTimeFailureCountz2']");
     private  final By maxfailures3 = By.xpath("//a[@id='MaxTimeFailureCountz3']");
-    private final By tableSearchResult = By.xpath("//table[@name='tLBVerificationQueueGrid_List']");
     private final By searchResultTitle = By.xpath("//label[@id='SRCHDesc']");
-
-    private final By tableLabquery = By.xpath("//table[@id='tLBVerificationQueueGrid_List']");
-    private final By testSetEditCollection = By.xpath("//a[contains(text(),'Single')]");
     private final By mainmenu = By.xpath("//a//md-icon[@title='Main Menu']");
-    private final By testSetSingleCollectionSingle = By.xpath("//a[text()='Single']");
     private final By secondrow = By.xpath("//a[text()='Single']");
 
 
@@ -146,6 +140,7 @@ public class LabQueues extends AbstractPage {
     public void searchResults(String queueTypeSelected,String department,String testSetStat) throws InterruptedException {
         switchToDefaultContext();
         Thread.sleep(4000);
+
         switchToFrame(switchiFrame);
 
         if(!queueTypeSelected.isEmpty()) {
@@ -172,9 +167,11 @@ public class LabQueues extends AbstractPage {
             case 2 -> click(totalResults2);
             case 3 -> click(totalResults3);
             case 4 -> click(totalResults4);
-            case 5 -> click(maxfailures1);
-            case 6 -> click(maxfailures2);
-            case 7 -> click(maxfailures3);
+            case 5 -> click(totalResults5);
+            case 6 -> click(totalResults6);
+            case 7 -> click(maxfailures1);
+            case 8 -> click(maxfailures2);
+            case 9 -> click(maxfailures3);
             default -> Assert.fail("Unable to find the row");
         }
     }
@@ -360,7 +357,6 @@ public class LabQueues extends AbstractPage {
             webElementList.get(number).click();
         }
 
-
     }
 
 
@@ -391,8 +387,8 @@ public class LabQueues extends AbstractPage {
     }
 
     public void navigatetoToolBox(){
-        click(mainmenu);
-        click(toolbox);
+        click(mainmenu,10);
+        click(toolbox,10);
     }
 
     public void navigateTestSet(){
@@ -400,35 +396,11 @@ public class LabQueues extends AbstractPage {
         if(validateElement_Enabled_Displayed(labInstrumentResultGenerator,10)){
             click(labInstrumentResultGenerator,10);
         }else{
-            click(testmenu,10);
+            click(testmenu,15);
             click(labInstrumentResultGenerator,10);
         }
 
     }
-
-    public String findlastresultlist(String labespide,String description){
-
-        List<String> value = getAllElementText(tableLabquery);
-
-        click(totalResults);
-        while(validateElement_Enabled_Displayed(nextpagequeue,5)){
-            click(nextpagequeue);
-        }
-        switchToDefaultContext();
-        switchToFrame(switchiFrame);
-        clinicalResultEpisode = By.xpath("//label[contains(text(),'%s')]".replace("%s",labespide));
-        List<String> texts = getAllElementText(clinicalResultEpisode,10);
-
-        if(texts.size()<=1){
-            stepPassedWithScreenshot("Successfully received Episode "+texts.get(0));
-            return texts.get(0);
-
-        }
-
-        return null;
-
-    }
-
 
     public void setSwitchiframeEdit(){
         switchToDefaultContext();
@@ -442,9 +414,6 @@ public class LabQueues extends AbstractPage {
 
     }
 
-
-
-
     @Override
     protected String get_uri() {
         return null;
@@ -454,8 +423,6 @@ public class LabQueues extends AbstractPage {
     public boolean waitForDisplayed() {
         return false;
     }
-
-
 
 
 }

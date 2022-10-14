@@ -151,11 +151,12 @@ public class ResultEntry extends AbstractPage {
         switchToFrame(resultEntryiFrame);
         int x =0;
 
-        for(WebElement element:find(inputTestresult ,5)){
+        for(WebElement element:find(searchTestresultEntry ,5)){
             if(element.isEnabled() && element.isDisplayed()) {
+                element.click();
+                labresultTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s",testresult[x]));
+                click(labresultTextfield);
                 Thread.sleep(5000);
-                element.sendKeys(testresult[x]);
-                        element.sendKeys(Keys.TAB);
                 x++;
             }
         }
@@ -182,6 +183,7 @@ public class ResultEntry extends AbstractPage {
         switchToDefaultContext();
         switchToFrame(resultEntryiFrame);
         if(validateElement_Enabled_Displayed(authoriseButton,10)) {
+            stepInfoWithScreenshot("Able to view Results Entry");
             click(authoriseButton);
             if(validateElement_Displayed(notficationApply,10)){
                 stepPassedWithScreenshot("Successfully received  "+getText(notficationApply));
@@ -340,24 +342,30 @@ public class ResultEntry extends AbstractPage {
 
     }
 
-  private void interactEspiodeNumber(){
+  public void interactEspiodeNumber(){
         click(espiodeNumberLink);
     }
-    public void  onlyapplyandvalidate(){
-        if(validateElement_Displayed(applyTestResult)) {
-            Assert.assertTrue(validateElement_Displayed(applyTestResult));
-            click(applyTestResult, 10);
+    public void  onlyapplyandvalidate(boolean onlyValidate){
 
-            if(validateElement_Displayed(notficationApply,10)){
-                stepPassedWithScreenshot("Successfully received  "+getText(notficationApply));
-            }else{
-                Assert.fail("Unable to receive notification results for Test set");
-            }
-        }
+      if(!onlyValidate) {
+          if (validateElement_Displayed(applyTestResult)) {
+              Assert.assertTrue(validateElement_Displayed(applyTestResult));
+              click(applyTestResult, 10);
+
+              if (validateElement_Displayed(notficationApply, 10)) {
+                  stepPassedWithScreenshot("Successfully received " + getText(notficationApply));
+
+              } else {
+                  Assert.fail("Unable to receive notification results for Test set");
+              }
+          }
+      }
 
         if(validateElement_Displayed(validate,10)) {
+            stepInfoWithScreenshot("Able to view Results Entry");
             click(validate);
-            stepPassedWithScreenshot("Successfully received  "+getText(notficationApply,5));
+            stepPassedWithScreenshot("Successfully received "+getText(notficationApply,5));
+            stepPassedWithScreenshot("Successfully clicked validate button");
         }else{
             Assert.fail("Unable to receive notification to validate");
         }
@@ -496,15 +504,16 @@ public class ResultEntry extends AbstractPage {
 
 
 
-    public int fileChecker(String dir){
+    public int fileChecker(String dir, String testname){
         File file = new File(dir);
         int x = 0;
 
      long endTime = System.nanoTime() + TimeUnit.NANOSECONDS.convert(15, TimeUnit.SECONDS);
         while(System.nanoTime() < endTime) {
-                for (String files : file.list()) {
-                    if (files.contains(".pdf")) {
+                for (File files : file.listFiles()) {
+                    if (files.getName().contains(".pdf")) {
                         x++;
+                        files.renameTo(new File(dir+testname+x+".pdf"));
                         stepInfo("Checking pdf reporting files");
                     }else if(x==numberfiles){
                         stepPassed("Successfully received files ");
@@ -513,7 +522,6 @@ public class ResultEntry extends AbstractPage {
                 }
         }
         return x;
-
     }
 
     public void findOne(By by, String input) {
@@ -544,14 +552,12 @@ public class ResultEntry extends AbstractPage {
 
     }
 
-   /* public boolean waitforDisplayed(By elment, int index){
-
-        if(find(elment).get(index).isDisplayed()){
-            return true;
-        }
-
-         return false;
-    }*/
+   public String urlString(){
+        WebElement pdfviewer = findOne(By.xpath("//pdf-viewer[@id='viewer']"));
+       JavascriptExecutor jExecutor = (JavascriptExecutor) this._driver;
+       WebElement shadowRoot = (WebElement)(jExecutor.executeScript("return arguments[0].shadowRoot", pdfviewer));
+      return shadowRoot.findElement(By.xpath("//embed[@original-url]")).getAttribute("original-url");
+    }
 
     public String switchToWindowHandleFirst(Set<String> windows, boolean firstorsecond){
         int counter =0;

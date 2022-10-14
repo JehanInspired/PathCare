@@ -33,7 +33,6 @@ public class PathCareProcessingPage extends AbstractPage {
     private final By addObervation = By.xpath("//a[contains(@id,'AddObservation')]");
     private final By obervationSelection = By.xpath("//input[contains(@id,'LBPTOObservationDR')]");
 
-    private final By testLinkDepartment = By.xpath("//a[contains(@id,'TabDepartmentID11')]");
 
     private final By pinserttestreults = By.xpath("//img[contains(@id,'Value')]");
     private final By applyTestResult = By.xpath("//input[@id='apply1']");
@@ -52,9 +51,9 @@ public class PathCareProcessingPage extends AbstractPage {
 
     private final By titlespecimenNumber = By.xpath("LBPTMMaterialNumber");
     private final By orgramismText = By.xpath("//input[@id='LBTSI_Valuez1']");
-    private  By div = By.xpath("//div");
+    private final  By div = By.xpath("//div");
 
-    private By organismText = By.xpath("//div[contains(@id,'LBTSIValue')]/p");
+    private final By organismText = By.xpath("//div[contains(@id,'LBTSIValue')]/p");
     private By organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']");
     private By LookupTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']");
 
@@ -96,6 +95,7 @@ public class PathCareProcessingPage extends AbstractPage {
     private By antibioticsPanel = By.xpath("//img[contains(@id,'AntibioticPanel')]");
     private By addAntibioticsPanel = By.xpath("//input[contains(@id,'add') and (not(contains(@type,'hidden')))]");
     private By antibioticsPanelTextbox = By.xpath("//input[contains(@id,'AntibioticPanel') and (not(contains(@type,'hidden'))) ]");
+
 
     private By tableListSearch = By.xpath("//table[@id='tblLookup']");
     public String speciemenR = "";
@@ -174,44 +174,40 @@ public class PathCareProcessingPage extends AbstractPage {
         findOne(inputScantextfield,specimenReceive);
     }
 
-    public void antibioticsPanel(String value){
+    public void antibioticsPanel(String value) throws InterruptedException {
 
         if(validateElement_Displayed(antibioticslink)){
             click(antibioticslink);
         }
         switchToDefaultContext();
         switchToFrame(iframeInfoObservation);
-        sendKeys(antibioticsPanelTextbox,value);
+        if(validateElement_Enabled_Displayed(antibioticsPanel,10)){
+            click(antibioticsPanel);
+        }else{
+            Thread.sleep(4000);
+            try {
+                    acceptAlert();
+                    click(antibioticsPanel);
+                }catch (NoAlertPresentException ignore){
+                    click(antibioticsPanel);
+                }
+        }
+
         By antibioticsList = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s",value));
         if(validateElement_Enabled_Displayed(tableListSearch)){
             click(antibioticsList);
-
-        }else{
-            while (findOne(antibioticsPanelTextbox).getAttribute("value").isBlank()){
-                    sendKeys(antibioticsPanelTextbox,value);
-            }
-            click(antibioticsList);
+            click(addAntibioticsPanel);
+            stepInfoWithScreenshot("Added "+value +" on Antibiotic list");
         }
 
-            try{
-                acceptAlert();
-                click(addAntibioticsPanel);
-            }catch (NoAlertPresentException ignore){
-                click(addAntibioticsPanel);
-            }
 
-            try {
-                while (!findOne(antibioticsPanelTextbox).getAttribute("value").isBlank()) {
+            /*try {
 
-                    acceptAlert();
-                    click(addAntibioticsPanel);
+                     acceptAlert();
                 }
                 }catch (NoAlertPresentException ignore){
-                    click(addAntibioticsPanel);
-                }
 
-
-
+                }*/
             stepInfo("Entered Antibiotic Panel "+value);
     }
 
@@ -577,8 +573,8 @@ public class PathCareProcessingPage extends AbstractPage {
 
         if(waitForDisplayed()){
             Set<String> currentWindow =  super._driver.getWindowHandles();
-            _driver.switchTo().window( switchToWindowHandleFirst(currentWindow,true));
-            fileChecker(dir);
+            _driver.switchTo().window(switchToWindowHandleFirst(currentWindow,true));
+            fileChecker(dir,_testName+"-");
         }
 
     }
@@ -621,10 +617,9 @@ public class PathCareProcessingPage extends AbstractPage {
                 if(waitForDisplayed()){
                 Set<String> currentWindow =  super._driver.getWindowHandles();
                 _driver.switchTo().window( switchToWindowHandleFirst(currentWindow,true));
-                fileChecker(this.dir);
+                fileChecker(this.dir,_testName+"-");
 
             }
-
 
         }
     }
@@ -657,25 +652,25 @@ public class PathCareProcessingPage extends AbstractPage {
 
     }
 
-    public int fileChecker(String dir){
-
+    public int fileChecker(String dir, String testname){
         File file = new File(dir);
         int x = 0;
 
         long endTime = System.nanoTime() + TimeUnit.NANOSECONDS.convert(15, TimeUnit.SECONDS);
         while(System.nanoTime() < endTime) {
-            for (String files : Objects.requireNonNull(file.list())) {
-                if (files.contains(".pdf")) {
+            for (File files : file.listFiles()) {
+                if (files.getName().contains(".pdf")) {
                     x++;
+                    files.renameTo(new File(dir+testname+x+".pdf"));
                     stepInfo("Checking pdf reporting files");
-                }else if(x==numberfiles){
-                    stepPassed("Successfully received files ");
-                    return x;
                 }
+            }
+            if(x==numberfiles){
+                stepPassed("Successfully received files ");
+                return x;
             }
         }
         return x;
-
     }
 
 
@@ -703,7 +698,6 @@ public class PathCareProcessingPage extends AbstractPage {
 
         WebDriverWait wait = new WebDriverWait(super._driver,30L);
         wait.pollingEvery(Duration.ofSeconds(10L));
-        return wait.until(EventFiringWebDriver::new).getWindowHandles().size() == 2 && fileChecker(this.dir) == this.numberfiles;
-
+        return wait.until(EventFiringWebDriver::new).getWindowHandles().size() == 2 && fileChecker(this.dir,_testName+"_") == this.numberfiles;
     }
 }

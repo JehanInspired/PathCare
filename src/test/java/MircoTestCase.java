@@ -49,7 +49,8 @@ public class MircoTestCase extends RomanBase {
     public void cleanUp(){
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.logoff();
-        roman().Dispose();
+        roman._driver.close();
+        roman._driver.quit();
     }
 
     @Test
@@ -62,7 +63,7 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture JEFFREY");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,true,1);
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,true,1,true );
         Assertions.assertFalse(labespides.isEmpty());
 
 
@@ -80,14 +81,14 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,true,1);
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,true,1,true );
 
         //Specimen Receive
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
-        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides,testcollection.length);
+        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides);
         pathCare.pre_analytical.switchtoMainiFrame();
 
         //Work Receive
@@ -109,9 +110,6 @@ public class MircoTestCase extends RomanBase {
 
     }
 
-
-
-
     @Test
     public void TP_50() throws Exception{
 
@@ -124,14 +122,14 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture JEFFREY");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,1);
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,1,true );
 
         //Specimen Receive
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PC Lab Assistant Jby");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
-        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides,testcollection.length);
+        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides);
         pathCare.pre_analytical.switchtoMainiFrame();
 
 
@@ -165,7 +163,7 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
-        HashMap<String, ArrayList<String>> mutlipleSpeicmen_patientmultiple = pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides,testcollection.length);
+        HashMap<String, ArrayList<String>> mutlipleSpeicmen_patientmultiple = pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides);
 
         //Work Receive
         pathCare.pre_analytical.switchtoMainiFrame();
@@ -266,7 +264,7 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,1);
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,1,true );
 
 
         //Specimen Receive
@@ -274,7 +272,7 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
-        HashMap<String, ArrayList<String>> mutlipleSpeicmen_patientmultiple = pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides,testcollection.length);
+        HashMap<String, ArrayList<String>> mutlipleSpeicmen_patientmultiple = pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides);
 
 
         //Work Receive
@@ -307,7 +305,6 @@ public class MircoTestCase extends RomanBase {
     public void TP_53() throws Exception{
         Faker faker = new Faker();
         SuperSetTesCSF superSetTesCSF = new SuperSetTesCSF();
-        HashMap<String, List<String>> values = superSetTesCSF.value;
         String[] testcollection = new String[]{"MCCSF","MCCAG","MGSTREPP"};
 
         String[] dapartments = new String[]{"Microbiology"};
@@ -316,14 +313,14 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,true,1);
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,true,1,true );
 
         //Specimen Receive
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
-        HashMap<String, ArrayList<String>> mutlipleSpeicmen_patientmultiple = pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides,testcollection.length);
+        HashMap<String, ArrayList<String>> mutlipleSpeicmen_patientmultiple = pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides);
         pathCare.pre_analytical.switchtoMainiFrame();
 
         //Work Receive
@@ -352,7 +349,7 @@ public class MircoTestCase extends RomanBase {
         //Generate Test set
         pathCare.labQueues.navigatetoToolBox();
         pathCare.labQueues.navigateTestSet();
-        pathCare.pathCareLabIntrumentResultGeneratorpage.testitemListGroup(new SuperSetTestCSFTestItem().value,"Abbott Alinity ci George","Alinity Tests",mutlipleSpeicmen_patientmultiple.get(labespides.get(0)).get(0));
+        pathCare.pathCareLabIntrumentResultGeneratorpage.testItemListGroup(new SuperSetTestCSFTestItem().value,"Abbott Alinity ci George","Alinity Tests",mutlipleSpeicmen_patientmultiple.get(labespides.get(0)).get(0));
 
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.labQueues.navigatetoHomepage();
@@ -413,14 +410,14 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,true,1);
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,true,1,true );
 
         //Specimen Receive
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
-        HashMap<String, ArrayList<String>> mutlipleSpeicmen_patientmultiple = pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides,testcollection.length);
+        HashMap<String, ArrayList<String>> mutlipleSpeicmen_patientmultiple = pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides);
         pathCare.pre_analytical.switchtoMainiFrame();
 
         //Work Receive
@@ -449,7 +446,7 @@ public class MircoTestCase extends RomanBase {
         //Generate Test set
         pathCare.labQueues.navigatetoToolBox();
         pathCare.labQueues.navigateTestSet();
-        pathCare.pathCareLabIntrumentResultGeneratorpage.testitemListGroup(new SuperSetTestCSFTestItem().value,"Abbott Alinity ci George","Alinity Tests",mutlipleSpeicmen_patientmultiple.get(labespides.get(0)).get(0));
+        pathCare.pathCareLabIntrumentResultGeneratorpage.testItemListGroup(new SuperSetTestCSFTestItem().value,"Abbott Alinity ci George","Alinity Tests",mutlipleSpeicmen_patientmultiple.get(labespides.get(0)).get(0));
 
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.labQueues.navigatetoHomepage();
@@ -561,7 +558,6 @@ public class MircoTestCase extends RomanBase {
 
         pathCare.pathCareProcessingPage.SingleProcessingTestSet("","",false,"",new String[]{"Final","Growth present."," "},true,true);
         pathCare.pathCareProcessingPage.applyandvalidateNoReport();
-
 
         //Receiving Report
         pathCare.pre_analytical.switchtoMainiFrame();

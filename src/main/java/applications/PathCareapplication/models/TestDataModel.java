@@ -6,11 +6,6 @@ import java.io.File;
 
 public class TestDataModel {
     public Object labespode;
-    public String Stage;
-    public String code;
-    public String site;
-    public String securityGroup;
-    public String[] AccessProfile;
     public String testset;
     public String department;
     public String workArea;
@@ -19,6 +14,13 @@ public class TestDataModel {
     {
         this.labespode = labespodespecimen;
         this.testset = testset;
+        this.department = department;
+        this.workArea = workArea;
+    }
+
+    public TestDataModel(Object labespodespecimen, String workArea, String department)
+    {
+        this.labespode = labespodespecimen;
         this.department = department;
         this.workArea = workArea;
     }
@@ -43,10 +45,4 @@ public class TestDataModel {
         }
 
     }*/
-
-    public static TestDataModel getExampleModel(String name) throws Exception
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(new File(System.getProperty("user.dir")+"\\src\\main\\resources\\"+name+".json"), TestDataModel.class);
-    }
 }

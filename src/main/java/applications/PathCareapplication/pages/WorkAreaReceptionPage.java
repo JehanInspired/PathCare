@@ -22,6 +22,7 @@ public class WorkAreaReceptionPage extends AbstractPage {
     private final By resetbutton = By.xpath("//input[@id='reset']");
 
     private final By checkout = By.xpath("//input[@id='RemoveFromWorkArea']");
+    private final By tobereceivedcontain = By.xpath("//label[@id='SpecimenNumberTBRz1']");
 
     private final By checkin = By.xpath("//input[@id='update']");
     private final By reset = By.xpath("//input[@id='reset']");
@@ -53,12 +54,25 @@ public class WorkAreaReceptionPage extends AbstractPage {
         List<TestDataModel> testDataModelList = new ArrayList<>();
 
         //2
-
         for (ArrayList specimen : specimenNumbers) {
-            for (int x = 0; x <= specimen.size() - 1; x++) {
-
+            for (int x = 0; x <= 1; x++) {
 
                 testDataModelList.add(new TestDataModel(specimen.get(x), testcollections.length <= specimen.size() ? testcollections[0] : testcollections[x], "g", testcollections.length <= specimen.size() ? departments[0] : departments[x]));
+            }
+        }
+        return testDataModelList;
+
+    }
+
+    public List<TestDataModel> setupdataSpecimentMultiple(String[] departments, Collection<ArrayList<String>> specimenNumbers) {
+        List<TestDataModel> testDataModelList = new ArrayList<>();
+
+
+        for (ArrayList specimen : specimenNumbers) {
+            for (int x = 0; x <= specimen.size()-1; x++) {
+                //if(!"([a-z])|([A-Z])\\w+".matches(specimen.get(x).toString())) {
+                    testDataModelList.add(new TestDataModel(specimen.get(x), "g", departments[0]));
+               // }
             }
         }
         return testDataModelList;
@@ -74,7 +88,6 @@ public class WorkAreaReceptionPage extends AbstractPage {
 
             click(lookuprowselection);
             if (validateElement_Enabled_Displayed(workArea, 10)) {
-                //sendKeys(workArea, dataModel.workArea);
                 click(workAreaSearchbutton);
             }
             click(lookuprowselection);
@@ -87,7 +100,9 @@ public class WorkAreaReceptionPage extends AbstractPage {
             }
             if (checking && !checkingout) {
                 stepPassedWithScreenshot("Successfully updated Lab Specimen under Lab episode: " + dataModel.labespode);
-                click(checkin);
+                if(!validateElement_Enabled_Displayed(tobereceivedcontain)) {
+                    click(checkin);
+                }
             } else {
                 if (validateElement_Displayed(resetbutton) && validateElement_Enabled_Displayed(checkout)) {
                     stepPassedWithScreenshot("Available option : Reset & Check Out. " + dataModel.labespode);
@@ -96,11 +111,7 @@ public class WorkAreaReceptionPage extends AbstractPage {
                     checking = true;
                 }
             }
-
-
         }
-
-
         return checking;
     }
 
