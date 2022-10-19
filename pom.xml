@@ -22,7 +22,7 @@
     </repositories>
 
     <properties>
-        <maven.compiler.release>16</maven.compiler.release>
+        <maven.compiler.release>18</maven.compiler.release>
     </properties>
 
     <dependencies>

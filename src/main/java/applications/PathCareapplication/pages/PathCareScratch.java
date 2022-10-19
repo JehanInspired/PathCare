@@ -11,13 +11,14 @@ import org.openqa.selenium.WebElement;
 import selenium.AbstractPage;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PathCareScratch extends AbstractPage {
 
     private final By switchiFrame = By.xpath("//iframe[@name='TRAK_main']");
-
     private final By surnametextbox = By.xpath("//input[@name='PAPERName']");
     private final By givennametextbox = By.xpath("//input[@name='PAPERName2']");
     private final By findbutton = By.xpath("//button[text()='Find']");
@@ -79,6 +80,12 @@ public class PathCareScratch extends AbstractPage {
 
     private final By testSetTextfield = By.xpath("//div[@name='TestSet']/p");
     private final By acceptButtonEdit = By.xpath("//button[text()='Accept']");
+    private final By receivedDateTextBox = By.xpath("//input[@name='LBEPReceivedDate']");
+    private final By receivedTimeTextBox = By.xpath("//input[@name='LBEPReceivedTime']");
+
+    private final By loadingBar = By.xpath("//div[@class='bar']");
+
+    private final By bodydom = By.xpath("//body[@ng-app='tcApp']");
 
     private  By testdieditfield = By.xpath("//a[text()='%s']//following::md-input-container[@class='tcNumeric']//input[contains(@name,'QA')]");
 
@@ -139,6 +146,7 @@ public class PathCareScratch extends AbstractPage {
         sendKeys(patientSearchSelect,"2100");
         super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
         findEnterTab(collectionTime,collectiontime);
+        addReceivedDate(collectiontime);
         for (String testset:testsetcollection) {
             setTestset(testset);
             testCode = By.xpath("//span[text()='%s']".replace("%s",testset));
@@ -153,8 +161,9 @@ public class PathCareScratch extends AbstractPage {
                 click(specimenContainerSearch);
                 click(specimenContainerlookup);
 
-                Assert.assertTrue(validateElement_Enabled_Displayed(applybuttonSpecimenContainer));
+                Assert.assertTrue("Unable to click apply button on Specimen Container",validateElement_Enabled_Displayed(applybuttonSpecimenContainer));
                 click(applybuttonSpecimenContainer);
+                loadingBarChecker();
                 if(validateElement_Enabled_Displayed(selectlinkSpecimen)){
                     click(selectlinkSpecimen);
                     switchToFrame(switchiFrame);
@@ -176,8 +185,9 @@ public class PathCareScratch extends AbstractPage {
     }
 
     public String updateClientDetails(){
-        if(validateElement_Enabled_Displayed(updatebuton)) {
-            click(updatebuton, 5);
+        if(validateElement_Enabled_Displayed(updatebuton,10)) {
+            loadingBarChecker();
+            click(updatebuton, 15);
         } else {
             Assert.fail("Unable to receive Lap Episode Number");
         }
@@ -188,28 +198,47 @@ public class PathCareScratch extends AbstractPage {
 
         return labepsiode;
     }
-    public void specimenSelect() throws InterruptedException {
-        if(validateElement_Displayed(backtoLabEpisodeNav)){click(backtoLabEpisodeNav);}
-        Thread.sleep(4000);
+    public void loadingBarChecker(){
+        int x =5;
+        while(validateElement_Displayed(loadingBar,5)|| !validateElement_Displayed(bodydom,5)){
+            x--;
+            stepInfo("Page still loading");
+            if(x==0){
+                break;
+            }
+        }
+    }
+    public void specimenSelect(){
+       // if(validateElement_Displayed(backtoLabEpisodeNav)){click(backtoLabEpisodeNav);}
+        loadingBarChecker();
+        scrollToElement(linkSelectSpecimen);
         click(linkSelectSpecimen,10);
         switchToDefaultContext();
         switchToFrame(switchiFrame);
         for(WebElement element:find(tickboxSpecimens)){
             if(!element.isSelected()){
             element.click();
-            }
             stepPassedWithScreenshot("Selected specimen "+testset);
+            }
+
         }
         click(acceptSpecimens);
         stepPassedWithScreenshot("Accepted specimen "+testset);
         switchToDefaultContext();
     }
 
-    public void editTestSet(String name ,String value){
-       click(editPencil);
+    public void editTestSet(String name ,String value)  {
+       if(validateElement_Enabled_Displayed(editPencil,10)){
+           loadingBarChecker();
+           scrollToElement(editPencil);
+           click(editPencil,10);
+        }else{
+           Assert.fail("Unable to click Edit Pencil");
+       }
        testdieditfield = By.xpath("//a[text()='%s']//following::md-input-container[@class='tcNumeric']//input[contains(@name,'QA')]".replace("%s",name));
        sendKeys(testdieditfield,value);
-       click(acceptButtonEdit);
+       click(acceptButtonEdit,10);
+       loadingBarChecker();
 
     }
 
@@ -227,16 +256,26 @@ public class PathCareScratch extends AbstractPage {
     }
 
     public void patientdetails(String name, String surname, String dateBirth, String gender){
-        sendKeys(surnametextbox,name);
-        sendKeys(givennametextbox,surname);
+        validateElement_Enabled_Displayed(surnametextbox,15);
+        sendKeys(surnametextbox,name,10);
+        validateElement_Enabled_Displayed(givennametextbox,15);
+        sendKeys(givennametextbox,surname,10);
+        validateElement_Enabled_Displayed(findButton,15);
         click(findbutton);
-        stepPassedWithScreenshot("The Patient list screen appears with no list");
+        if(validateElement_Enabled_Displayed(newbutton,15)) {
+            stepPassedWithScreenshot("The Patient list screen appears with no list");
+        }
         click(newbutton);
         findEnterTab(gendertextbox,gender);
         findEnterTab(DateofBirth,dateBirth);
         click(DateofBirth);
         stepPassedWithScreenshot("User is directed to Lab Episode screen");
-        click(saveAndclose);
+        if(validateElement_Enabled_Displayed(saveAndclose,10)) {
+            click(saveAndclose);
+            loadingBarChecker();
+        }else{
+            Assert.fail("Unable to click save close button");
+        }
         stepPassedWithScreenshot("Successfully User is directed to Patient Registration screen" );
 
     }
@@ -253,29 +292,36 @@ public class PathCareScratch extends AbstractPage {
         for(int x=0;x<=numberPatient-1;x++){
             patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
             doctorSelection();
-            labEspideonumber.add(collectiondetailnew("n-1",testcollection,specimenSelect,updateClient ));
+            labEspideonumber.add(collectiondetailnew("n-1",testcollection,specimenSelect,updateClient));
         }
 
         return labEspideonumber;
     }
 
-    public void searchPatient(List<String> lapespido){
-        for(String value:lapespido){
+    public void addReceivedDate(String time){
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        findEnterTab(receivedDateTextBox, dateTimeFormatter.format(LocalDate.now()));
+        findEnterTab(receivedTimeTextBox,time);
+
+    }
+
+    public void searchPatient(String lapespido){
+
             if(validateElement_Displayed(advanceSearch,10)){
                 click(advanceSearch);
-                sendKeys(labEpiodeTextField,value);
+                sendKeys(labEpiodeTextField,lapespido);
                 click(findButton);
                 stepInfoWithScreenshot("Search for Patient "+ lapespido);
             }else{
                 Assert.fail("Unable to find Advance Search");
             }
 
-        }
     }
 
-    public List<String> addMultipleSpecimen(String testSetFilter,String specimen,String container,int numberSpecimen){
+    public List<String> addMultipleSpecimen(String testSetFilter,String specimen,String container,int numberSpecimen,boolean checkspecimen){
         for(int x=0;x<=numberSpecimen-1;x++) {
             if (validateElement_Enabled_Displayed(addSpecimenButton, 10)) {
+                scrollToElement(addSpecimenButton);
                 click(addSpecimenButton);
                 testSetFilter(testSetFilter);
                 specimenEditSpecimen(specimen);
@@ -283,7 +329,7 @@ public class PathCareScratch extends AbstractPage {
                 click(applybuttonSpecimenContainer);
             }
         }
-        return  specimenNumberExtract();
+        return  specimenNumberExtract(checkspecimen);
     }
 
 
@@ -328,16 +374,19 @@ public class PathCareScratch extends AbstractPage {
         }
     }
 
-    public List<String> specimenNumberExtract(){
-        List<String> values =  new ArrayList<>();
-        if(validateElement_Displayed(specimenN)){
-            for (WebElement element : find(specimenN).stream().toList()) {
-              values.add(element.getAttribute("value"));
+    public ArrayList<String> specimenNumberExtract(boolean checkspecimen){
+        ArrayList<String> values =  new ArrayList<>();
+        if(checkspecimen) {
+            if (validateElement_Displayed(specimenN)) {
+                scrollToElement(specimenN);
+                for (WebElement element : find(specimenN)) {
+                    values.add(element.getAttribute("value"));
+                }
+                stepInfoWithScreenshot("Able to receive Specimen Number " + values);
+                return values;
+            } else {
+                Assert.fail("Unable to Find specimen Number");
             }
-            stepInfoWithScreenshot("Able to receive Specimen Number "+values);
-            return values;
-        }else{
-        Assert.fail("Unable to Find specimen Number");
         }
         return null;
     }

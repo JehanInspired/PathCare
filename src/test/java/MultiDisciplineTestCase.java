@@ -44,7 +44,7 @@ public class MultiDisciplineTestCase extends RomanBase {
     public void cleanUp(){
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.logoff();
-       // roman().Dispose();
+        //roman().Dispose();
     }
 
     @Test
@@ -192,8 +192,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.pre_analytical.navigateTransfer();
         pathCare.pathCareLabTransferList.tranferlistLabepisode(labespide);
-        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.specimenNumbers);
-        pathCare.pathCareLabTransferList.url(dir+"TP_13");
+        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.specimenNumbers,true);
         pathCare.pathCareLabTransferList.closePackage();
         pathCare.pathCareLabTransferList.tranferlistLabepisodewithoutframe(labespide);
         Assertions.assertTrue(pathCare.pathCareLabTransferList.checknumbersTransfer(labespide, pathCare.pathCareLabSpecimenReception.specimenNumbers));
@@ -220,7 +219,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.pre_analytical.navigateTransfer();
         pathCare.pathCareLabTransferList.tranferlistLabepisode(labespide);
-        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.specimenNumbers);
+        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.specimenNumbers,true);
         pathCare.pathCareLabTransferList.closePackage();
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.changelocation();
@@ -254,7 +253,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.pre_analytical.navigateTransfer();
         pathCare.pathCareLabTransferList.tranferlistLabepisode(labespide);
-        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.specimenNumbers);
+        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.specimenNumbers,true);
         pathCare.pathCareLabTransferList.closePackage();
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.changelocation();
@@ -335,7 +334,7 @@ public class MultiDisciplineTestCase extends RomanBase {
 
         TestSetResults coldAgg = TestSetResults.getExampleModel("ColdAgglutinins");
         pathCare.resultEntry.mutlipleLabEntryTestSet(labespides, coldAgg.testresult, coldAgg.testresult2, dir);
-        Assertions.assertEquals(labespides.size(), pathCare.resultEntry.fileChecker(dir,"Test25-"));
+        Assertions.assertEquals(labespides.size(), pathCare.resultEntry.fileChecker(dir,"TP_25-"));
 
 
     }
@@ -352,12 +351,12 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,1, true);
+        List<String> labEpisode = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,1, true);
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
-        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides);
+        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labEpisode);
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PC Med Lab Professional RL Chem");
@@ -372,7 +371,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.analytical.navigateResultEntry();
 
         TestSetResults ca199 = TestSetResults.getExampleModel("CA199");
-        pathCare.resultEntry.singleTestsetComment(labespides.get(labespides.size()-1),ca199.testresult2,"Result has been checked in dilution, 1:50 onboard dilution");
+        pathCare.resultEntry.singleTestsetComment(labEpisode.get(labEpisode.size()-1),ca199.testresult2,"Result has been checked in dilution, 1:50 onboard dilution");
         Assertions.assertEquals(1, pathCare.resultEntry.fileChecker(dir,"TP24-"));
 
     }
@@ -396,7 +395,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.pre_analytical.navigateTransfer();
         pathCare.pathCareLabTransferList.tranferlistLabepisode(labespides.get(0));
-        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.specimenNumbers);
+        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.specimenNumbers,true);
         pathCare.pathCareLabTransferList.closePackage();
         //Pick Up
         pathCare.pre_analytical.switchtoMainiFrame();
@@ -613,7 +612,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         Assertions.assertTrue(pathCare.pathCareLabTransferList.checknumbersWaiting(labespides.get(0),labespides));
 
         //Shipment
-        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.values());
+        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.values(),true );
         pathCare.pathCareLabTransferList.closePackage();
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.pathCareLabTransferList.tranferlistLabepisode(labespides.get(0));
@@ -625,7 +624,6 @@ public class MultiDisciplineTestCase extends RomanBase {
     public void TP_30() throws Exception {
 
         Faker faker = new Faker();
-        String dir = get_reportDir();
         String[] testcollection = new String[]{"ECA199R","BUCE"};
         String[] dapartments = new String[]{"Biochemistry"};
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
@@ -710,7 +708,6 @@ public class MultiDisciplineTestCase extends RomanBase {
     public void TP_31() throws Exception{
 
         Faker faker = new Faker();
-        String dir = get_reportDir();
         String[] testcollection = new String[]{"HMAL"};
         String[] dapartments = new String[]{"Haematology"};
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");

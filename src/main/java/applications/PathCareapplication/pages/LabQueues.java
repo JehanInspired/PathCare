@@ -109,7 +109,7 @@ public class LabQueues extends AbstractPage {
         setSwitchiFrame();
         click(savedSearch);
         setSwitchiframeEdit();
-        sendKeys(textboxDespiption,desc);
+        sendKeys(textboxDespiption,desc,true,true,10);
         click(findbuttonLab);
 
        if(getText(descriptionTable).contains(desc)){

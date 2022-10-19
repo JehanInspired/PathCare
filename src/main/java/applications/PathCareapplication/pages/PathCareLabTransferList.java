@@ -4,9 +4,7 @@ import Roman.Roman;
 import org.junit.Assert;
 import org.openqa.selenium.*;
 import selenium.AbstractPage;
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+
 import java.util.*;
 
 public class PathCareLabTransferList extends AbstractPage {
@@ -35,20 +33,23 @@ public class PathCareLabTransferList extends AbstractPage {
   private final By closeShipment =  By.xpath("//a[@id='Closez1']");
   private  final By closepacksession = By.xpath("//input[@id='close1']");
   private By listTransfer = By.xpath("//label[text()='%s']");
+  private final  By testSetlist = By.xpath("//select[@name='TestSetList']");
+  private final By testSetTextBox = By.xpath("//input[@name='TestSet']");
 
-  private By fromLabSite = By.name("FromSite");
+  private  final By fromLabSite = By.name("FromSite");
 
-  private By toLabsite = By.name("ToSite");
+  private final By toLabsite = By.name("ToSite");
 
-  private By saveSearchResult = By.id("SaveSearch");
+  private final By saveSearchResult = By.id("SaveSearch");
 
-  private By descriptionSaveSearch = By.id("SRCHDesc");
-  private By updatebutton = By.id("update1");
-  private By savedSearches = By.id("SavedSearches");
-  private By descriptiontextbox = By.xpath("//input[@id='Description']");
-  private By getDescriptionSaveSearchfromlist ;
-  private By iframeSaveSearch = By.name("TRAK_info");
+  private final By descriptionSaveSearch = By.id("SRCHDesc");
+  private final By updatebutton = By.id("update1");
+  private final By savedSearches = By.id("SavedSearches");
+  private final By descriptiontextbox = By.xpath("//input[@id='Description']");
+  private  By getDescriptionSaveSearchfromlist ;
+  private  final By iframeSaveSearch = By.name("TRAK_info");
     private final By searchResultTitle = By.xpath("//label[@id='SRCHDesc']");
+    private final By nextpageTransferlist =By.xpath("//img[@id='NextPageImage_LBTransfer_List']");
     private String description= "";
     private String url = "";
 
@@ -127,8 +128,8 @@ public class PathCareLabTransferList extends AbstractPage {
 
     }
 
-  public void createShipment(ArrayList<String> specimennumbers) throws InterruptedException {
-      click(selectallspecimen);
+  public void createShipment(ArrayList<String> specimennumbers,boolean selectAll) throws InterruptedException {
+      if(selectAll){click(selectallspecimen);}
       click(shipmentbutton);
       click(addshipmentcontainerbutton,10);
       if(validateElement_Displayed(shipmentnumbertext,10)){
@@ -148,21 +149,9 @@ public class PathCareLabTransferList extends AbstractPage {
       stepPassedWithScreenshot("Successfully clicked closed shipment");
 
   }
-  public void url(String testName) throws MalformedURLException {
-      try (BufferedInputStream in = new BufferedInputStream(new URL(_driver.getCurrentUrl()).openStream());
-           FileOutputStream fileOutputStream = new FileOutputStream(testName+".pdf")) {
-          byte dataBuffer[] = new byte[1024];
-          int bytesRead;
-          while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-              fileOutputStream.write(dataBuffer, 0, bytesRead);
-          }
-      } catch (IOException e) {
-          // handle exception
-      }
-  }
 
-    public void createShipment(Collection<ArrayList<String>> specimenNumbers){
-        click(selectallspecimen);
+    public void createShipment(Collection<ArrayList<String>> specimenNumbers, boolean selectAll){
+        if(selectAll){click(selectallspecimen);}
         click(shipmentbutton);
         click(addshipmentcontainerbutton,10);
         if(validateElement_Displayed(shipmentnumbertext,10)){
@@ -184,8 +173,50 @@ public class PathCareLabTransferList extends AbstractPage {
 
   public void closePackage(){
     switchToDefaultContext();
-    click(closepacksession);
+    switchToFrame(switchiFrame);
+    if(validateElement_Enabled_Displayed(closepacksession,10)){
+          click(closepacksession, 10);
+      }else{
+        Assert.fail("Unable to click close pack session button");
+    }
     acceptAlert();
+  }
+
+  public boolean testSetfield(String name){
+      switchToFrame(switchiFrame);
+      sendKeys(testSetTextBox,name);
+      super.findOne(testSetTextBox).sendKeys( Keys.TAB);
+      for(String value :getAllElementText(testSetlist)){
+          if(value.contentEquals(name)){
+              return true;
+          }
+      }
+      return false;
+  }
+
+  public void clickFindButton(){
+      click(findbutton);
+  }
+
+  public void selectlistlabespido(ArrayList<String> labEpisode){
+      for(String value:labEpisode){
+          int y=0;
+         By labEpisodefield = By.xpath("//parent::td[label[text()='%s']]//parent::tr//td//input[contains(@id,'Selectz')]".replace("%s",value));
+
+         while(!validateElement_Enabled_Displayed(labEpisodefield,10)){
+             if(validateElement_Displayed(nextpageTransferlist)){
+                 click(nextpageTransferlist);
+             }else{
+                 break;
+             }
+
+         }
+         for(WebElement element: find(labEpisodefield)){
+
+             element.click();
+             stepInfoWithScreenshot("Ticked Lab Episode "+value+" "+y++);
+         }
+      }
   }
 
   //Save Searches
@@ -214,7 +245,7 @@ public class PathCareLabTransferList extends AbstractPage {
         switchToDefaultContext();
         switchToFrame(iframeSaveSearch);
         getDescriptionSaveSearchfromlist = By.xpath("//a[contains(text(),'%s')]".replace("%s",description));
-        sendKeys(descriptiontextbox,description);
+        sendKeys(descriptiontextbox,description,10);
         if(getText(getDescriptionSaveSearchfromlist).contains(description)){
             stepPassedWithScreenshot("Able to view Saved Search Results");
             return true;
@@ -229,7 +260,7 @@ public class PathCareLabTransferList extends AbstractPage {
         click(getDescriptionSaveSearchfromlist);
         switchToDefaultContext();
         switchToFrame(switchiFrame);
-        if(getText(searchResultTitle).contentEquals(description)){
+        if(getText(searchResultTitle,10).contentEquals(description)){
             stepPassedWithScreenshot("Able to view Save Search of "+description);
             return true;
         }

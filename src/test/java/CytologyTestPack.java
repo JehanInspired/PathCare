@@ -9,7 +9,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.chrome.ChromeOptions;
-import java.util.Arrays;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,8 +45,8 @@ public class CytologyTestPack extends RomanBase {
     public void cleanUp(){
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.logoff();
-        roman._driver.close();
-        roman._driver.quit();
+        roman.Dispose();
+
     }
 
 
@@ -59,8 +60,8 @@ public class CytologyTestPack extends RomanBase {
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
         List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker, testcollection,false,1,true );
-        pathCare.pathCareScratch.searchPatient(labespides);
-        Assert.assertNotEquals("",pathCare.pathCareScratch.specimenNumberExtract());
+        pathCare.pathCareScratch.searchPatient(labespides.get(0));
+        Assert.assertNotEquals("",pathCare.pathCareScratch.specimenNumberExtract(true));
 
     }
 
@@ -74,12 +75,12 @@ public class CytologyTestPack extends RomanBase {
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.mutiplePatient(faker, testcollection,false,1,false );
-        pathCare.pathCareScratch.addMultipleSpecimen("CytologyTestPack Non-Gynae","Non-Gynae Specimen","Slide(s)",1);
+        pathCare.pathCareScratch.addMultipleSpecimen("Cytology Non-Gynae","Non-Gynae Specimen","Slide(s)",1,false);
         pathCare.pathCareScratch.specimenSelect();
         pathCare.pathCareScratch.editTestSet("Number of FNA Slides","4");
-        String labespides =  pathCare.pathCareScratch.updateClientDetails();
-        pathCare.pathCareScratch.searchPatient(Arrays.asList(labespides));
-        Assert.assertNotEquals("",pathCare.pathCareScratch.specimenNumberExtract());
+        String labEpisode =  pathCare.pathCareScratch.updateClientDetails();
+        pathCare.pathCareScratch.searchPatient(labEpisode);
+        Assert.assertNotEquals("",pathCare.pathCareScratch.specimenNumberExtract(true));
     }
 
     @Test
@@ -92,11 +93,69 @@ public class CytologyTestPack extends RomanBase {
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.mutiplePatient(faker, testcollection,false,1,false );
-        pathCare.pathCareScratch.addMultipleSpecimen("CytologyTestPack Non-Gynae","Non-Gynae Specimen","Slide(s)",1);
+        pathCare.pathCareScratch.addMultipleSpecimen("Cytology Non-Gynae","Non-Gynae Specimen","Slide(s)",1,false);
         pathCare.pathCareScratch.specimenSelect();
         pathCare.pathCareScratch.editTestSet("Number of FNA Slides","4");
         String labespides =  pathCare.pathCareScratch.updateClientDetails();
-        pathCare.pathCareScratch.searchPatient(Arrays.asList(labespides));
-        Assert.assertNotEquals("",pathCare.pathCareScratch.specimenNumberExtract());
+        pathCare.pathCareScratch.searchPatient(labespides);
+        Assert.assertNotEquals("",pathCare.pathCareScratch.specimenNumberExtract(true));
     }
+
+    @Test
+    public void TP_146() throws Exception {
+        Faker faker = new Faker();
+        ArrayList<String> labEpisode = new ArrayList<>();
+        ArrayList<ArrayList<String>> specimenNumbers = new ArrayList<>();
+        String[] testcollection = new String[]{"ANCYTONG"};
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username,model.password);
+        //1st patient
+        pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PANORAMA");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateRegistration();
+        labEpisode.add(pathCare.pathCareScratch.mutiplePatient(faker, testcollection,false,1,true ).get(0));
+        pathCare.pathCareScratch.searchPatient(labEpisode.get(0));
+        specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtract(true));
+
+        //2nd patient
+        pathCare.analytical.switchToDefaultContext();
+        pathCare.pre_analytical.navigateRegistration();
+        pathCare.pathCareScratch.mutiplePatient(faker, testcollection,false,1,false );
+        pathCare.pathCareScratch.addMultipleSpecimen("Cytology Non-Gynae","Non-Gynae Specimen","Slide(s)",1,false);
+        pathCare.pathCareScratch.specimenSelect();
+        pathCare.pathCareScratch.editTestSet("Number of FNA Slides","4");
+        labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
+        pathCare.pathCareScratch.searchPatient(labEpisode.get(1));
+        specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtract(true));
+
+        //3rd patient
+        pathCare.analytical.switchToDefaultContext();
+        pathCare.pre_analytical.navigateRegistration();
+        pathCare.pathCareScratch.mutiplePatient(faker, testcollection,false,1,false );
+        pathCare.pathCareScratch.addMultipleSpecimen("Cytology Non-Gynae","Non-Gynae Specimen","Slide(s)",1,false);
+        pathCare.pathCareScratch.specimenSelect();
+        pathCare.pathCareScratch.editTestSet("Number of FNA Slides","4");
+        labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
+        pathCare.pathCareScratch.searchPatient(labEpisode.get(2));
+        specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtract(true));
+
+        //Change user Profile
+        pathCare.pathCareScratch.loadingBarChecker();
+        pathCare.analytical.switchToDefaultContext();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.pathCareScratch.loadingBarChecker();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant PANORAMA");
+        pathCare.interSystemloginPage.userselection();
+
+        //Transfer
+        pathCare.pre_analytical.navigateTransfer();
+        pathCare.pathCareLabTransferList.testSetfield("Cytology Non-Gynae");
+        pathCare.pathCareLabTransferList.clickFindButton();
+        pathCare.pathCareLabTransferList.selectlistlabespido(labEpisode);
+        pathCare.pathCareLabTransferList.createShipment(specimenNumbers,false );
+        pathCare.pathCareLabTransferList.closePackage();
+
+    }
+
+
 }

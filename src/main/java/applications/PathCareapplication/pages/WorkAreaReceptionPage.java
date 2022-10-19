@@ -55,7 +55,7 @@ public class WorkAreaReceptionPage extends AbstractPage {
 
         //2
         for (ArrayList specimen : specimenNumbers) {
-            for (int x = 0; x <= 1; x++) {
+            for (int x = 0; x <= specimen.size() - 1; x++) {
 
                 testDataModelList.add(new TestDataModel(specimen.get(x), testcollections.length <= specimen.size() ? testcollections[0] : testcollections[x], "g", testcollections.length <= specimen.size() ? departments[0] : departments[x]));
             }

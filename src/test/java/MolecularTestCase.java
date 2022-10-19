@@ -63,7 +63,7 @@ public class MolecularTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatientWithDifferentTestset(faker, testCollection,false);
+        List<String> labEpisode = pathCare.pathCareScratch.mutiplePatientWithDifferentTestset(faker, testCollection,false);
 
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.changelocation();
@@ -72,7 +72,7 @@ public class MolecularTestCase extends RomanBase {
 
         //Specimen Received
         pathCare.pre_analytical.navigatespecimenRecived();
-        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides);
+        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labEpisode);
 
     }
 

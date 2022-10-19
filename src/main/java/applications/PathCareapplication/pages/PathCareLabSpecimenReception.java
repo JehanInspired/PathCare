@@ -102,6 +102,33 @@ public class PathCareLabSpecimenReception extends AbstractPage {
         return mutlipleSpeicmen;
     }
 
+    public void specimenReceiveCreated(ArrayList<ArrayList<String>> specimen){
+        switchToDefaultContext();
+        switchToFrame(specimenframe);
+        int numtestset =1;
+        int x=0;
+        for(ArrayList<String> values :specimen) {
+            for (String value : values) {
+                x++;
+                findOne(specimenNumberText, value);
+                stepPassedWithScreenshot("Successfully Entered Lab Specimen under Lab episode: " + value);
+                int numberSpeicmen = find(By.xpath("//label[contains(text(),'%s')]".replace("%s", value + "-"))).size();
+                if (numberSpeicmen != 0 && x == 1) {
+                    numtestset = numberSpeicmen;
+                }
+
+                if (!validateElement_Enabled_Displayed(tobereceivedcontain)) {
+                    click(specimenNumberUpdateButton);
+                    break;
+                }
+
+                if (!validateElement_Enabled_Displayed(specimenNumberUpdateButton)) {
+                    Assert.fail("Unable to Update Lab Specimen");
+                }
+            }
+        }
+    }
+
 
     public void redoentryLabspecimen(String labspecnumber){
         findOne(specimenNumberText,labspecnumber);

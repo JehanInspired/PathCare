@@ -73,7 +73,7 @@ public class ResultEntry extends AbstractPage {
 
     private final By receivedTestList = By.xpath("//span[text()='Received']");
     private final By pinserttestreult = By.xpath("//img[contains(@id,'Value')]");
-    private By closelookup = By.xpath("//span[@id='OverlayCloseLookupOverlayDiv']");
+    private final By closelookup = By.xpath("//span[@id='OverlayCloseLookupOverlayDiv']");
 
     private By espiodeNumberLink = By.xpath("//a[@id='LBEPNumber']");
 
@@ -225,7 +225,7 @@ public class ResultEntry extends AbstractPage {
         for(String testResult:testlistResult.keySet()){
           By testSetElement = By.xpath("//td[preceding-sibling::td[contains(.,'"+testResult+"')]]//input[contains(@id,'LBTSIValue') and(not(contains(@type,'hidden')))]");
          String value = findOne(testSetElement).getAttribute("value") ;
-          if(value.isBlank()||value.isEmpty() || Math.abs(Double.valueOf(value)) !=Math.abs(Double.valueOf(testlistResult.get(testResult)))){
+          if(value.isBlank()||value.isEmpty() || Math.abs(Double.parseDouble(value)) !=Math.abs(Double.valueOf(testlistResult.get(testResult)))){
               stepInfo("checked test set " + testResult + " has test Result " + value +" but excepted is "+testlistResult.get(testResult));
                 return false;
             }
@@ -491,7 +491,7 @@ public class ResultEntry extends AbstractPage {
         if(querysearchLabResults(department)){
             click(savedResults);
             testsetlistTitle = By.xpath("//span[contains(text(),'%s')]".replace("%s",desc));
-            if(getText(testsetlistTitle).contains(desc)){
+            if(getText(testsetlistTitle,15).contains(desc)){
                 stepPassedWithScreenshot("Successfully Recieved Test Set List Title "+desc);
                 return true;
             }
@@ -510,8 +510,8 @@ public class ResultEntry extends AbstractPage {
 
      long endTime = System.nanoTime() + TimeUnit.NANOSECONDS.convert(15, TimeUnit.SECONDS);
         while(System.nanoTime() < endTime) {
-                for (File files : file.listFiles()) {
-                    if (files.getName().contains(".pdf")) {
+                for (File files : Objects.requireNonNull(file.listFiles())) {
+                    if (files.getName().contains(".pdf") && files.getName().contains("document")) {
                         x++;
                         files.renameTo(new File(dir+testname+x+".pdf"));
                         stepInfo("Checking pdf reporting files");
@@ -561,9 +561,9 @@ public class ResultEntry extends AbstractPage {
 
     public String switchToWindowHandleFirst(Set<String> windows, boolean firstorsecond){
         int counter =0;
-        Iterator var = windows.iterator();
+        Iterator<String> var = windows.iterator();
         while(var.hasNext()){
-          String value = (String) var.next();
+          String value = var.next();
             if(firstorsecond){
                 return value;
             }else if(counter==1){
