@@ -140,13 +140,15 @@ public class PathCareScratch extends AbstractPage {
         return getText(labEspiodeNum,10).replace("Lab Episode Number: ","");
     }
 
-    public String collectiondetailnew(String collectiontime, String[] testsetcollection, Boolean specimenSelect, Boolean updateClient) throws InterruptedException {
+    public String collectiondetailnew(String collectiontime, String[] testsetcollection,Boolean receiveDate, Boolean specimenSelect, Boolean updateClient) throws InterruptedException {
        //click(iconPatientSearch);
         String labepsiode ="";
         sendKeys(patientSearchSelect,"2100");
         super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
         findEnterTab(collectionTime,collectiontime);
-        addReceivedDate(collectiontime);
+        if(receiveDate) {
+            addReceivedDate(collectiontime);
+        }
         for (String testset:testsetcollection) {
             setTestset(testset);
             testCode = By.xpath("//span[text()='%s']".replace("%s",testset));
@@ -228,6 +230,7 @@ public class PathCareScratch extends AbstractPage {
     }
 
     public void editTestSet(String name ,String value)  {
+        loadingBarChecker();
        if(validateElement_Enabled_Displayed(editPencil,10)){
            loadingBarChecker();
            scrollToElement(editPencil);
@@ -287,12 +290,12 @@ public class PathCareScratch extends AbstractPage {
     }
 
 
-    public List<String> mutiplePatient(Faker faker, String[] testcollection, Boolean specimenSelect, int numberPatient, Boolean updateClient) throws InterruptedException {
+    public List<String> mutiplePatient(Faker faker, String[] testcollection, boolean receiveDate,boolean specimenSelect, int numberPatient, Boolean updateClient) throws InterruptedException {
         List<String> labEspideonumber = new ArrayList<>();
         for(int x=0;x<=numberPatient-1;x++){
             patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
             doctorSelection();
-            labEspideonumber.add(collectiondetailnew("n-1",testcollection,specimenSelect,updateClient));
+            labEspideonumber.add(collectiondetailnew("n-1",testcollection,receiveDate,specimenSelect,updateClient));
         }
 
         return labEspideonumber;

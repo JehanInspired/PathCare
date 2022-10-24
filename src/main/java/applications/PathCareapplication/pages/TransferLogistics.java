@@ -53,7 +53,6 @@ public class TransferLogistics extends AbstractPage {
     public boolean pickUpShipmentValid(String shipContainerNumber){
 
         findOne(pickUpShipment,shipContainerNumber);
-
             if(validateElement_Displayed(updatebutton,10)){
                 stepPassedWithScreenshot("Successfully Pick Up "+ shipContainerNumber);
                 click(updatebutton);

@@ -31,7 +31,6 @@ public class Pre_Analytical extends AbstractPage {
         return null;
     }
 
-
     public void navigatespecimenRecived() {
 
             click(mainmenu,15);
@@ -62,7 +61,6 @@ public class Pre_Analytical extends AbstractPage {
             click(pre_Analytical);
             click(workAreaReceive,10);
         }
-
 
         stepPassedWithScreenshot("Navigated to Work Received");
     }

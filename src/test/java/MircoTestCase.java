@@ -5,7 +5,6 @@ import applications.PathCareapplication.models.AutomationUserModel;
 import applications.PathCareapplication.models.SuperSetTesCSF;
 import applications.PathCareapplication.models.SuperSetTestCSFTestItem;
 import com.github.javafaker.Faker;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 
 import org.junit.jupiter.api.Assertions;
@@ -63,7 +62,7 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture JEFFREY");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,true,1,true );
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,true,1,true );
         Assertions.assertFalse(labespides.isEmpty());
 
 
@@ -81,7 +80,7 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,true,1,true );
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,true,1,true );
 
         //Specimen Receive
         pathCare.interSystemloginPage.changelocation();
@@ -122,7 +121,7 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture JEFFREY");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,1,true );
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,false,1,true );
 
         //Specimen Receive
         pathCare.interSystemloginPage.changelocation();
@@ -264,7 +263,7 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,1,true );
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,false,1,true );
 
 
         //Specimen Receive
@@ -313,7 +312,7 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,true,1,true );
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,true,1,true );
 
         //Specimen Receive
         pathCare.interSystemloginPage.changelocation();
@@ -410,7 +409,7 @@ public class MircoTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labEpisode = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,true,1,true );
+        List<String> labEpisode = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,true,1,true );
 
         //Specimen Receive
         pathCare.interSystemloginPage.changelocation();

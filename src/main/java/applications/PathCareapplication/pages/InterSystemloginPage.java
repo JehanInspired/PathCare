@@ -19,7 +19,7 @@ public class InterSystemloginPage extends AbstractPage {
     private String location = "";
 
     //Need to change
-    private  By AccessProfile;
+    private  By accessProfile;
 
 
     public InterSystemloginPage(Roman roman) {
@@ -56,18 +56,18 @@ public class InterSystemloginPage extends AbstractPage {
     }
 
     public void userselection(){
-        AccessProfile = By.xpath("//span[contains(text(),'%s')]".replace("%s",location));
-       scrollToElement(nextPage,10);
-       scrollToElement(footer,10);
-        while(!validateElement_Enabled_Displayed(AccessProfile,10)){
-            scrollToElement(footer,10);
-            scrollToElement(nextPage,10);
-            click(nextPage,10);
-        }
-
+        accessProfile = By.xpath("//span[contains(text(),'%s')]".replace("%s",location));
+        scrollToElement(nextPage,10);
         scrollToElement(footer,10);
-        scrollToElement(AccessProfile,10);
-        click(AccessProfile,10);
+            while (!validateElement_Enabled_Displayed(accessProfile, 10)) {
+                scrollToElement(footer, 10);
+                scrollToElement(nextPage, 10);
+                click(nextPage, 10);
+            }
+            scrollToElement(footer, 10);
+            scrollToElement(accessProfile, 10);
+            click(accessProfile, 10);
+
         stepPassedWithScreenshot("Lab queues screen "+location);
     }
 

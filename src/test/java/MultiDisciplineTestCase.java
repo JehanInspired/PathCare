@@ -10,6 +10,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -56,12 +57,12 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespide = pathCare.pathCareScratch.mutiplePatient(faker, testcollection,false, 1,true );
+        List<String> labespide = pathCare.pathCareScratch.mutiplePatient(faker, testcollection,false,false, 1,true );
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation(model.accessProfile);
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
-        Assertions.assertEquals("Specimen already received:", pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide.get(0), testcollection.length));
+        Assertions.assertEquals("Specimen already received:", pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide.get(0)));
 
     }
 
@@ -76,7 +77,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
-        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,true );
+        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true );
         Assertions.assertNotEquals("", labespide);
 
     }
@@ -92,12 +93,12 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
-        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,true );
+        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true );
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation(model.accessProfile);
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
-        Assertions.assertEquals("Specimen already received:", pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide.concat("-1"), testcollection.length));
+        Assertions.assertEquals("Specimen already received:", pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide.concat("-1")));
 
     }
 
@@ -112,7 +113,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
-        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,true );
+        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true );
         Assertions.assertNotEquals("", labespide);
 
     }
@@ -129,12 +130,12 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
-        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,true );
+        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true );
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation(model.accessProfile);
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
-        pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide, testcollection.length);
+        pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide);
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.pre_analytical.navigateWorkRecived();
         pathCare.workAreaReceptionPage.labworkareaswitch();
@@ -183,19 +184,20 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
-        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,true );
+        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true );
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation(model.accessProfile);
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
-        pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide, testcollection.length);
+        pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide);
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.pre_analytical.navigateTransfer();
         pathCare.pathCareLabTransferList.tranferlistLabepisode(labespide);
-        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.specimenNumbers,true);
+        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.get(0),true);
         pathCare.pathCareLabTransferList.closePackage();
         pathCare.pathCareLabTransferList.tranferlistLabepisodewithoutframe(labespide);
-        Assertions.assertTrue(pathCare.pathCareLabTransferList.checknumbersTransfer(labespide, pathCare.pathCareLabSpecimenReception.specimenNumbers));
+        pathCare.pathCareLabTransferList.switchToDefaultContext();
+        Assertions.assertTrue(pathCare.pathCareLabTransferList.checknumbersTransferlapepisode(labespide, pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.get(0)));
     }
 
 
@@ -210,12 +212,12 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
-        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,true );
+        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true );
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation(model.accessProfile);
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
-        pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide, testcollection.length);
+        pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide);
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.pre_analytical.navigateTransfer();
         pathCare.pathCareLabTransferList.tranferlistLabepisode(labespide);
@@ -244,12 +246,12 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
-        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,true );
+        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true );
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation(model.accessProfile);
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
-        pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide, testcollection.length);
+        pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide);
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.pre_analytical.navigateTransfer();
         pathCare.pathCareLabTransferList.tranferlistLabepisode(labespide);
@@ -292,12 +294,12 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.patientdetails(faker.name().name(), faker.name().lastName(),  new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)), faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
-        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,true );
+        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true );
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation(model.accessProfile);
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
-        Assertions.assertEquals("Specimen already received:", pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide, testcollection.length));
+        Assertions.assertEquals("Specimen already received:", pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide));
 
     }
 
@@ -313,7 +315,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker, testcollection,false, 2,true );
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker, testcollection,false,false, 2,true );
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL");
         pathCare.interSystemloginPage.userselection();
@@ -351,7 +353,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labEpisode = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,1, true);
+        List<String> labEpisode = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,false,1, true);
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL");
         pathCare.interSystemloginPage.userselection();
@@ -386,12 +388,12 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,1, true);
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,false,1, true);
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
-        pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespides.get(0), testcollection.length);
+        pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespides.get(0));
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.pre_analytical.navigateTransfer();
         pathCare.pathCareLabTransferList.tranferlistLabepisode(labespides.get(0));
@@ -457,7 +459,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,1,true );
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,false,1,true );
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL");
         pathCare.interSystemloginPage.userselection();
@@ -532,7 +534,6 @@ public class MultiDisciplineTestCase extends RomanBase {
             pathCare.labQueues.phoneQueues("Alert Failures",true);
             pathCare.pathCareProcessingPage.phonequeue();
 
-
         }
 
         //Stat
@@ -595,7 +596,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         //Registration
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,1, true);
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,false,1, true);
 
         //specimen Receive
         pathCare.interSystemloginPage.changelocation();
@@ -631,7 +632,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,1,true );
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,false,1,true );
 
         //Specimen Recieve
         pathCare.interSystemloginPage.changelocation();
@@ -715,7 +716,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,1,true );
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,false,1,true );
 
         //Specimen Recieve
         pathCare.interSystemloginPage.changelocation();
@@ -771,7 +772,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,true,1,true );
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker,testcollection,false,true,1,true );
 
         //Specimen Receive
         pathCare.interSystemloginPage.changelocation();

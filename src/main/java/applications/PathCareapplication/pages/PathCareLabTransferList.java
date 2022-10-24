@@ -83,6 +83,54 @@ public class PathCareLabTransferList extends AbstractPage {
       }
         return checker;
   }
+  public void checkPackItem(ArrayList<String> mulitplelabepisode,ArrayList<ArrayList<String>> specimenRecieve) {
+      switchToFrame(switchiFrame);
+      findOne(By.xpath("//input[@id='Status']"), "PKD");
+      int y=0;
+      for (String labEpisode : mulitplelabepisode) {
+          findOne(this.labEpisode, labEpisode);
+          clickFindButton();
+              By labEpisodefield = By.xpath("//parent::td[label[text()='%s']]//parent::tr//td//input[contains(@id,'Selectz')]".replace("%s", labEpisode));
+              if (!(getAllElementText(labEpisodefield).size() == specimenRecieve.get(y).size())) {
+                  Assert.fail("Unable to find " + labEpisode);
+              }
+              stepInfoWithScreenshot("Able to find specimen under lab " + labEpisode);
+          y++;
+      }
+  }
+
+    public Boolean checknumbersTransferlapepisode(String labepisode, ArrayList<String> specimennumbers){
+        boolean checker = false;
+        switchToFrame(switchiFrame);
+        findOne(By.xpath("//input[@id='Status']"),"T");
+            findOne(this.labEpisode, labepisode);
+            clickFindButton();
+            listTransfer = By.xpath("//label[text()='%s']".replace("%s", labepisode));
+                    if (getAllElementText(listTransfer).size() == specimennumbers.size()) {
+                        stepPassedWithScreenshot("Able to view package In Transit " + labEpisode);
+                        checker = true;
+                    }
+
+        return checker;
+    }
+
+    public Boolean checknumbersTransferMultiple(ArrayList<String> mulitplelabepisode, ArrayList<ArrayList<String>> specimennumbers){
+        boolean checker = false;
+        switchToFrame(switchiFrame);
+        int y =0;
+        findOne(By.xpath("//input[@id='Status']"),"T");
+        for(String labEpisode:mulitplelabepisode) {
+            findOne(this.labEpisode, labEpisode);
+            clickFindButton();
+            listTransfer = By.xpath("//label[text()='%s']".replace("%s", labEpisode));
+            if (getAllElementText(listTransfer).size() == specimennumbers.get(y).size()) {
+                stepPassedWithScreenshot("Able to view package In Transit " + labEpisode);
+                checker = true;
+            }
+            y++;
+        }
+        return checker;
+    }
     public Boolean checknumbersDelivery(String labepisode, List<String> specimennumbers){
         boolean checker =false;
         listTransfer = By.xpath("//label[text()='%s']".replace("%s",labepisode));
