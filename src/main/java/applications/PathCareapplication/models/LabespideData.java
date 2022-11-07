@@ -41,5 +41,9 @@ public class LabespideData {
         this.testSet = testSet;
     }
 
+    public void reader(){
+
+    }
+
 
 }

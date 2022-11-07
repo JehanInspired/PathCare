@@ -195,7 +195,6 @@ public class LabQueues extends AbstractPage {
             if(clicklastElementList){
                 clickEspiodeElement(single,texts.get(0));
             }
-
             return value;
         }else{
             Assert.fail("Unable to view  "+labespide +" on lab queues");

@@ -10,7 +10,7 @@ public class SuperSetTesCSF {
 
     public SuperSetTesCSF() {
         value.put("CSF Macroscopy",splitArryfiler(new String[]{"Xanthochromic","Xanthochromic"}));
-        value.put("CSF Microscopy",splitArryfiler(new String[]{"Organisms seen","Scanty"}));
+        value.put("CSF Microscopy",splitArryfiler(new String[]{"Present","Scanty"}));
         value.put("CSF Cell Count",splitArryfiler(new String[]{"14","0","1710"}));
         value.put("Cryptococcal Antigen LFA",splitArryfiler(new String[]{"Negative","Present"}));
 

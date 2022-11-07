@@ -23,6 +23,7 @@ public class PathCareScratch extends AbstractPage {
     private final By givennametextbox = By.xpath("//input[@name='PAPERName2']");
     private final By findbutton = By.xpath("//button[text()='Find']");
     private final By newbutton = By.xpath("//a[text()='New']");
+    private final By newbutton2 = By.xpath("//button[text()='New']");
     private final By gendertextbox = By.xpath("//input[@name='CTSEXDesc']");
     //dd/mm/yyyy
     private final By DateofBirth = By.xpath("//input[@name='PAPERDob']");
@@ -36,6 +37,7 @@ public class PathCareScratch extends AbstractPage {
     private final By collectionTime =By.xpath("//input[@name='LBEPCollectionTime']");
     private final By testSetCollection = By.xpath("//input[@name='TestSetSuperset']");
     private final By backtoLabEpisodeNav = By.xpath("//a[text()='Back to: Lab Episode']");
+    private final By backtoPatient = By.xpath("//a[contains(@aria-label,'Back to: Patient')]");
     private final By supersetItemSelection = By.xpath("//span[contains(text(),'Superset Item Selection')]");
     private final By labEspiodeNum = By.xpath("//div[contains(text(),'Lab Episode Number:')]");
     private final By specimensearch = By.xpath("//md-icon[@id='LBSpecimenContainer_Msg_Edit_0-item-LBSPCSpecimenDR-lookupIcon']");
@@ -59,6 +61,7 @@ public class PathCareScratch extends AbstractPage {
 
     private final By acceptSpecimens = By.xpath("//input[contains(@id,'accept')]");
     private final By labEpiodeTextField = By.xpath("//input[@name='LBEPNumber']");
+    private final By lapEpisodeTitle = By.xpath("//span[text()='Lab Episode']");
 
     private final By findButton = By.xpath("//button[text()='Find']");
 
@@ -67,6 +70,7 @@ public class PathCareScratch extends AbstractPage {
     private final By addSpecimenButton = By.xpath("//a[contains(@ng-class,'AddS')]");
 
     private final By advanceSearch = By.xpath("//span[text()='Advanced Search']");
+    private final By advanceSearchDownArrow = By.xpath("//md-icon[@md-svg-icon='system-chevron-down' and not(contains(@id,'PreAnalysis'))]");
     private final By specimenContainerEdit = By.xpath("//input[@name='LBSPCSpecimenDR']");
 
     private final By nextpagelookup = By.xpath("//a[@aria-label='Lookup Next Page']");
@@ -82,6 +86,9 @@ public class PathCareScratch extends AbstractPage {
     private final By acceptButtonEdit = By.xpath("//button[text()='Accept']");
     private final By receivedDateTextBox = By.xpath("//input[@name='LBEPReceivedDate']");
     private final By receivedTimeTextBox = By.xpath("//input[@name='LBEPReceivedTime']");
+    private final By clickTestSetLink = By.xpath("//md-icon[contains(@id,'LBTSLink') and not(@ng-class)]");
+
+    private final By firstpatientEpisodeSearch = By.xpath("//a[contains(@id,'PAPerson') and  not(@aria-label='New') and not(@title)]");
 
     private final By loadingBar = By.xpath("//div[@class='bar']");
 
@@ -90,6 +97,14 @@ public class PathCareScratch extends AbstractPage {
     private  By testdieditfield = By.xpath("//a[text()='%s']//following::md-input-container[@class='tcNumeric']//input[contains(@name,'QA')]");
 
     public  String testset ="";
+    private boolean newPatient = true;
+
+    private boolean clickBackboneLabEpisodeSelect = true;
+
+    private String name;
+    private String dateOfBirth;
+    private String surname;
+    private String gender;
 
     public String collectionDetailWithMultipleTestSet(String collectiontime, String[] testsetcollection, Boolean specimenSelect) {
         //click(iconPatientSearch);
@@ -211,7 +226,7 @@ public class PathCareScratch extends AbstractPage {
         }
     }
     public void specimenSelect(){
-       // if(validateElement_Displayed(backtoLabEpisodeNav)){click(backtoLabEpisodeNav);}
+        if(clickBackboneLabEpisodeSelect){click(backtoLabEpisodeNav);}
         loadingBarChecker();
         scrollToElement(linkSelectSpecimen);
         click(linkSelectSpecimen,10);
@@ -240,6 +255,7 @@ public class PathCareScratch extends AbstractPage {
        }
        testdieditfield = By.xpath("//a[text()='%s']//following::md-input-container[@class='tcNumeric']//input[contains(@name,'QA')]".replace("%s",name));
        sendKeys(testdieditfield,value);
+       stepPassedWithScreenshot("Added "+name+" "+value);
        click(acceptButtonEdit,10);
        loadingBarChecker();
 
@@ -258,25 +274,40 @@ public class PathCareScratch extends AbstractPage {
          return false;
     }
 
-    public void patientdetails(String name, String surname, String dateBirth, String gender){
-        validateElement_Enabled_Displayed(surnametextbox,15);
+    public void setClientdetails(String name, String surname, String dateOfBirth,String gender){
+        setName(name);
+        setSurname(surname);
+        setDateOfBirth(dateOfBirth);
+        setGender(gender);
+    }
+
+    public void patientdetails(String name, String surname, String dateOfBirth, String gender) throws InterruptedException {
         sendKeys(surnametextbox,name,10);
-        validateElement_Enabled_Displayed(givennametextbox,15);
         sendKeys(givennametextbox,surname,10);
-        validateElement_Enabled_Displayed(findButton,15);
+        sendKeys(gendertextbox,gender,10);
+        setClientdetails(name,surname,dateOfBirth,gender);
         click(findbutton);
-        if(validateElement_Enabled_Displayed(newbutton,15)) {
+        if(!newPatient){
+            loadingBarChecker();
+            Thread.sleep(4000);
+            click(firstpatientEpisodeSearch,15);
+            loadingBarChecker();
+            click(newbutton2,15);
+        }else if(validateElement_Enabled_Displayed(newbutton,15)) {
             stepPassedWithScreenshot("The Patient list screen appears with no list");
+            click(newbutton,15);
         }
-        click(newbutton);
-        findEnterTab(gendertextbox,gender);
-        findEnterTab(DateofBirth,dateBirth);
-        click(DateofBirth);
-        stepPassedWithScreenshot("User is directed to Lab Episode screen");
+
+        if(newPatient) {
+            findEnterTab(gendertextbox, gender);
+            findEnterTab(DateofBirth, dateOfBirth);
+            click(DateofBirth);
+            stepPassedWithScreenshot("User is directed to Lab Episode screen");
+        }
         if(validateElement_Enabled_Displayed(saveAndclose,10)) {
             click(saveAndclose);
             loadingBarChecker();
-        }else{
+        }else if(!validateElement_Displayed(updatebuton,10)){
             Assert.fail("Unable to click save close button");
         }
         stepPassedWithScreenshot("Successfully User is directed to Patient Registration screen" );
@@ -301,6 +332,82 @@ public class PathCareScratch extends AbstractPage {
         return labEspideonumber;
     }
 
+    public List<String> mutiplePatientEditSpecimen(Faker faker,String gender, String[] testcollection, boolean receiveDate,boolean specimenSelect, int numberPatient,String testSetFilter,String specimen,String container, Boolean updateClient) throws InterruptedException {
+        List<String> labEspideonumber = new ArrayList<>();
+        for(int x=0;x<=numberPatient-1;x++){
+            patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),gender);
+            doctorSelection();
+            labEspideonumber.add(collectiondetailnewEditSpecimen("n-1",testcollection,receiveDate,specimenSelect,updateClient,testSetFilter,specimen,container));
+        }
+        return labEspideonumber;
+    }
+
+    public String collectiondetailnewEditSpecimen(String collectiontime, String[] testsetcollection,Boolean receiveDate, Boolean specimenSelect, Boolean updateClient,String testSetFilter,String specimen,String container) {
+        //click(iconPatientSearch);
+        String labepsiode ="";
+        sendKeys(patientSearchSelect,"2100");
+        super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
+        findEnterTab(collectionTime,collectiontime);
+        if(receiveDate) {
+            addReceivedDate(collectiontime);
+        }
+        for (String testset:testsetcollection) {
+            setTestset(testset);
+            testCode = By.xpath("//span[text()='%s']".replace("%s",testset));
+            sendKeys(testSetCollection,testset);
+            super._driver.findElement(testSetCollection).sendKeys(Keys.TAB);
+            if(validateElement_Displayed(supersetItemSelection)){
+                stepInfoWithScreenshot("Reach to Superset Item Selection");
+                click(buttonSupersetItemSelectionAccept);
+            } else if (validateElement_Displayed(backtoLabEpisodeNav) && !specimenSelect){
+                testSetFilter(testSetFilter);
+                specimenEditSpecimen(specimen);
+                containerSpeciemen(container);
+
+                Assert.assertTrue("Unable to click apply button on Specimen Container",validateElement_Enabled_Displayed(applybuttonSpecimenContainer));
+                click(applybuttonSpecimenContainer);
+                loadingBarChecker();
+               /* if(validateElement_Enabled_Displayed(selectlinkSpecimen)){
+                    click(selectlinkSpecimen);
+                    switchToFrame(switchiFrame);
+                    click(acceptButton);
+                    switchToDefaultContext();
+                }*/
+            }else if(specimenSelect){
+                specimenSelect();
+            }
+            validateElement_Enabled_Displayed(testSetLink,10);
+            stepPassedWithScreenshot("The correct Test Set appears under Tests : "+testset);
+        }
+
+        if(updateClient) {
+            labepsiode = updateClientDetails();
+        }
+        return labepsiode;
+    }
+
+    public void LinkSelectSpecimen(){
+        loadingBarChecker();
+        click(clickTestSetLink,15);
+        switchToDefaultContext();
+        switchToFrame(switchiFrame);
+        By linkedLabEpisode =By.xpath("//label[@id='LBEP_Numberz1']");
+        for(WebElement element:find(tickboxSpecimens)){
+            if(!element.isSelected()){
+                element.click();
+                stepPassedWithScreenshot("Selected specimen "+getText(linkedLabEpisode));
+            }
+        }
+        click(acceptSpecimens);
+        stepPassedWithScreenshot("Accepted Linked Test Set List "+testset);
+        switchToDefaultContext();
+        if(validateElement_Displayed(clickTestSetLink)) {
+            scrollToElement(clickTestSetLink);
+        }
+
+    }
+
+
     public void addReceivedDate(String time){
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         findEnterTab(receivedDateTextBox, dateTimeFormatter.format(LocalDate.now()));
@@ -310,27 +417,50 @@ public class PathCareScratch extends AbstractPage {
 
     public void searchPatient(String lapespido){
 
-            if(validateElement_Displayed(advanceSearch,10)){
-                click(advanceSearch);
-                sendKeys(labEpiodeTextField,lapespido);
+                if(validateElement_Enabled_Displayed(advanceSearch,15) && !(validateElement_Displayed(advanceSearchDownArrow))){
+                    click(advanceSearch);
+                }
+                findOne(labEpiodeTextField).clear();
+                sendKeys(labEpiodeTextField, lapespido);
                 click(findButton);
                 stepInfoWithScreenshot("Search for Patient "+ lapespido);
-            }else{
+
+            if(!validateElement_Displayed(lapEpisodeTitle,10)){
                 Assert.fail("Unable to find Advance Search");
             }
 
     }
 
-    public List<String> addMultipleSpecimen(String testSetFilter,String specimen,String container,int numberSpecimen,boolean checkspecimen){
-        for(int x=0;x<=numberSpecimen-1;x++) {
-            if (validateElement_Enabled_Displayed(addSpecimenButton, 10)) {
-                scrollToElement(addSpecimenButton);
-                click(addSpecimenButton);
-                testSetFilter(testSetFilter);
-                specimenEditSpecimen(specimen);
-                containerSpeciemen(container);
-                click(applybuttonSpecimenContainer);
+    public ArrayList<ArrayList<String>> searchMutliplePatient(List<String> lapsiode){
+        ArrayList<ArrayList<String>> speciemenlist = new ArrayList<>();
+        for(String labnumber: lapsiode) {
+            searchPatient(labnumber);
+            speciemenlist.add(specimenNumberExtract(true));
+            if (validateElement_Enabled_Displayed(backtoPatient,15)){
+                click(backtoPatient,15);
+                }
+        }
+        return speciemenlist;
+    }
+
+    public List<String> addMultipleSpecimen(String testSetFilter,String specimen,String container,int numberSpecimen,boolean checkspecimen,boolean addSpecimen){
+        if(addSpecimen) {
+            for (int x = 0; x <= numberSpecimen - 1; x++) {
+                if (validateElement_Enabled_Displayed(addSpecimenButton, 10)) {
+                    scrollToElement(addSpecimenButton);
+                    click(addSpecimenButton);
+                    testSetFilter(testSetFilter);
+                    specimenEditSpecimen(specimen);
+                    containerSpeciemen(container);
+                    click(applybuttonSpecimenContainer);
+                }
             }
+        }else{
+            testSetFilter(testSetFilter);
+            specimenEditSpecimen(specimen);
+            containerSpeciemen(container);
+            click(applybuttonSpecimenContainer);
+
         }
         return  specimenNumberExtract(checkspecimen);
     }
@@ -371,7 +501,7 @@ public class PathCareScratch extends AbstractPage {
         By lookupOnList = By.xpath("//span[contains(@id,'LBSpecimenContainer_Msg_Edit_0') and (text()='%s')]".replace("%s", container));
         if(findOne(specimenContainerTextField).getAttribute("value").contentEquals(container)){
             click(lookupOnList);
-            stepInfo("Entered container "+container);
+            stepInfoWithScreenshot("Entered container "+container);
         }else{
             Assert.fail("Unable to find Container Specimen "+container);
         }
@@ -394,7 +524,7 @@ public class PathCareScratch extends AbstractPage {
         return null;
     }
 
-    public List<String> mutiplePatientWithDifferentTestset(Faker faker,String[] testcollection,Boolean specimenSelect) {
+    public List<String> mutiplePatientWithDifferentTestset(Faker faker,String[] testcollection,Boolean specimenSelect) throws InterruptedException {
         List<String> labEspideonumber = new ArrayList<>();
         for(int x=0;x<=testcollection.length-1;x++){
                 patientdetails(faker.name().name(), faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11, 55)), faker.demographic().sex());
@@ -405,6 +535,8 @@ public class PathCareScratch extends AbstractPage {
         return labEspideonumber;
 
     }
+
+
 
     public void findEnterTab(By by, String input) {
 
@@ -429,5 +561,53 @@ public class PathCareScratch extends AbstractPage {
     @Override
     public boolean waitForDisplayed() {
         return validateElement_Enabled_Displayed(iconDoctorSearch,15);
+    }
+
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setClickBackboneLabEpisodeSelect(boolean clickBackboneLabEpisodeSelect){ this.clickBackboneLabEpisodeSelect =clickBackboneLabEpisodeSelect;}
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+
+    private boolean pageReady(){
+        JavascriptExecutor jsExec = (JavascriptExecutor)this._driver;
+        Object docState = jsExec.executeScript("return document.readyState", new Object[0]);
+        return  Boolean.valueOf(docState.toString().contentEquals("complete"));
+    }
+
+    public boolean isNewPatient() {
+        return newPatient;
+    }
+
+    public void setNewPatient(boolean newPatient) {
+        this.newPatient = newPatient;
     }
 }

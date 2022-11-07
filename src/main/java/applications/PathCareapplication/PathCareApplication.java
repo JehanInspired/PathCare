@@ -14,6 +14,8 @@ public class PathCareApplication
 
     public PathCareLabTransferList pathCareLabTransferList;
 
+    public Procedures procedures;
+
     public PathCareDashboardPage pathCareDashboardPage;
 
     public PathCareLabSpecimenReception pathCareLabSpecimenReception;
@@ -47,6 +49,7 @@ public class PathCareApplication
         pathCareProcessingPage = new PathCareProcessingPage(roman);
         pathCareLabIntrumentResultGeneratorpage = new PathCareLabIntrumentResultGeneratorPage(roman);
         singleProcess = new SingleProcess(roman);
+        procedures = new Procedures(roman);
 
     }
 }

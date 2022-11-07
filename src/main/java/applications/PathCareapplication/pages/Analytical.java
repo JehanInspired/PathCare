@@ -8,6 +8,7 @@ public class Analytical extends AbstractPage {
 
     private final By mainmenu = By.xpath("//a//md-icon[@title='Main Menu']");
     private final By processing = By.xpath("//span[text()='Processing']");
+    private final By procedures = By.xpath("//span[text()='Procedures']");
     private final By resultEntry = By.xpath("//li//span[text()='Result Entry']");
     private  final By analytical = By.xpath("//li//span[text()='Analytical']");
 
@@ -24,6 +25,19 @@ public class Analytical extends AbstractPage {
             click(analytical);
             click(resultEntry,10);
         }
+    }
+
+    public void navigateProcedures() {
+
+        click(mainmenu,15);
+        if(validateElement_Enabled_Displayed(procedures)){
+            click(procedures,10);
+        }else{
+            click(analytical);
+            click(procedures,10);
+        }
+
+        stepPassedWithScreenshot("Navigated to specimen received");
     }
 
     public void navigateProcessing() {

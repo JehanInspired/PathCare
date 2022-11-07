@@ -106,8 +106,22 @@ public class PathCareLabSpecimenReception extends AbstractPage {
 
         return mutlipleSpeicmen;
     }
+    public void specimenReceiveCreated(ArrayList<ArrayList<String>> specimen) throws InterruptedException {
+        switchToDefaultContext();
+        switchToFrame(specimenframe);
 
-    public void specimenReceiveCreated(ArrayList<ArrayList<String>> specimen,HashMap<String,List<String>> specimenDetail) {
+        for(ArrayList<String> values :specimen) {
+            int x=0;
+            for (String value : values) {
+                findOne(specimenNumberText, value);
+                stepPassedWithScreenshot("Successfully Entered Lab Specimen under Lab episode: " + value);
+                }
+                click(specimenNumberUpdateButton);
+            }
+
+    }
+
+    public void specimenReceiveCreated(ArrayList<ArrayList<String>> specimen,HashMap<String,List<String>> specimenDetail) throws InterruptedException {
         switchToDefaultContext();
         switchToFrame(specimenframe);
 
@@ -124,51 +138,55 @@ public class PathCareLabSpecimenReception extends AbstractPage {
                     num = "3.1";
                 }
                 int y = 0;
+                String speicmenvalue1 ="";
                 for (String speicmenvalue : specimenDetail.get(num)) {
-                    By elment =By.xpath("//parent::td[label[text()='%s']]//parent::tr//td//input[not(@type='hidden')and @value='' and contains(@id,'AnatomicalSite') or contains(@id,'Lesionz')]".replace("%s",value));
+                    By elment = By.xpath("//parent::td[label[text()='%s']]//parent::tr//td//input[not(@type='hidden')and @value='' and contains(@id,'AnatomicalSite') or contains(@id,'Lesionz')]".replace("%s",value));
+                    By lookupGlass = By.xpath("//parent::td[label[text()='%s']]//parent::tr//img[@class='clsLookupIcon' and contains(@name,'AnatomicalSiteQualifier') or contains(@name,'Lesion') or contains(@name,'AnatomicalSite')]".replace("%s",value));
                     if (y == 0) {
-                       find(elment).get(y).sendKeys(speicmenvalue);
-                      // find(elment).get(y).sendKeys(Keys.TAB);
+                        find(elment).get(y).sendKeys(speicmenvalue);
+                        if (find(elment).get(y).getAttribute("value").isBlank()) {
+                            find(elment).get(y).sendKeys(speicmenvalue);
+                        }
+                        find(lookupGlass).get(y).click();
+
+                        if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)),15)) {
+                            click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
+                        }
                         y++;
                     } else if (y == 1) {
-                            find(elment).get(y).sendKeys(speicmenvalue);
-                            if (find(elment).get(y).getAttribute("value").isBlank()) {
-                                find(elment).get(y).sendKeys(speicmenvalue.split("Site")[0]);
-                            }
-                            if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)),15)) {
-                                click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
-                            }
-
-                        y++;
-                    } else if (y == 2) {
-                        By invalidTextBox = By.xpath("//input[@class='clsInvalid']");
-                        String secondvalue = find(elment).get(1).getAttribute("value");
-                            find(elment).get(y).sendKeys(speicmenvalue);
-                            find(elment).get(y).sendKeys(Keys.TAB);
+                        speicmenvalue1 =speicmenvalue;
+                        find(elment).get(y).sendKeys(speicmenvalue);
                             if (find(elment).get(y).getAttribute("value").isBlank()) {
                                 find(elment).get(y).sendKeys(speicmenvalue);
                             }
-                            if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)),15)) {
-                                    click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
-                                }
-                            if(validateElement_Displayed(invalidTextBox,6)) {
-                                click(invalidTextBox);
-                                if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)))) {
-                                    click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
-                                }
-                                if(find(elment).get(1).getAttribute("value").isBlank()){
-                                    find(elment).get(1).sendKeys(secondvalue);
-                                }
-                            }
-
-                            break;
+                          find(lookupGlass).get(y).click();
+                        Thread.sleep(3000);
+                        if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)),15)) {
+                            click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
                         }
+                        y++;
+                    } else if (y == 2) {
+                        find(elment).get(y).sendKeys(speicmenvalue);
+                        if (find(elment).get(y).getAttribute("value").isBlank()) {
+                            find(elment).get(y).sendKeys(speicmenvalue);
+                        }
+                        find(lookupGlass).get(y).click();
+
+                        if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)),15)) {
+                            click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
+                        }
+
+                        find(lookupGlass).get(y-1).click();
+                        if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue1)),15)) {
+                            click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue1)));
+                        }
+
+                                break;
+                            }
+                        }
+                    stepPassedWithScreenshot("Successfully Entered Specimen details: " + value);
                 }
-
-                stepPassedWithScreenshot("Successfully Entered Specimen details: " + value);
-                click(specimenNumberUpdateButton);
-            }
-
+            click(specimenNumberUpdateButton);
         }
     }
 

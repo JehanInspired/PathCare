@@ -10,6 +10,7 @@ public class PathCareDashboardPage extends AbstractPage {
   private final By resultEntrybuttonmenu = By.xpath("//span[text()='Result Entry']");
 
   private final By findbutton = By.xpath("//input[@name='find1']");
+  private final By body = By.xpath("//body[@ng-app]");
 
   private final By analyticalbuttonmenu = By.xpath("//span[text()='Analytical']");
 
@@ -31,7 +32,7 @@ public class PathCareDashboardPage extends AbstractPage {
             click(analyticalbuttonmenu,10);
             if(!validateElement_Enabled_Displayed(resultEntrybuttonmenu,5)){
                 stepPassedWithScreenshot("Not Able to reach Result entry.");
-                validateElement_Enabled_Displayed(findbutton,5);
+                click(body);
                 return true;
             }
         }

@@ -75,6 +75,8 @@ public class PathCareProcessingPage extends AbstractPage {
 
     private By organimMaginitglass = By.xpath("//img[@id='lt8560iLBTSI_PathogenGrowthQualifier_DRz1']");
 
+    private By requestLink = By.id("registrationLink");
+
     private By listTestSet = By.xpath("//a[contains(@id,'TabTestSet')]");
 
     private  By phoneEventlink = By.xpath("//a[contains(@id,'PhoneEventLink')]");
@@ -96,13 +98,135 @@ public class PathCareProcessingPage extends AbstractPage {
     private By addAntibioticsPanel = By.xpath("//input[contains(@id,'add') and (not(contains(@type,'hidden')))]");
     private By antibioticsPanelTextbox = By.xpath("//input[contains(@id,'AntibioticPanel') and (not(contains(@type,'hidden'))) ]");
 
+    private final By loadingBar = By.xpath("//div[@class='bar']");
+
+    private final By bodydom = By.xpath("//body[@ng-app='tcApp']");
 
     private By tableListSearch = By.xpath("//table[@id='tblLookup']");
+    private By questionarieButton = By.xpath("//a[@id='TC.LBTSOrderQuestionMissingMandatory']");
+    private By testSetProtocolButton = By.xpath("//a[@id='TC.LBTSProtocolsCompleted']");
+    private By questionProtocolButton = By.xpath("//a[@id='TC.LBPTPQuestionsEntered']");
+    private By iframeInfroCloseButton = By.xpath("//span[@id='InfoPaneClose']");
+    private By slideMaterialText = By.xpath("//label[@id='MaterialStatusCountz1.1']");
+    private  By testSetOptionButtonDropDown = By.xpath("//a[text()='Test Set Options']");
+    private  By oneSpecimenContainer = By.xpath("//a[@id='LBProtocolz1']");
+    private By secondQuestion = By.xpath("//input[@id='QAz2']");
+
+    private  By episodeEventlink = By.xpath("//a[@id='EpisodeEventLink']");
     public String speciemenR = "";
     public String dir ="";
     public int counter = 0;
 
+    public int getNum() {
+        return num;
+    }
+
+    public void setNumSpecimen(int num) {
+        this.num = num;
+    }
+
+    public int num = 1;
+
     public int numberfiles =1;
+
+    public void clickRequestLink(){
+        if(validateElement_Enabled_Displayed(requestLink)) {
+            click(requestLink);
+            stepInfoWithScreenshot("Able to click request Link");
+        }
+    }
+
+    public void backbuttonBrowers(){
+        _driver.navigate().back();
+    }
+    public void clickEpisodeEventLink(){
+        switchToDefaultContext();
+        switchToFrame(iframeProcessing);
+        if(validateElement_Enabled_Displayed(episodeEventlink)) {
+            click(episodeEventlink);
+            stepInfoWithScreenshot("Able to click Episode Events Link");
+        }else{
+            Assert.fail("Unable to view Episode Events Link");
+        }
+        switchToDefaultContext();
+        switchToFrame(iframeInfoObservation);
+        click(iframeInfroCloseButton,15);
+        switchToDefaultContext();
+        switchToFrame(iframeProcessing);
+    }
+
+    public void testSpeciemenQuestionaire(String value){
+       if(validateElement_Enabled_Displayed(questionarieButton,15)) {
+           click(questionarieButton);
+           stepInfoWithScreenshot("Able to click Test Set Order Questions" );
+       }
+        switchToDefaultContext();
+        switchToFrame(iframeInfoObservation);
+       if(validateElement_Enabled_Displayed(secondQuestion)) {
+          enterquestionvalue(value);
+       }else{
+           click(iframeInfroCloseButton,15);
+           switchToDefaultContext();
+           switchToFrame(iframeProcessing);
+           click(questionarieButton);
+           switchToDefaultContext();
+           switchToFrame(iframeInfoObservation);
+           enterquestionvalue(value);
+       }
+
+       click(iframeInfroCloseButton,15);
+        switchToDefaultContext();
+        switchToFrame(iframeProcessing);
+
+    }
+    private void enterquestionvalue(String value){
+        sendKeys(secondQuestion, value, 15);
+        if (!getAttribute(secondQuestion, "value", 10).isBlank()) {
+            stepPassedWithScreenshot("Entered value " + value);
+        }
+    }
+    public void proctocolProcdueQuestion(){
+        if(validateElement_Enabled_Displayed(questionProtocolButton,15)) {
+            click(questionProtocolButton);
+            stepInfoWithScreenshot("Able to click Test Set Protocol" );
+        }
+        switchToDefaultContext();
+        switchToFrame(iframeInfoObservation);
+        stepPassedWithScreenshot("Able to view Procedure Question ");
+
+        click(iframeInfroCloseButton);
+        switchToDefaultContext();
+        switchToFrame(iframeProcessing);
+    }
+
+    public void testSetProctocol(){
+        if(validateElement_Enabled_Displayed(testSetProtocolButton,15)) {
+            click(testSetProtocolButton);
+            stepInfoWithScreenshot("Able to click Test Set Protocol" );
+        }
+        switchToDefaultContext();
+        switchToFrame(iframeInfoObservation);
+        if(!getText(slideMaterialText,15).isBlank()) {
+            stepPassedWithScreenshot("Able to view Number of slide ");
+        }
+        click(iframeInfroCloseButton);
+        switchToDefaultContext();
+        switchToFrame(iframeProcessing);
+    }
+
+    public  void testSetOption(){
+        click(testSetOptionButtonDropDown,10);
+        if(validateElement_Enabled_Displayed(oneSpecimenContainer)) {
+            click(oneSpecimenContainer, 10);
+            stepPassedWithScreenshot("Able to view Protocol Overview");
+        }
+        switchToDefaultContext();
+        switchToFrame(iframeInfoObservation);
+        click(iframeInfroCloseButton);
+        switchToDefaultContext();
+        switchToFrame(iframeProcessing);
+
+    }
 
     public void lookupSinglewithoutOrgnimfield(String speciemenReceive,String[] testresults,boolean validate,boolean apply) throws InterruptedException {
         int x = 0;
@@ -188,9 +312,11 @@ public class PathCareProcessingPage extends AbstractPage {
             try {
                     acceptAlert();
                     click(antibioticsPanel);
-                }catch (NoAlertPresentException ignore){
+                }catch (NoAlertPresentException ignore) {
+                if (validateElement_Enabled_Displayed(antibioticsPanel, 10)) {
                     click(antibioticsPanel);
                 }
+            }
         }
 
         By antibioticsList = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s",value));
@@ -214,8 +340,10 @@ public class PathCareProcessingPage extends AbstractPage {
     public void antibiotics(String[][] antibios,String mic) throws InterruptedException {
         int x= 0;
         Boolean resultfound = false;
-        if(validateElement_Displayed(antibioticslink)){
+        if(validateElement_Enabled_Displayed(antibioticslink,10)){
             click(antibioticslink);
+        }else{
+            Assert.fail("Unable to click Antibiotics Link");
         }
         Thread.sleep(4000);
         switchToDefaultContext();
@@ -249,14 +377,14 @@ public class PathCareProcessingPage extends AbstractPage {
 
     public void specimenNumPending(String specimenReceive,String observation,Boolean addnotes,String notesvalue,Boolean addLinkedTest,String linkedTest){
 
-        specimenNumber = By.xpath("//strong[contains(text(),'%s')]".replace("%s",specimenReceive.concat(".1")));
+        specimenNumber = speciemenPendingValue(specimenReceive,num);
         click(specimenNumber,10);
-        stepPassedWithScreenshot("Successfully selected  "+specimenReceive.concat(".1"));
-        click(addObervation,10);
+        stepPassedWithScreenshot("Successfully selected  "+specimenReceive.concat("."+num));
+        if(!observation.isBlank()){click(addObervation,10);}
 
         switchToDefaultContext();
         switchToFrame(iframeInfoObservation);
-        if(!observation.isEmpty()) {
+        if(!observation.isBlank()) {
             findOne(obervationSelection, observation);
         }
 
@@ -275,12 +403,22 @@ public class PathCareProcessingPage extends AbstractPage {
             switchToFrame(iframeInfoObservation);
             findOne(linkedTestSetItem,linkedTest);
         }
+        if(!observation.isBlank()) {
+            switchToDefaultContext();
+            switchToFrame(iframeInfoObservation);
+            stepPassedWithScreenshot("Successfully entered Observation " + observation);
 
-        switchToDefaultContext();
-        switchToFrame(iframeInfoObservation);
-        stepPassedWithScreenshot("Successfully entered Observation "+observation);
-        click(updateObservation);
+            click(updateObservation);
+        }
 
+
+    }
+    private By speciemenPendingValue(String value,int num){
+        if(num==1){
+      return  By.xpath("//strong[contains(text(),'%s')]".replace("%s",value.concat("."+num)));
+        }else{
+          return  By.xpath("//a[contains(text(),'Complete All')]");
+        }
     }
 
     public void specimenCompleteWithoutApplyorUpdate(){
@@ -440,61 +578,46 @@ public class PathCareProcessingPage extends AbstractPage {
             element.clear();
         }
 
+        if(testresults.length!=0) {
 
-        for(WebElement element:find(pinserttestreults)){
-            Thread.sleep(4000);
-            element.click();
-            organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s",testresults[x++]));
-            if(x==3) {
-                click(closelookup);
-                break;
-
-            }
-            if(!validateElement_Enabled_Displayed(organismTextfield, 10)){
-                click(orgramismText);
+            for (WebElement element : find(pinserttestreults)) {
+                click(pathogentextbox);
                 element.click();
                 Thread.sleep(4000);
+                organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s", testresults[x++]));
+                if (x == 3) {
+                    click(closelookup);
+                    break;
+                }
+                while(!validateElement_Enabled_Displayed(organismTextfield, 10)) {
+                    _driver.findElement(pathogentextbox).sendKeys(Keys.TAB);
+                    element.click();
+                }
+                Thread.sleep(3000);
+                click(organismTextfield);
             }
 
-            if(!validateElement_Enabled_Displayed(organismTextfield, 10)){
-                click(applyTestResult);
-                Thread.sleep(5000);
-                if(element.isEnabled() && element.isDisplayed()){
-                    element.click();
-                }else{
-                    Thread.sleep(5000);
-                    element.click();
+            if (!organisms.isEmpty()) {
+                if (validateElement_Displayed(closelookup)) {
+                    click(closelookup);
+                }
+                if (validateElement_Displayed(manglass)) {
+                    sendKeys(orgramismText, organisms);
+                    if (validateElement_Displayed(closelookup)) {
+                        click(closelookup);
+                        // click(manglass);
+                    }
+//                Thread.sleep(4000);
+//                organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s", organisms));
+//                click(organismTextfield);
+                    click(applyTestResult);
+                    Thread.sleep(3000);
                 }
 
             }
-
-            click(organismTextfield);
-
         }
 
-
-        if(!organism.isEmpty()) {
-            click(organimMaginitglass);
-            organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s", organism));
-            click(organismTextfield);
-            Thread.sleep(3000);
-            click(applyTestResult);
-            Thread.sleep(3000);
-        }
-
-        if (!organisms.isEmpty()){
-            if(validateElement_Displayed(closelookup)){
-                click(closelookup);
-            }
-            click(manglass);
-            organismTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s", organisms));
-            click(organismTextfield);
-            Thread.sleep(3000);
-            click(applyTestResult);
-            Thread.sleep(3000);
-        }
-
-        stepPassedWithScreenshot("Successfully Entered Results " + organism +" "+organisms);
+        stepInfo("Successfully Entered Results " + organism +" "+organisms);
 
         //Testing Comment
         if(!comments.isEmpty()) {
@@ -502,8 +625,8 @@ public class PathCareProcessingPage extends AbstractPage {
         }else{
             testcomment("");
         }
-        Thread.sleep(5000);
 
+        loadingBarChecker();
         reportPreview();
         stepPassedWithScreenshot("Successfully updated Test Result");
     }
@@ -563,6 +686,34 @@ public class PathCareProcessingPage extends AbstractPage {
         speciemenR=specimenReceive.concat(".1");
 
     }
+    public void specimenComplete(String specimenReceive,String number){
+
+        switchToDefaultContext();
+        switchToFrame(iframeProcessing);
+        click(completeButton);
+
+        completequery = By.xpath("//strong[contains(text(),'%s')]".replace("%s",specimenReceive.concat("."+number)));
+
+        if(validateElement_Displayed(completequery)){
+            stepPassedWithScreenshot("Successfully Completed "+specimenReceive.concat("."+number));
+        }
+
+        click(applyTestResult);
+
+        if(validateElement_Displayed(notficationApply,10)){
+            stepPassedWithScreenshot("Successfully received  "+getText(notficationApply));
+        }
+
+        click(updateTestResult);
+
+        if(validateElement_Displayed(notficationApply,10)){
+            stepPassedWithScreenshot("Successfully received  "+getText(notficationApply));
+        }
+
+        speciemenR=specimenReceive.concat(".1");
+
+    }
+
     public void receiveReport() throws InterruptedException {
         if(validateElement_Enabled_Displayed(reportpreview,10)) {
             click(reportpreview, 10);
@@ -658,22 +809,30 @@ public class PathCareProcessingPage extends AbstractPage {
 
         long endTime = System.nanoTime() + TimeUnit.NANOSECONDS.convert(15, TimeUnit.SECONDS);
         while(System.nanoTime() < endTime) {
-            for (File files : file.listFiles()) {
-                if (files.getName().contains(".pdf")) {
+            for (File files : Objects.requireNonNull(file.listFiles())) {
+                if (files.getName().contains(".pdf") && files.getName().contains("document")) {
                     x++;
                     files.renameTo(new File(dir+testname+x+".pdf"));
                     stepInfo("Checking pdf reporting files");
+                }else if(x==numberfiles){
+                    stepPassed("Successfully received files ");
+                    return x;
                 }
-            }
-            if(x==numberfiles){
-                stepPassed("Successfully received files ");
-                return x;
             }
         }
         return x;
     }
 
-
+    public void loadingBarChecker(){
+        int x =3;
+        while(!validateElement_Displayed(bodydom,5)){
+            x--;
+            stepInfo("Page still loading");
+            if(x==0){
+                break;
+            }
+        }
+    }
 
 
     public void findOne(By by,String input) {

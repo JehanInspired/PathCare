@@ -2,6 +2,7 @@ package applications.PathCareapplication.pages;
 
 import Roman.Roman;
 
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
@@ -49,20 +50,17 @@ public class SingleProcess extends AbstractPage {
 
             }
 
-            if(!validateElement_Enabled_Displayed(organismTextfield, 10)){
-                click(orgramismText);
+            int y =0;
+            while(!validateElement_Enabled_Displayed(organismTextfield, 10)) {
+                _driver.findElement(pathogentextbox).sendKeys(Keys.TAB);
                 element.click();
-                Thread.sleep(4000);
-            }
-
-            if(!validateElement_Enabled_Displayed(organismTextfield, 10)){
-                find(pinserttestreults).get(0).click();
-                element.click();
-                Thread.sleep(4000);
+                if(y==6){
+                    Assert.fail("Unable to find "+organismTextfield.toString());
+                }
+                y++;
             }
 
             click(organismTextfield);
-
 
         }
 

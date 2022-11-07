@@ -10,7 +10,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -98,7 +97,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation(model.accessProfile);
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
-        Assertions.assertEquals("Specimen already received:", pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide.concat("-1")));
+        Assertions.assertEquals("Specimen already received:", pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide));
 
     }
 
@@ -174,9 +173,8 @@ public class MultiDisciplineTestCase extends RomanBase {
     @Test
     public void TP_13() throws Exception {
         Faker faker = new Faker();
-        //pls remove
+
         String[] testcollection = new String[]{"HCD4", "BAA1"};
-       // String[] testcollection = new String[]{"HCD4", "BAA1", "IIGAM", "IIGGSUB", "HLUPUS", "HVWILL", "HPC", "HFPSAG", "HATIII"};
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture GEORGE");
@@ -193,11 +191,11 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.pre_analytical.navigateTransfer();
         pathCare.pathCareLabTransferList.tranferlistLabepisode(labespide);
-        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.get(0),true);
+        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.specimenNumbers,true);
         pathCare.pathCareLabTransferList.closePackage();
         pathCare.pathCareLabTransferList.tranferlistLabepisodewithoutframe(labespide);
         pathCare.pathCareLabTransferList.switchToDefaultContext();
-        Assertions.assertTrue(pathCare.pathCareLabTransferList.checknumbersTransferlapepisode(labespide, pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.get(0)));
+        Assertions.assertTrue(pathCare.pathCareLabTransferList.checknumbersPackage(labespide, pathCare.pathCareLabSpecimenReception.specimenNumbers));
     }
 
 

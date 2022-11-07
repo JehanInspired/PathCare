@@ -109,8 +109,8 @@ public class Pre_Analytical extends AbstractPage {
     public void navigateMenu(){
         switchtoMainiFrame();
         click(mainmenu,15);
-
     }
+
     public void navigatehome(){
         switchtoMainiFrame();
         click(homelink);

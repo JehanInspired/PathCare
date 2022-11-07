@@ -5,6 +5,9 @@ import org.junit.Assert;
 import org.openqa.selenium.*;
 import selenium.AbstractPage;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class PathCareLabTransferList extends AbstractPage {
@@ -50,6 +53,8 @@ public class PathCareLabTransferList extends AbstractPage {
   private  final By iframeSaveSearch = By.name("TRAK_info");
     private final By searchResultTitle = By.xpath("//label[@id='SRCHDesc']");
     private final By nextpageTransferlist =By.xpath("//img[@id='NextPageImage_LBTransfer_List']");
+    private final By dateSentFrom = By.xpath("//input[@id='FromSentDate']");
+    private final By dateSentTo = By.xpath("//input[@id='DateSentTo']");
     private String description= "";
     private String url = "";
 
@@ -73,7 +78,7 @@ public class PathCareLabTransferList extends AbstractPage {
     }
 
 
-  public Boolean checknumbersTransfer(String labepisode, List<String> specimennumbers){
+    public Boolean checknumbersTransfer(String labepisode, List<String> specimennumbers){
       boolean checker = false;
       listTransfer = By.xpath("//label[text()='%s']".replace("%s",labepisode));
 
@@ -83,7 +88,7 @@ public class PathCareLabTransferList extends AbstractPage {
       }
         return checker;
   }
-  public void checkPackItem(ArrayList<String> mulitplelabepisode,ArrayList<ArrayList<String>> specimenRecieve) {
+    public void checkPackItem(ArrayList<String> mulitplelabepisode,ArrayList<ArrayList<String>> specimenRecieve) {
       switchToFrame(switchiFrame);
       findOne(By.xpath("//input[@id='Status']"), "PKD");
       int y=0;
@@ -98,6 +103,21 @@ public class PathCareLabTransferList extends AbstractPage {
           y++;
       }
   }
+    public void checkWaitItem(ArrayList<String> mulitplelabepisode,ArrayList<ArrayList<String>> specimenRecieve) {
+        switchToFrame(switchiFrame);
+        findOne(By.xpath("//input[@id='Status']"), "W");
+        int y=0;
+        for (String labEpisode : mulitplelabepisode) {
+            findOne(this.labEpisode, labEpisode);
+            clickFindButton();
+            By labEpisodefield = By.xpath("//parent::td[label[text()='%s']]//parent::tr//td//input[contains(@id,'Selectz')]".replace("%s", labEpisode));
+            if (!(getAllElementText(labEpisodefield).size() == specimenRecieve.get(y).size())) {
+                Assert.fail("Unable to find " + labEpisode);
+            }
+            stepInfoWithScreenshot("Able to find specimen under lab " + labEpisode);
+            y++;
+        }
+    }
 
     public Boolean checknumbersTransferlapepisode(String labepisode, ArrayList<String> specimennumbers){
         boolean checker = false;
@@ -153,10 +173,15 @@ public class PathCareLabTransferList extends AbstractPage {
 
     public Boolean checknumbersPackage(String labepisode, List<String> specimennumbers){
       boolean checker =false;
+      switchToDefaultContext();
+        switchToFrame(switchiFrame);
         listTransfer = By.xpath("//label[text()='%s']".replace("%s",labepisode));
-        if(getAllElementText(listTransfer).size()==specimennumbers.size() && getAllElementText(status).contains("Packed")) {
+        if(getAllElementText(listTransfer).size()==specimennumbers.size()) {
             stepPassedWithScreenshot("Able to view Packaged "+labepisode);
             checker = true;
+        }else{
+            stepInfoWithScreenshot("Unable to find Packed lap episode Excepted "
+                    +getAllElementText(listTransfer).size()+" but received "+specimennumbers.size());
         }
         return checker ;
     }
@@ -245,12 +270,24 @@ public class PathCareLabTransferList extends AbstractPage {
   public void clickFindButton(){
       click(findbutton);
   }
+  public void statChangeWaitingLinkFind(String fromSite, String toSite){
+      DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+      switchToDefaultContext();
+      switchToFrame(switchiFrame);
+      /*findOne(dateSentFrom,dateTimeFormatter.format(LocalDate.now()));
+      findOne(dateSentTo,dateTimeFormatter.format(LocalDate.now()));*/
+      findOne(fromLabSite,fromSite);
+      findOne(toLabsite,toSite);
+      findOne(By.xpath("//input[@id='Status']"), "W");
+      clickFindButton();
+
+  }
 
   public void selectlistlabespido(ArrayList<String> labEpisode){
+
       for(String value:labEpisode){
           int y=0;
          By labEpisodefield = By.xpath("//parent::td[label[text()='%s']]//parent::tr//td//input[contains(@id,'Selectz')]".replace("%s",value));
-
          while(!validateElement_Enabled_Displayed(labEpisodefield,10)){
              if(validateElement_Displayed(nextpageTransferlist)){
                  click(nextpageTransferlist);
@@ -272,6 +309,7 @@ public class PathCareLabTransferList extends AbstractPage {
 
        description ="From PathCare Park Reference Lab to George Laboratory Lab Transfer "+ new Random().nextDouble();
       switchToFrame(switchiFrame);
+
       findOne(fromLabSite,"PathCare Park Reference Lab");
       findOne(toLabsite,"George Laboratory");
       click(findbutton);
@@ -312,7 +350,6 @@ public class PathCareLabTransferList extends AbstractPage {
             stepPassedWithScreenshot("Able to view Save Search of "+description);
             return true;
         }
-
       }
       return false;
     }
