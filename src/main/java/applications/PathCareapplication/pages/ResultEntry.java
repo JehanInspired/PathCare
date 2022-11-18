@@ -35,6 +35,8 @@ public class ResultEntry extends AbstractPage {
     private final  By reportCollectionDate = By.xpath("//input[@name='DateFrom']");
 
     private final  By testSetComments = By.xpath("//a[@id='LBTSCommentsLink']");
+    private  By testSetOptionButtonDropDown = By.xpath("//a[text()='Test Set Options']");
+    private  By MultipleSpecimenContainer = By.xpath("//a[contains(@id,'LBProtocolz')]");
 
     private final By inputTestresults = By.xpath("//input[contains(@id,'Value')]");
     private final By lookupicon = By.xpath("//img[contains(@id,'Value')]");
@@ -74,6 +76,7 @@ public class ResultEntry extends AbstractPage {
     private final By receivedTestList = By.xpath("//span[text()='Received']");
     private final By pinserttestreult = By.xpath("//img[contains(@id,'Value')]");
     private final By closelookup = By.xpath("//span[@id='OverlayCloseLookupOverlayDiv']");
+    private final By iframeProcessing = By.xpath("//iframe[@id='TRAK_main']");
 
     private By espiodeNumberLink = By.xpath("//a[@id='LBEPNumber']");
 
@@ -104,6 +107,30 @@ public class ResultEntry extends AbstractPage {
             click(receivedTestList);
 
         }
+    }
+    public void mutlipleTestResult(ArrayList<String> LapespideMultiple){
+        for(String labespide:LapespideMultiple) {
+            LabResultsEntry(labespide);
+            episodeNumber = By.xpath("//span[contains(text(),'%s')]".replace("%s", labespide));
+
+            if (validateElement_Displayed(episodeNumber)) {
+                stepPassedWithScreenshot("Able to view testset " + getText(episodeNumber));
+                click(episodeNumber);
+                switchToFrame(iframeProcessing);
+                testSetOption();
+                switchToDefaultContext();
+                //click back twice
+                click(By.xpath("//a[@ng-click='navBack();']"));
+                click(By.xpath("//a[@ng-click='navBack();']"));
+            }
+        }
+    }
+
+    public void testSetOption()  {
+
+        click(testSetOptionButtonDropDown, 10);
+        stepInfoWithScreenshot("Able to view specimen container ");
+
     }
     public void LabResultsEntry(String labespide){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");

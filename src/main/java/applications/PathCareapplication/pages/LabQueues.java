@@ -176,7 +176,8 @@ public class LabQueues extends AbstractPage {
         }
     }
 
-    public String findlastresultlist(String labespide, boolean clicklastElementList,int totalrow,boolean single){
+    public String findlastresultlist(String labespide, boolean clicklastElementList,int totalrow,boolean single) throws InterruptedException {
+        Thread.sleep(3000);
         switchToDefaultContext();
         switchToFrame(switchiFrame);
         selecSearch(totalrow);

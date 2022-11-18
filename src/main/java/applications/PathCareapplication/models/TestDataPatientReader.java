@@ -11,10 +11,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 public class TestDataPatientReader {
 
-    public HashMap<String, ArrayList<String>> value = new HashMap<>();
+    public HashMap<String, List<String>> value = new HashMap<>();
 
     public TestDataPatientReader() {
 
@@ -24,9 +25,10 @@ public class TestDataPatientReader {
         FileInputStream file = new FileInputStream(path);
         Workbook extractSheet = new XSSFWorkbook(file);
             ArrayList<String> datavalue = new ArrayList<>();
+
             for (Iterator<Sheet> it = extractSheet.sheetIterator(); it.hasNext(); ) {
                 Sheet sheet = it.next();
-
+                datavalue = new ArrayList<>();
                 String key = sheet.getSheetName();
                 for (int x = 0; x < sheet.getPhysicalNumberOfRows(); x++) {
 
@@ -38,6 +40,8 @@ public class TestDataPatientReader {
                                 datavalue.add(String.valueOf(cell.getNumericCellValue()));
                             }else if (cell.getCellType().equals(CellType.STRING)){
                                 datavalue.add(cell.getStringCellValue().trim());
+                            }else if(cell.getCellType().equals(CellType.BLANK)){
+                                datavalue.add(cell.getStringCellValue().trim());
                             }
 
                         }
@@ -45,6 +49,8 @@ public class TestDataPatientReader {
                     }
 
                 }
+              value.put(key,datavalue);
+
             }
 
     }

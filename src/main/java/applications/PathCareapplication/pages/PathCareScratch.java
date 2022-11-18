@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Action;
 import selenium.AbstractPage;
 
 import java.text.SimpleDateFormat;
@@ -415,7 +416,7 @@ public class PathCareScratch extends AbstractPage {
 
     }
 
-    public void searchPatient(String lapespido){
+    public void searchPatient(String lapespido) throws InterruptedException {
 
                 if(validateElement_Enabled_Displayed(advanceSearch,15) && !(validateElement_Displayed(advanceSearchDownArrow))){
                     click(advanceSearch);
@@ -424,14 +425,46 @@ public class PathCareScratch extends AbstractPage {
                 sendKeys(labEpiodeTextField, lapespido);
                 click(findButton);
                 stepInfoWithScreenshot("Search for Patient "+ lapespido);
-
-            if(!validateElement_Displayed(lapEpisodeTitle,10)){
+                Thread.sleep(3000);
+            if(!validateElement_Displayed(lapEpisodeTitle,15)){
                 Assert.fail("Unable to find Advance Search");
             }
 
     }
 
-    public ArrayList<ArrayList<String>> searchMutliplePatient(List<String> lapsiode){
+    public void specimenContainerList(String specimenContainer,String anatomical,String lesion,String anatomicalSite) throws InterruptedException {
+            List<WebElement> specimentlist = find(By.xpath("//div[@class='componentTableColumnRow ']//span[contains(@ng-bind,'LBTS_SpecimenContainers')]"),10);
+        int number =specimentlist.size();
+        int y = 0;
+        for(WebElement element:specimentlist){
+            if(element.getText().contains(specimenContainer)){
+
+                break;
+            }
+            y++;
+        }
+        int numberpoint = number-y;
+        By specimenContainerlistnumber = By.xpath("//parent::tr//td//input[@name='LBCL_Descz$s' or @name='LBCASQ_Descz$s' or @name='LBCAS_Descz$s']".replace("$s",String.valueOf(numberpoint)));
+        int x =0;
+        for(WebElement element:find(specimenContainerlistnumber)){
+            if(x==0 && !anatomical.isBlank()){
+                element.sendKeys(anatomical);
+                element.sendKeys(Keys.TAB);
+            }else if(x==1 && !anatomicalSite.isBlank()){
+                element.sendKeys(anatomicalSite);
+                element.sendKeys(Keys.TAB);
+            }else if(x==2 &&!lesion.isBlank()){
+                Thread.sleep(4000);
+                element.sendKeys(lesion);
+                element.sendKeys(Keys.TAB);
+            }
+            x++;
+        }
+        click(updatebuton, 15);
+
+    }
+
+    public ArrayList<ArrayList<String>> searchMutliplePatient(List<String> lapsiode) throws InterruptedException {
         ArrayList<ArrayList<String>> speciemenlist = new ArrayList<>();
         for(String labnumber: lapsiode) {
             searchPatient(labnumber);

@@ -42,6 +42,10 @@ public class InterSystemloginPage extends AbstractPage {
         sendKeys(usernametext,username);
         sendKeys(passwordtext,password);
         click(loginBtn);
+        Object navigationStart = getObjectFromJavaScript("return window.performance.timing.navigationStart");
+        Object responseStart = getObjectFromJavaScript("return window.performance.timing.responseStart");
+        Object domComplete = getObjectFromJavaScript("return window.performance.timing.domComplete");
+
         stepPassedWithScreenshot("User is directed to User Profile screen");
     }
     public void logoff(){

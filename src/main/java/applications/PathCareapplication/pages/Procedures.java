@@ -27,9 +27,9 @@ public class Procedures extends AbstractPage {
         Thread.sleep(3000);
        if(validateElement_Displayed(spcimennumberTexts,10)) {
             if(find(spcimennumberTexts,15).size()==specimenNumber.size()) {
-                stepPassed("Able to view correct number of specimen");
+                stepPassed("Able to view correct number of specimen of "+labEpisode);
            }else{
-                Assert.fail("Unable to view correct speciemen number");
+                Assert.fail("Unable to view correct speciemen number of "+labEpisode);
             }
         }
 

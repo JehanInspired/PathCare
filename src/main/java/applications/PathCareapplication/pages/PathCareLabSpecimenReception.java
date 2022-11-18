@@ -1,6 +1,7 @@
 package applications.PathCareapplication.pages;
 
 import Roman.Roman;
+import applications.PathCareapplication.models.CytologyNon_GynaeSpecimen;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -27,6 +28,7 @@ public class PathCareLabSpecimenReception extends AbstractPage {
     private final By tobereceivedcontain = By.xpath("//label[@id='SpecimenNumberTBRz1']");
 
     public ArrayList<String> specimenNumbers = new ArrayList<>();
+    public int timer = 15;
     public HashMap<String,ArrayList<String>> mutlipleSpeicmen = new HashMap<>();
 
     public String entryMultipleLabspecimenSingleReception(String labspecnumber){
@@ -87,7 +89,7 @@ public class PathCareLabSpecimenReception extends AbstractPage {
                     break;
                 }
 
-                if (!validateElement_Enabled_Displayed(specimenNumberUpdateButton)) {
+                if (!validateElement_Enabled_Displayed(specimenNumberUpdateButton,timer)) {
                     Assert.fail("Unable to Update Lab Specimen");
                 }
                // specimenNumbers.add(getText(By.xpath("//label[@id='TestSetListz']".replace("TestSetListz","TestSetListz"+x)),10));
@@ -100,18 +102,18 @@ public class PathCareLabSpecimenReception extends AbstractPage {
 
         for(String value:specimenNumbers){
             redoentryLabspecimen(value);
-            validateElement_Enabled_Displayed(textEpisode,5);
+            validateElement_Enabled_Displayed(textEpisode,timer);
             stepPassedWithScreenshot(value);
         }
 
         return mutlipleSpeicmen;
     }
-    public void specimenReceiveCreated(ArrayList<ArrayList<String>> specimen) throws InterruptedException {
+
+    public void specimenReceiveCreated(ArrayList<ArrayList<String>> specimen) {
         switchToDefaultContext();
         switchToFrame(specimenframe);
 
         for(ArrayList<String> values :specimen) {
-            int x=0;
             for (String value : values) {
                 findOne(specimenNumberText, value);
                 stepPassedWithScreenshot("Successfully Entered Lab Specimen under Lab episode: " + value);
@@ -121,78 +123,99 @@ public class PathCareLabSpecimenReception extends AbstractPage {
 
     }
 
-    public void specimenReceiveCreated(ArrayList<ArrayList<String>> specimen,HashMap<String,List<String>> specimenDetail) throws InterruptedException {
+    public void specimenReceiveCreated(ArrayList<ArrayList<String>> specimen,HashMap<String,List<String>> specimenDetail,boolean Non_GynaeSpecimen)  {
         switchToDefaultContext();
         switchToFrame(specimenframe);
-
+        int x=1;
+        String num = "";
         for(ArrayList<String> values :specimen) {
-            int x=0;
-            for (String value : values) {
 
+            for (String value : values) {
                 findOne(specimenNumberText, value);
                 stepPassedWithScreenshot("Successfully Entered Lab Specimen under Lab episode: " + value);
-                 String num ="1";
-                if (String.valueOf(x).contentEquals("3")) {
-                    num = "2.1";
-                } else if (String.valueOf(x).contentEquals("5")) {
-                    num = "3.1";
+                if(Non_GynaeSpecimen) {
+                        num = "1";
+                    if (String.valueOf(x).contentEquals("2")) {
+                        num = "2";
+                    } else if (String.valueOf(x).contentEquals("3")) {
+                        num = "2.1";
+                    } else if (String.valueOf(x).contentEquals("4")) {
+                        num = "3.1";
+                    } else if (String.valueOf(x).contentEquals("5")) {
+                        num = "3.2";
+                    }
+                }else{
+                     num = "Lab Episode "+x;
                 }
-                int y = 0;
-                String speicmenvalue1 ="";
-                for (String speicmenvalue : specimenDetail.get(num)) {
-                    By elment = By.xpath("//parent::td[label[text()='%s']]//parent::tr//td//input[not(@type='hidden')and @value='' and contains(@id,'AnatomicalSite') or contains(@id,'Lesionz')]".replace("%s",value));
-                    By lookupGlass = By.xpath("//parent::td[label[text()='%s']]//parent::tr//img[@class='clsLookupIcon' and contains(@name,'AnatomicalSiteQualifier') or contains(@name,'Lesion') or contains(@name,'AnatomicalSite')]".replace("%s",value));
-                    if (y == 0) {
-                        find(elment).get(y).sendKeys(speicmenvalue);
-                        if (find(elment).get(y).getAttribute("value").isBlank()) {
-                            find(elment).get(y).sendKeys(speicmenvalue);
-                        }
-                        find(lookupGlass).get(y).click();
 
-                        if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)),15)) {
-                            click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
-                        }
-                        y++;
-                    } else if (y == 1) {
-                        speicmenvalue1 =speicmenvalue;
-                        find(elment).get(y).sendKeys(speicmenvalue);
-                            if (find(elment).get(y).getAttribute("value").isBlank()) {
-                                find(elment).get(y).sendKeys(speicmenvalue);
-                            }
-                          find(lookupGlass).get(y).click();
-                        Thread.sleep(3000);
-                        if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)),15)) {
-                            click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
-                        }
-                        y++;
-                    } else if (y == 2) {
-                        find(elment).get(y).sendKeys(speicmenvalue);
-                        if (find(elment).get(y).getAttribute("value").isBlank()) {
-                            find(elment).get(y).sendKeys(speicmenvalue);
-                        }
-                        find(lookupGlass).get(y).click();
+                enteringValueSpecimenDetail(specimenDetail,num,value);
 
-                        if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)),15)) {
-                            click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
-                        }
+                stepInfoWithScreenshot("Successfully Entered Specimen details: " + value);
+                x++;
+                }
+            click(specimenNumberUpdateButton,timer);
+        }
+        switchToDefaultContext();
+    }
 
-                        find(lookupGlass).get(y-1).click();
-                        if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue1)),15)) {
+    public void enteringValueSpecimenDetail (HashMap<String,List<String>> specimenDetail,String num,String value){
+        int y = 0;
+        String speicmenvalue1 ="";
+        for (String speicmenvalue : specimenDetail.get(num)) {
+            By elment = By.xpath("//parent::td[label[text()='%s']]//parent::tr//td//input[not(@type='hidden')and @value='' and contains(@id,'AnatomicalSite') or contains(@id,'Lesionz')]".replace("%s",value));
+            By lookupGlass = By.xpath("//parent::td[label[text()='%s']]//parent::tr//img[@class='clsLookupIcon' and contains(@name,'AnatomicalSiteQualifier') or contains(@name,'Lesion') or contains(@name,'AnatomicalSite')]".replace("%s",value));
+            if (y == 0) {
+                if(!speicmenvalue.isBlank()) {
+                    find(elment).get(y).sendKeys(speicmenvalue);
+                    if (find(elment).get(y).getAttribute("value").isBlank()) {
+                        find(elment).get(y).sendKeys(speicmenvalue);
+                    }
+                    find(lookupGlass).get(y).click();
+                    if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)), timer)) {
+                        click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
+                    }
+                }
+                y++;
+            } else if (y == 1) {
+                speicmenvalue1 =speicmenvalue;
+                if(!speicmenvalue.isBlank()) {
+                    find(elment).get(y).sendKeys(speicmenvalue);
+                    if (find(elment).get(y).getAttribute("value").isBlank()) {
+                        find(elment).get(y).sendKeys(speicmenvalue);
+                    }
+                    find(lookupGlass).get(y).click();
+                    if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)), timer)) {
+                        click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
+                    }
+                }
+                y++;
+            } else if (y == 2) {
+                if(!speicmenvalue.isBlank()) {
+                    find(elment).get(y).sendKeys(speicmenvalue);
+                    if (find(elment).get(y).getAttribute("value").isBlank()) {
+                        find(elment).get(y).sendKeys(speicmenvalue);
+                    }
+                    find(lookupGlass).get(y).click();
+
+                    if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)), timer)) {
+                        click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
+                    }
+
+                    if(!speicmenvalue1.isBlank()) {
+                        find(lookupGlass).get(y - 1).click();
+                        if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue1)), timer)) {
                             click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue1)));
                         }
-
-                                break;
-                            }
-                        }
-                    stepPassedWithScreenshot("Successfully Entered Specimen details: " + value);
+                    }
                 }
-            click(specimenNumberUpdateButton);
+                break;
+            }
         }
     }
 
     public void redoentryLabspecimen(String labspecnumber){
         findOne(specimenNumberText,labspecnumber);
-        click(specimenNumberUpdateButton);
+        click(specimenNumberUpdateButton,timer);
     }
 
     public void findOne(By by,String input) {

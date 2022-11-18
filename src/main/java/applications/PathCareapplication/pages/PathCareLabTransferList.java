@@ -244,15 +244,17 @@ public class PathCareLabTransferList extends AbstractPage {
 
     }
 
-  public void closePackage(){
+  public boolean closePackage(){
     switchToDefaultContext();
     switchToFrame(switchiFrame);
     if(validateElement_Enabled_Displayed(closepacksession,10)){
           click(closepacksession, 10);
+            acceptAlert();
+            return true;
       }else{
         Assert.fail("Unable to click close pack session button");
     }
-    acceptAlert();
+    return false;
   }
 
   public boolean testSetfield(String name){
