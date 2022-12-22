@@ -15,6 +15,7 @@ public class InterSystemloginPage extends AbstractPage {
     private final By logoffbutton = By.xpath("//button[@aria-label='Logout']");
     private final By footer = By.xpath("//div[@class='footer']");
 
+    private int timeout =15;
 
     private String location = "";
 
@@ -28,6 +29,10 @@ public class InterSystemloginPage extends AbstractPage {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getLocation() {
+        return location;
     }
 
     @Override
@@ -61,22 +66,22 @@ public class InterSystemloginPage extends AbstractPage {
 
     public void userselection(){
         accessProfile = By.xpath("//span[contains(text(),'%s')]".replace("%s",location));
-        scrollToElement(nextPage,10);
-        scrollToElement(footer,10);
-            while (!validateElement_Enabled_Displayed(accessProfile, 10)) {
-                scrollToElement(footer, 10);
-                scrollToElement(nextPage, 10);
-                click(nextPage, 10);
+        scrollToElement(nextPage,timeout);
+        scrollToElement(footer,timeout);
+            while (!validateElement_Enabled_Displayed(accessProfile, timeout)) {
+                scrollToElement(footer, timeout);
+                scrollToElement(nextPage, timeout);
+                click(nextPage, timeout);
             }
-            scrollToElement(footer, 10);
-            scrollToElement(accessProfile, 10);
-            click(accessProfile, 10);
+            scrollToElement(footer, timeout);
+            scrollToElement(accessProfile, timeout);
+            click(accessProfile, timeout);
 
         stepPassedWithScreenshot("Lab queues screen "+location);
     }
 
     public boolean waitForDisplayed() {
-        return validateElement_Enabled_Displayed(loginBtn,15);
+        return validateElement_Enabled_Displayed(loginBtn,timeout);
     }
 
 }

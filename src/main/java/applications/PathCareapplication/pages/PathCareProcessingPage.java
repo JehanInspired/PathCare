@@ -76,7 +76,7 @@ public class PathCareProcessingPage extends AbstractPage {
 
     private By organimMaginitglass = By.xpath("//img[@id='lt8560iLBTSI_PathogenGrowthQualifier_DRz1']");
 
-    private By requestLink = By.id("registrationLink");
+    private By requestLink = By.xpath("//a[text()='equest']");
 
     private By listTestSet = By.xpath("//a[contains(@id,'TabTestSet')]");
 
@@ -123,9 +123,11 @@ public class PathCareProcessingPage extends AbstractPage {
     private By lookupProtocolMaterial = By.xpath("//img[@id='ld8628iLBPTMMaterialDR']");
 
     private By protocolObservation = By.xpath("//input[@id='LBPTPOObservationDR']");
+    private By backtopreviouspage = By.xpath("//a[@ng-click='navBack();']");
     public String speciemenR = "";
     public String dir ="";
     public int counter = 0;
+    public int timeout = 20;
 
     public int getNum() {
         return num;
@@ -139,21 +141,32 @@ public class PathCareProcessingPage extends AbstractPage {
 
     public int numberfiles =1;
 
-    public void clickRequestLink(){
-        if(validateElement_Enabled_Displayed(requestLink)) {
-            click(requestLink);
+
+    public void backtopreviouspage(){
+        switchToDefaultContext();
+        click(backtopreviouspage);
+        _driver.navigate().refresh();
+    }
+
+    public void clickRequestLink() throws InterruptedException {
+        switchToDefaultContext();
+        switchToFrame(iframeProcessing);
+        Thread.sleep(10000);
+        if(validateElement_Enabled_Displayed(requestLink,timeout)) {
+            click(requestLink,timeout);
             stepInfoWithScreenshot("Able to click request Link");
         }
     }
 
-    public void backbuttonBrowers(){
+    public void backbuttonbrowser(){
         _driver.navigate().back();
     }
-    public void clickEpisodeEventLink(){
+    public void clickEpisodeEventLink() throws InterruptedException {
         switchToDefaultContext();
         switchToFrame(iframeProcessing);
         if(validateElement_Enabled_Displayed(episodeEventlink)) {
-            click(episodeEventlink);
+            click(episodeEventlink,timeout);
+            Thread.sleep(3000);
             stepInfoWithScreenshot("Able to click Episode Events Link");
         }else{
             Assert.fail("Unable to view Episode Events Link");
@@ -168,7 +181,10 @@ public class PathCareProcessingPage extends AbstractPage {
     public void clickUpdateButton(){
         switchToDefaultContext();
         switchToFrame(iframeProcessing);
+        if(validateElement_Enabled_Displayed(questionarieButton,15)) {
         click(updateTestResult);
+        stepInfoWithScreenshot("Clicked Update Button");
+        }
     }
 
     public void testSpeciemenQuestionaire(String value,boolean entervalue) throws InterruptedException {
@@ -211,7 +227,6 @@ public class PathCareProcessingPage extends AbstractPage {
         }
     }
     private void checkquestionvalue(String value){
-        sendKeys(secondQuestion, value, 15);
         if (getAttribute(secondQuestion, "value", 10).equals(value)) {
             stepPassedWithScreenshot("Able to view " + value);
         }
@@ -407,9 +422,13 @@ public class PathCareProcessingPage extends AbstractPage {
 
     public void antibioticsPanel(String value) throws InterruptedException {
 
-        if(validateElement_Displayed(antibioticslink)){
+        if(validateElement_Enabled_Displayed(antibioticslink)) {
+            click(antibioticslink);
+        }else{
+            Thread.sleep(4000);
             click(antibioticslink);
         }
+
         switchToDefaultContext();
         switchToFrame(iframeInfoObservation);
         if(validateElement_Enabled_Displayed(antibioticsPanel,10)){
@@ -446,12 +465,9 @@ public class PathCareProcessingPage extends AbstractPage {
 
     public void antibiotics(String[][] antibios,String mic) throws InterruptedException {
         int x= 0;
+        Thread.sleep(5000);
         Boolean resultfound = false;
-        if(validateElement_Enabled_Displayed(antibioticslink,10)){
-            click(antibioticslink);
-        }else{
-            Assert.fail("Unable to click Antibiotics Link");
-        }
+
         Thread.sleep(4000);
         switchToDefaultContext();
         switchToFrame(iframeInfoObservation);

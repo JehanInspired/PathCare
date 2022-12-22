@@ -30,6 +30,7 @@ public class WorkAreaReceptionPage extends AbstractPage {
 
     private final By workAreaReceptionframe = By.xpath("//iframe[@id='TRAK_main']");
 
+    int timeout = 20;
 
     public WorkAreaReceptionPage(Roman roman) {
         super(roman);
@@ -84,13 +85,13 @@ public class WorkAreaReceptionPage extends AbstractPage {
         boolean checkingout = false;
         for (TestDataModel dataModel : data) {
 
-            sendKeys(departmentText, dataModel.department, 10);
+            sendKeys(departmentText, dataModel.department, timeout);
 
-            click(lookuprowselection);
-            if (validateElement_Enabled_Displayed(workArea, 10)) {
-                click(workAreaSearchbutton);
+            click(lookuprowselection,timeout);
+            if (validateElement_Enabled_Displayed(workArea, timeout)) {
+                click(workAreaSearchbutton,timeout);
             }
-            click(lookuprowselection);
+            click(lookuprowselection,timeout);
             findOne(specimenNumberText, (String) dataModel.labespode);
 
 
@@ -104,9 +105,9 @@ public class WorkAreaReceptionPage extends AbstractPage {
                     click(checkin);
                 }
             } else {
-                if (validateElement_Displayed(resetbutton) && validateElement_Enabled_Displayed(checkout)) {
+                if (validateElement_Displayed(resetbutton,timeout) && validateElement_Enabled_Displayed(checkout,timeout)) {
                     stepPassedWithScreenshot("Available option : Reset & Check Out. " + dataModel.labespode);
-                    click(reset);
+                    click(reset,timeout);
                     checkingout = true;
                     checking = true;
                 }

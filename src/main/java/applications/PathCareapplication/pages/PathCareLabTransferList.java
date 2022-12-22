@@ -223,7 +223,7 @@ public class PathCareLabTransferList extends AbstractPage {
 
   }
 
-    public void createShipment(Collection<ArrayList<String>> specimenNumbers, boolean selectAll){
+    public void createShipment(Collection<ArrayList<String>> specimenNumbers, boolean selectAll) throws InterruptedException {
         if(selectAll){click(selectallspecimen);}
         click(shipmentbutton);
         click(addshipmentcontainerbutton,10);
@@ -236,6 +236,7 @@ public class PathCareLabTransferList extends AbstractPage {
         for(ArrayList<String> values:specimenNumbers) {
             for(String value:values) {
                 findOne(packSpecimenNumber, value);
+                Thread.sleep(3000);
             }
         }
         click(closeShipment,5);

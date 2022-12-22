@@ -11,12 +11,12 @@ import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtensionContext;
+
 import org.junit.runners.MethodSorters;
 import org.openqa.selenium.chrome.ChromeOptions;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -73,16 +73,16 @@ public class CytologyTestPack extends RomanBase {
         @Test
         @Order(1)
         public void TP_143() throws Exception {
-
+            String[] testcollection = new String[]{"ANCYTONG"};
             AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
             pathCare.interSystemloginPage.login(model.username,model.password);
             pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PANORAMA");
             pathCare.interSystemloginPage.userselection();
             pathCare.pre_analytical.navigateRegistration();
-            labEpisode.addAll(pathCare.pathCareScratch.mutiplePatient(faker, testcollection,true,false,1,true )) ;
+            labEpisode.addAll(pathCare.pathCareScratch.mutiplePatientEditSpecimen(faker,"Female",testcollection,true,false,1,"Cytology Non-Gynae","Non-Gynae Specimen","Slide(s)",true)) ;
             pathCare.pathCareScratch.searchPatient(labEpisode.get(0));
-            Assert.assertTrue(!(pathCare.pathCareScratch.specimenNumberExtract(true).isEmpty()));
             specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtract(true));
+            Assert.assertTrue(!(specimenNumbers.isEmpty()));
             value=false;
 
         }
@@ -90,24 +90,20 @@ public class CytologyTestPack extends RomanBase {
         @Test
         @Order(2)
         public void TP_144() throws Exception {
-            Assume.assumeTrue("TP-143 Failed ",value);
-            value=false;
             AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
             pathCare.interSystemloginPage.login(model.username,model.password);
             pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PANORAMA");
             pathCare.interSystemloginPage.userselection();
             pathCare.pre_analytical.navigateRegistration();
             pathCare.pathCareScratch.setClickBackboneLabEpisodeSelect(false);
-            labEpisode.addAll(pathCare.pathCareScratch.mutiplePatient(faker, testcollection,true,false,1,false ));
+            pathCare.pathCareScratch.mutiplePatientEditSpecimen(faker,"Female",testcollection,true,false,1,"Cytology Non-Gynae","Non-Gynae Specimen","Slide(s)",false);
             pathCare.pathCareScratch.addMultipleSpecimen("Cytology Non-Gynae","Non-Gynae Specimen","Slide(s)",1,false,true);
             pathCare.pathCareScratch.specimenSelect();
-            pathCare.pathCareScratch.editTestSet("Number of FNA Slides","4");
+            pathCare.pathCareScratch.editTestSetSingle("Number of FNA Slides","4");
             labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
-            labEpisode.remove("");
             pathCare.pathCareScratch.searchPatient(labEpisode.get(1));
-            Assert.assertTrue(!(pathCare.pathCareScratch.specimenNumberExtract(true).isEmpty()));
             specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtract(true));
-            value =true;
+            Assert.assertTrue(!(specimenNumbers.isEmpty()));
         }
 
         @Test
@@ -115,32 +111,27 @@ public class CytologyTestPack extends RomanBase {
         public void TP_145() throws Exception{
             Faker faker = new Faker();
             String[] testcollection = new String[]{"ANCYTONG"};
-            Assume.assumeTrue("TP-144 Failed ",value);
-            value=false;
             AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
             pathCare.interSystemloginPage.login(model.username,model.password);
             pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PANORAMA");
             pathCare.interSystemloginPage.userselection();
             pathCare.pre_analytical.navigateRegistration();
             pathCare.pathCareScratch.setClickBackboneLabEpisodeSelect(false);
-            labEpisode.addAll(pathCare.pathCareScratch.mutiplePatient(faker, testcollection,true,false,1,false ));
+            pathCare.pathCareScratch.mutiplePatientEditSpecimen(faker,"Female",testcollection,true,false,1,"Cytology Non-Gynae","Non-Gynae Specimen","Slide(s)",false);
             pathCare.pathCareScratch.addMultipleSpecimen("Cytology Non-Gynae","Non-Gynae Specimen","Slide(s)",1,false,true);
             pathCare.pathCareScratch.specimenSelect();
-            pathCare.pathCareScratch.editTestSet("Number of FNA Slides","4");
+            pathCare.pathCareScratch.editTestSetSingle("Number of FNA Slides","4");
             labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
-            labEpisode.remove("");
             pathCare.pathCareScratch.searchPatient(labEpisode.get(2));
-            Assert.assertNotEquals("",pathCare.pathCareScratch.specimenNumberExtract(true));
-            labData.write(roman().testName,pathCare.pathCareScratch.specimenNumberExtract(true).toString());
-            value= false;
+            specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtract(true));
+            Assert.assertNotEquals("",specimenNumbers);
         }
 
 
         @Test
         @Order(4)
         public void TP_146() throws Exception {
-            Assume.assumeTrue("TP-145 Failed ",value);
-            value=false;
+
             AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
             pathCare.interSystemloginPage.login(model.username,model.password);
             pathCare.interSystemloginPage.setLocation("PC Lab Assistant PANORAMA");
@@ -165,14 +156,11 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pre_analytical.switchtoMainiFrame();
             pathCare.pre_analytical.navigateTransfer();
             pathCare.pathCareLabTransferList.checknumbersTransferMultiple(labEpisode,specimenNumbers);
-            value=true;
         }
 
         @Test
         @Order(5)
         public void TP_147() throws Exception {
-            Assume.assumeTrue("TP-146 Failed ",value);
-            value=false;
             CytologyNon_GynaeSpecimen specimenDetails =new CytologyNon_GynaeSpecimen();
             AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
             pathCare.interSystemloginPage.login(model.username,model.password);
@@ -181,10 +169,9 @@ public class CytologyTestPack extends RomanBase {
             pathCare.interSystemloginPage.userselection();
             pathCare.pre_analytical.navigatespecimenRecived();
             pathCare.pathCareLabSpecimenReception.specimenReceiveCreated(specimenNumbers,specimenDetails.value, true);
-            value =true;
         }
 
-        @Test
+        /*@Test
         @Order(6)
         public void TP_167() throws Exception{
             Faker faker = new Faker();
@@ -197,10 +184,10 @@ public class CytologyTestPack extends RomanBase {
             pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PANORAMA");
             pathCare.interSystemloginPage.userselection();
             pathCare.pre_analytical.navigateRegistration();
-            pathCare.pathCareScratch.setClickBackboneLabEpisodeSelect(false);
-            labEpisode.add(pathCare.pathCareScratch.mutiplePatient(faker, testcollection,true,false,1,true).get(0));
+            labEpisode.addAll(pathCare.pathCareScratch.mutiplePatientEditSpecimen(faker,"Female",testcollection,true,false,1,"Cytology Non-Gynae","Non-Gynae Specimen","Slide(s)",true)) ;
             pathCare.pathCareScratch.searchPatient(labEpisode.get(0));
             specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtract(true));
+
 
             //2nd patient
             pathCare.analytical.switchToDefaultContext();
@@ -208,7 +195,7 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pathCareScratch.mutiplePatient(faker, testcollection,true,false,1,false );
             pathCare.pathCareScratch.addMultipleSpecimen("Cytology Non-Gynae","Non-Gynae Specimen","Slide(s)",1,false,true);
             pathCare.pathCareScratch.specimenSelect();
-            pathCare.pathCareScratch.editTestSet("Number of FNA Slides","4");
+            pathCare.pathCareScratch.editTestSetSingle("Number of FNA Slides","4");
             labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
             pathCare.pathCareScratch.searchPatient(labEpisode.get(1));
             specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtract(true));
@@ -219,7 +206,7 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pathCareScratch.mutiplePatient(faker, testcollection,true,false,1,false );
             pathCare.pathCareScratch.addMultipleSpecimen("Cytology Non-Gynae","Non-Gynae Specimen","Slide(s)",1,false,true);
             pathCare.pathCareScratch.specimenSelect();
-            pathCare.pathCareScratch.editTestSet("Number of FNA Slides","4");
+            pathCare.pathCareScratch.editTestSetSingle("Number of FNA Slides","4");
             labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
             pathCare.pathCareScratch.searchPatient(labEpisode.get(2));
             specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtract(true));
@@ -269,7 +256,7 @@ public class CytologyTestPack extends RomanBase {
             pathCare.analytical.navigateProcessing();
             pathCare.pathCareProcessingPage.searchSpecimenReceive(specimenNumbers.get(0).get(0));
             pathCare.pathCareProcessingPage.clickRequestLink();
-            pathCare.pathCareProcessingPage.backbuttonBrowers();
+            pathCare.pathCareProcessingPage.backbuttonbrowser();
             pathCare.pathCareProcessingPage.clickEpisodeEventLink();
             pathCare.pathCareProcessingPage.testSpeciemenQuestionaire("2",true);
             pathCare.pathCareProcessingPage.testSetProctocol();
@@ -289,7 +276,7 @@ public class CytologyTestPack extends RomanBase {
             //2nd lap Episode
             pathCare.pathCareProcessingPage.searchSpecimenReceive(specimenNumbers.get(1).get(0));
             pathCare.pathCareProcessingPage.clickRequestLink();
-            pathCare.pathCareProcessingPage.backbuttonBrowers();
+            pathCare.pathCareProcessingPage.backbuttonbrowser();
             pathCare.pathCareProcessingPage.clickEpisodeEventLink();
             pathCare.pathCareProcessingPage.testSetProctocol();
             pathCare.pathCareProcessingPage.testSpeciemenQuestionaire("4",false);
@@ -310,7 +297,7 @@ public class CytologyTestPack extends RomanBase {
             //2nd lap Episode --2nd specimen
             pathCare.pathCareProcessingPage.searchSpecimenReceive(specimenNumbers.get(1).get(1));
             pathCare.pathCareProcessingPage.clickRequestLink();
-            pathCare.pathCareProcessingPage.backbuttonBrowers();
+            pathCare.pathCareProcessingPage.backbuttonbrowser();
             pathCare.pathCareProcessingPage.clickEpisodeEventLink();
             pathCare.pathCareProcessingPage.testSetProctocol();
             pathCare.pathCareProcessingPage.testSpeciemenQuestionaire("4",false);
@@ -332,7 +319,7 @@ public class CytologyTestPack extends RomanBase {
             //3rd lap Episode --1st specimen
             pathCare.pathCareProcessingPage.searchSpecimenReceive(specimenNumbers.get(2).get(0));
             pathCare.pathCareProcessingPage.clickRequestLink();
-            pathCare.pathCareProcessingPage.backbuttonBrowers();
+            pathCare.pathCareProcessingPage.backbuttonbrowser();
             pathCare.pathCareProcessingPage.clickEpisodeEventLink();
             pathCare.pathCareProcessingPage.testSetProctocol();
             pathCare.pathCareProcessingPage.testSpeciemenQuestionaire("4",false);
@@ -351,7 +338,7 @@ public class CytologyTestPack extends RomanBase {
             //3rd lap Episode --2nd specimen
             pathCare.pathCareProcessingPage.searchSpecimenReceive(specimenNumbers.get(2).get(1));
             pathCare.pathCareProcessingPage.clickRequestLink();
-            pathCare.pathCareProcessingPage.backbuttonBrowers();
+            pathCare.pathCareProcessingPage.backbuttonbrowser();
             pathCare.pathCareProcessingPage.clickEpisodeEventLink();
             pathCare.pathCareProcessingPage.testSetProctocol();
             pathCare.pathCareProcessingPage.testSpeciemenQuestionaire("4",false);
@@ -366,7 +353,7 @@ public class CytologyTestPack extends RomanBase {
             pathCare.labQueues.navigatetoHomepage();
             Assert.assertNotEquals("",pathCare.labQueues.findlastresultlist(labEpisode.get(2),false,4,false));
 
-        }
+        }*/
 
     }
 
@@ -385,7 +372,7 @@ public class CytologyTestPack extends RomanBase {
             pathCare.interSystemloginPage.userselection();
             pathCare.pre_analytical.navigateRegistration();
             pathCare.pathCareScratch.setClickBackboneLabEpisodeSelect(false);
-            labEpisode.addAll(pathCare.pathCareScratch.mutiplePatientEditSpecimen(faker,faker.demographic().sex().contentEquals("Male")? "Female":"Female",testCollection,false,false,4,"Cytology Gynae","Cytology Gynae Specimen","LBC Container",true));
+            labEpisode.addAll(pathCare.pathCareScratch.mutiplePatientEditSpecimen(faker,"Female",testCollection,false,false,4,"Cytology Gynae","Cytology Gynae Specimen","LBC Container",true));
             value = (labEpisode.size() == 4);
             Assert.assertEquals(4,labEpisode.size());
 
@@ -394,7 +381,7 @@ public class CytologyTestPack extends RomanBase {
         @Test
         @Order(2)
         public void TP_97() throws Exception {
-            Assume.assumeTrue("TP-97",value);
+           // Assume.assumeTrue("TP-97",value);
             Faker faker = new Faker();
             String[] testcollection = new String[]{"AGCYTO"};
             AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
@@ -416,7 +403,7 @@ public class CytologyTestPack extends RomanBase {
         @Test
         @Order(3)
         public void TP_113() throws Exception {
-            Assume.assumeTrue("TP-97 Failed",value);
+            //Assume.assumeTrue("TP-97 Failed",value);
             value = false;
             Faker faker  = new Faker();
             String[]  testCollection = new String[]{"AGCYTO"};
@@ -463,6 +450,8 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pathCareScratch.LinkSelectSpecimen();
             labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
             value=labEpisode.size()==10;
+            //All Specimen LabEpisode
+            specimenNumbers=pathCare.pathCareScratch.searchMutliplePatient(labEpisode);//
             Assert.assertEquals(10,labEpisode.size());
 
         }
@@ -470,20 +459,11 @@ public class CytologyTestPack extends RomanBase {
         @Test
         @Order(5)
         public void TP_397() throws Exception{
-            Assume.assumeTrue("TP-112",value);
+           // Assume.assumeTrue("TP-112",value);
+            value = false;
             //Search Users
             AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
             pathCare.interSystemloginPage.login(model.username, model.password);
-            pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PANORAMA");
-            pathCare.interSystemloginPage.userselection();
-            pathCare.pre_analytical.navigateRegistration();
-
-            //All Specimen LabEpisode
-            specimenNumbers=pathCare.pathCareScratch.searchMutliplePatient(labEpisode);
-
-            //Specimen Receive
-            pathCare.pre_analytical.switchtoMainiFrame();
-            pathCare.interSystemloginPage.changelocation();
             pathCare.interSystemloginPage.setLocation("PC Lab Assistant PANORAMA");
             pathCare.interSystemloginPage.userselection();
             pathCare.pre_analytical.navigatespecimenRecived();
@@ -519,28 +499,39 @@ public class CytologyTestPack extends RomanBase {
             pathCare.interSystemloginPage.setLocation("PC Lab Assistant PANORAMA");
             pathCare.interSystemloginPage.userselection();
             pathCare.pre_analytical.navigateLogistics();
-            pathCare.transferLogistics.pickUpShipmentValid(pathCare.pathCareLabTransferList.shipmentNumber);
+            pathCare.transferLogistics.pickUpShipmentValid(shipmentNumber);
             pathCare.pre_analytical.navigateTransfer();
-            pathCare.pathCareLabTransferList.checknumbersTransferMultiple(labEpisode,specimenNumbers);
-
+            value=pathCare.pathCareLabTransferList.checknumbersTransferMultiple(labEpisode,specimenNumbers);
+            Assert.assertTrue(value);
 
         }
+
 
         @Test
         @Order(8)
         public void TP_211() throws Exception{
+            Assume.assumeTrue("TP-207 issue ",value);
+            value =false;
             AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
             pathCare.interSystemloginPage.login(model.username, model.password);
             //Drop off
             pathCare.interSystemloginPage.setLocation("Pathcare Lab Assistant Histo N1");
             pathCare.interSystemloginPage.userselection();
             pathCare.pre_analytical.navigateLogistics();
-             pathCare.transferLogistics.dropOffShipmentValid(pathCare.pathCareLabTransferList.shipmentNumber);
+             pathCare.transferLogistics.dropOffShipmentValid(shipmentNumber);
+//            labData.write("TP_211()",labEpisode.toString()+","+specimenNumbers.toString());
         }
 
         @Test
         @Order(9)
         public void TP_114() throws Exception{
+//            if(labEpisode.isEmpty()){
+//               if (labData.reader("TP_211()")){
+//                specimenNumbers.add(labData.getSpecimenNumbers());
+//                labEpisode=labData.getLapEpsiode();
+//                shipmentNumber=labData.getShipment();
+//               };
+//            }
             TestDataPatientReader testDataPatientReader = new TestDataPatientReader();
             testDataPatientReader.extractTestData("src/main/resources/TP-114_testCase.xlsx");
             AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
@@ -551,15 +542,198 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pathCareLabSpecimenReception.specimenReceiveCreated(specimenNumbers,testDataPatientReader.value,false);
             pathCare.pre_analytical.navigateRegistration();
             pathCare.pathCareScratch.searchPatient(labEpisode.get(9));
-            pathCare.pathCareScratch.specimenContainerList(specimenNumbers.get(9).get(0),"LBC Ectocervical Specimen","C: LBC Primary","");
+            pathCare.pathCareScratch.specimenContainerList("LBC Ectocervical Specimen","C: LBC Primary","");
             pathCare.analytical.navigateResultEntry();
             pathCare.resultEntry.mutlipleTestResult(labEpisode);
+           // labData.write("TP_114()",labEpisode.toString()+","+specimenNumbers.toString());
 
         }
 
+      /*  @Test
+        void TP_117() throws Exception {
+
+//            if(labEpisode.isEmpty()){
+//                if (labData.reader("TP_114()")){
+//                    specimenNumbers.add(labData.getSpecimenNumbers());
+//                    labEpisode=labData.getLapEpsiode();
+//                }
+//            }
+            AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+            pathCare.interSystemloginPage.login(model.username, model.password);
+            pathCare.interSystemloginPage.setLocation("Pathcare Lab Assistant Histo N1");
+            pathCare.interSystemloginPage.userselection();
+            pathCare.analytical.navigateProcedures();
+            pathCare.procedures.searchSelection("Gynae Specimen Verification");
+            //5th lap episode
+//            try {
+//                if(specimenNumbers.get(4).get(0).isEmpty() || specimenNumbers.get(4).get(0) == null) {
+//                    pathCare.procedures.search(specimenNumbers.get(0).get(4));
+//                }else {
+                    pathCare.procedures.search(specimenNumbers.get(4).get(0));
+//                }
+//            }catch(IndexOutOfBoundsException e){
+//                pathCare.procedures.search(specimenNumbers.get(0).get(4));
+//            }
+
+            pathCare.pathCareProcessingPage.clickRequestLink();
+            pathCare.pathCareProcessingPage.backbuttonbrowser();
+            pathCare.pathCareProcessingPage.clickEpisodeEventLink();
+            pathCare.pathCareProcessingPage.testSpeciemenQuestionaire("",false);
+            pathCare.pathCareProcessingPage.testSetProctocol();
+            pathCare.pathCareProcessingPage.testSetOption();
+            pathCare.pathCareProcessingPage.proctocolProcdueQuestion();
+           // try {
+            //    if (specimenNumbers.get(4).get(0).isEmpty() || specimenNumbers.get(4).get(0) == null) {
+                   // pathCare.pathCareProcessingPage.specimenNumPending(specimenNumbers.get(0).get(4), "", false, "", false, "");
+               // } else {
+                    pathCare.pathCareProcessingPage.specimenNumPending(specimenNumbers.get(4).get(0), "", false, "", false, "");
+//                }
+//            }catch(IndexOutOfBoundsException e){
+//                pathCare.procedures.search(specimenNumbers.get(0).get(4));
+//            }
+            pathCare.pathCareProcessingPage.specimenCompleteWithoutApplyorUpdate();
+            pathCare.pathCareProcessingPage.clickUpdateButton();
+            pathCare.pathCareProcessingPage.backtopreviouspage();
+            pathCare.procedures.searchSelection("Gynae Specimen Verification");
+            //Lab 6
+//            try {
+//                if (specimenNumbers.get(5).get(0).isEmpty() || specimenNumbers.get(5).get(0) == null) {
+//                    pathCare.procedures.search(specimenNumbers.get(0).get(5));
+//                } else {
+                    pathCare.procedures.search(specimenNumbers.get(5).get(0));
+//                }
+//            }catch(IndexOutOfBoundsException e){
+//                pathCare.procedures.search(specimenNumbers.get(0).get(4));
+//            }
+
+            pathCare.pathCareProcessingPage.clickRequestLink();
+            pathCare.pathCareProcessingPage.backbuttonbrowser();
+            pathCare.pathCareProcessingPage.clickEpisodeEventLink();
+            pathCare.pathCareProcessingPage.testSpeciemenQuestionaire("",false);
+            pathCare.pathCareProcessingPage.testSetProctocol();
+            pathCare.pathCareProcessingPage.testSetOption();
+            pathCare.pathCareProcessingPage.proctocolProcdueQuestion();
+//            try {
+//                if (specimenNumbers.get(5).get(0).isEmpty() || specimenNumbers.get(5).get(0) == null) {
+//                    pathCare.pathCareProcessingPage.specimenNumPending(specimenNumbers.get(0).get(5), "", false, "", false, "");
+//                } else {
+                    pathCare.pathCareProcessingPage.specimenNumPending(specimenNumbers.get(5).get(0), "", false, "", false, "");
+//                }
+//            }catch(NullPointerException e){
+//                pathCare.pathCareProcessingPage.specimenNumPending(specimenNumbers.get(0).get(5), "", false, "", false, "");
+//
+//            }
+
+            pathCare.pathCareProcessingPage.specimenCompleteWithoutApplyorUpdate();
+            pathCare.pathCareProcessingPage.clickUpdateButton();
+            pathCare.pathCareProcessingPage.backtopreviouspage();
+            pathCare.procedures.searchSelection("Gynae Specimen Verification");
+
+            //Lab 7
+//            try {
+//                if (specimenNumbers.get(6).get(0).isEmpty() || specimenNumbers.get(6).get(0) == null) {
+//                    pathCare.procedures.search(specimenNumbers.get(0).get(6));
+//                } else {
+                    pathCare.procedures.search(specimenNumbers.get(6).get(0));
+//                }
+//            }catch (IndexOutOfBoundsException e){
+//                pathCare.procedures.search(specimenNumbers.get(0).get(6));
+//            }
+
+            pathCare.pathCareProcessingPage.clickRequestLink();
+            pathCare.pathCareProcessingPage.backbuttonbrowser();
+            pathCare.pathCareProcessingPage.clickEpisodeEventLink();
+            pathCare.pathCareProcessingPage.testSpeciemenQuestionaire("",false);
+            pathCare.pathCareProcessingPage.testSetProctocol();
+            pathCare.pathCareProcessingPage.testSetOption();
+            pathCare.pathCareProcessingPage.proctocolProcdueQuestion();
+//            try {
+//                if (specimenNumbers.get(6).get(0).isEmpty() || specimenNumbers.get(6).get(0) == null) {
+//                    pathCare.pathCareProcessingPage.specimenNumPending(specimenNumbers.get(0).get(6), "", false, "", false, "");
+//                } else {
+                    pathCare.pathCareProcessingPage.specimenNumPending(specimenNumbers.get(6).get(0), "", false, "", false, "");
+//                }
+//            }catch (IndexOutOfBoundsException e){
+//                pathCare.pathCareProcessingPage.specimenNumPending(specimenNumbers.get(0).get(6), "", false, "", false, "");
+//
+//            }
+            pathCare.pathCareProcessingPage.specimenCompleteWithoutApplyorUpdate();
+            pathCare.pathCareProcessingPage.clickUpdateButton();
+            pathCare.pathCareProcessingPage.backtopreviouspage();
+            pathCare.procedures.searchSelection("Gynae Specimen Verification");
+            //Lab 8
+//            try {
+//                if (specimenNumbers.get(7).get(0).isEmpty() || specimenNumbers.get(7).get(0) == null) {
+//                    pathCare.procedures.search(specimenNumbers.get(0).get(7));
+//                } else {
+                    pathCare.procedures.search(specimenNumbers.get(7).get(0));
+//                }
+//            }catch (IndexOutOfBoundsException e){
+//                pathCare.procedures.search(specimenNumbers.get(0).get(7));
+//            }
+
+            pathCare.pathCareProcessingPage.clickRequestLink();
+            pathCare.pathCareProcessingPage.backbuttonbrowser();
+            pathCare.pathCareProcessingPage.clickEpisodeEventLink();
+            pathCare.pathCareProcessingPage.testSpeciemenQuestionaire("",false);
+            pathCare.pathCareProcessingPage.testSetProctocol();
+            pathCare.pathCareProcessingPage.testSetOption();
+            pathCare.pathCareProcessingPage.proctocolProcdueQuestion();
+//            try {
+//                if (specimenNumbers.get(7).get(0).isEmpty() || specimenNumbers.get(7).get(0) == null) {
+//                    pathCare.pathCareProcessingPage.specimenNumPending(specimenNumbers.get(0).get(7), "", false, "", false, "");
+//                } else {
+                    pathCare.pathCareProcessingPage.specimenNumPending(specimenNumbers.get(7).get(0), "", false, "", false, "");
+//                }
+//            }catch (IndexOutOfBoundsException e){
+//                pathCare.pathCareProcessingPage.specimenNumPending(specimenNumbers.get(0).get(7), "", false, "", false, "");
+//            }
+            pathCare.pathCareProcessingPage.specimenCompleteWithoutApplyorUpdate();
+            pathCare.pathCareProcessingPage.clickUpdateButton();
+            pathCare.pathCareProcessingPage.backtopreviouspage();
+            pathCare.procedures.searchSelection("Gynae Specimen Verification");
+            //Lab 9
+//            try {
+//                if (specimenNumbers.get(8).get(0).isEmpty() || specimenNumbers.get(8).get(0) == null) {
+//                    pathCare.procedures.search(specimenNumbers.get(0).get(8));
+//                } else {
+                    pathCare.procedures.search(specimenNumbers.get(8).get(0));
+//                }
+//            }catch (IndexOutOfBoundsException e){
+//                pathCare.procedures.search(specimenNumbers.get(0).get(8));
+//            }
+
+            pathCare.pathCareProcessingPage.clickRequestLink();
+            pathCare.pathCareProcessingPage.backbuttonbrowser();
+            pathCare.pathCareProcessingPage.clickEpisodeEventLink();
+            pathCare.pathCareProcessingPage.testSpeciemenQuestionaire("",false);
+            pathCare.pathCareProcessingPage.testSetProctocol();
+            pathCare.pathCareProcessingPage.testSetOption();
+            pathCare.pathCareProcessingPage.proctocolProcdueQuestion();
+//            try {
+//                if (specimenNumbers.get(8).get(0).isEmpty() || specimenNumbers.get(8).get(0) == null) {
+//                    pathCare.pathCareProcessingPage.specimenNumPending(specimenNumbers.get(0).get(8), "", false, "", false, "");
+//                } else {
+                    pathCare.pathCareProcessingPage.specimenNumPending(specimenNumbers.get(8).get(0), "", false, "", false, "");
+//                }
+//            }catch(IndexOutOfBoundsException e){
+//                pathCare.pathCareProcessingPage.specimenNumPending(specimenNumbers.get(0).get(8), "", false, "", false, "");
+//            }
+            pathCare.pathCareProcessingPage.specimenCompleteWithoutApplyorUpdate();
+            pathCare.pathCareProcessingPage.clickUpdateButton();
+            pathCare.pathCareProcessingPage.backtopreviouspage();
+            pathCare.labQueues.switchToDefaultContext();
+            pathCare.labQueues.navigatetoHomepage();
+            Assert.assertTrue("",pathCare.labQueues.searchEachEpisode(labEpisode));
+
+        }
+
+*/
+
+
     }
 
-    @Nested
+   /* @Nested
     class ViralStorage{
         @Test
         void tp_229() throws Exception {
@@ -593,5 +767,34 @@ public class CytologyTestPack extends RomanBase {
 
         }
     }
+
+    @Nested
+    class CytologyGynae{
+        @Test
+        void TP_123() throws Exception {
+            Faker faker  = new Faker();
+            String[]  testCollection = new String[]{"AGCYTO"};
+            AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+            pathCare.interSystemloginPage.login(model.username, model.password);
+            pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PANORAMA");
+            pathCare.interSystemloginPage.userselection();
+            pathCare.pre_analytical.navigateRegistration();
+            pathCare.pathCareScratch.setClickBackboneLabEpisodeSelect(false);
+            labEpisode.addAll(pathCare.pathCareScratch.mutiplePatientEditSpecimen(faker,faker.demographic().sex().contentEquals("Male")? "Female":"Female",testCollection,false,false,4,"Cytology Gynae","Cytology Gynae Specimen","LBC Container",true));
+            specimenNumbers = pathCare.pathCareScratch.searchMutliplePatient(labEpisode);
+            pathCare.pre_analytical.navigatespecimenRecived();
+            pathCare.pathCareLabSpecimenReception.specimenReceiveCreated(specimenNumbers);
+            pathCare.pre_analytical.navigateTransfer();
+            pathCare.pathCareLabTransferList.statChangeWaitingLinkFind("Panorama Laboratory","PCP  - Histology Laboratory");
+            pathCare.pathCareLabTransferList.selectlistlabespido(labEpisode);
+            pathCare.pathCareLabTransferList.createShipment(specimenNumbers,false );
+
+
+
+
+        }
+    }
+    */
+
 
 }
