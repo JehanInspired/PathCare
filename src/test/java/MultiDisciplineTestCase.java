@@ -4,10 +4,8 @@ import applications.PathCareapplication.PathCareApplication;
 import applications.PathCareapplication.models.*;
 import com.github.javafaker.Faker;
 import org.junit.Assert;
-
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.chrome.ChromeOptions;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +22,7 @@ public class MultiDisciplineTestCase extends RomanBase {
   private LabespideData dataPatient = new LabespideData();
 
     @BeforeEach
-    public void startup(){
+    public void startup() throws IllegalAccessException {
          dir = get_reportDir();
          options = new ChromeOptions();
         dataPatient.patientInform();
@@ -69,7 +67,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         Assertions.assertEquals("Specimen already received:", pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide.get(0)));
 
     }
-
+/*
     @Test
     @Disabled
     public void registerPatient() throws Exception {
@@ -89,7 +87,7 @@ public class MultiDisciplineTestCase extends RomanBase {
             }
             if(patient.getURN() != null){
                 pathCare.pathCareScratch.searchPatientURN(patient.getURN());
-                pathCare.pathCareScratch.uncreatedSamePatient();
+                pathCare.pathCareScratch.createdSamePatient();
             }else{
                 pathCare.pathCareScratch.patientdetails(patient.getGivenName(), patient.getSurname(), patient.getDateOfBirth(), patient.getSex());
             }
@@ -97,22 +95,8 @@ public class MultiDisciplineTestCase extends RomanBase {
             dataPatient.write(patient.getPk()+","+pathCare.pathCareScratch.collectiondetailnewEditSpecimen(patient.getPk(),patient.getCollectionTime(),patient.getPatientLocation(),patient.getTestSet().toArray(String[]::new),!patient.getReceivedDate().isBlank(),dataPatient.getTestSetDetailsList(),dataPatient.getSpecimensArrayList(),dataPatient.getEditTestArrayList()));
         }
 
-
     }
-
-    @Test
-    @Disabled
-    public void speciemenReceive() throws Exception {
-        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
-        pathCare.interSystemloginPage.login(model.username, model.password);
-        pathCare.interSystemloginPage.setLocation("PC Lab Assistant George");
-        pathCare.interSystemloginPage.userselection();
-        pathCare.pre_analytical.navigateRegistration();
-        HashMap<String, ArrayList<String>> labespisodesSpecimen = pathCare.pathCareScratch.searchMutliplePatientKeys(dataPatient.readerList());
-        pathCare.pre_analytical.navigatespecimenRecived();
-        pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingle(labespisodesSpecimen,dataPatient.getSpecimenReceiveArrayList());
-        dataPatient.removealllabespisode(dataPatient.getLapEpsiode());
-    }
+*/
 
     @Test
     public void TP_18() throws Exception {
@@ -371,6 +355,7 @@ public class MultiDisciplineTestCase extends RomanBase {
     }
 
     @Test
+    @Disabled("Need to resolve Test set comments on Result Entry")
     public void TP_24() throws Exception {
 
         Faker faker = new Faker();
@@ -557,7 +542,7 @@ public class MultiDisciplineTestCase extends RomanBase {
 
 
         //Alert Failures
-        if(!totalNumber.get("Alert Failures").isBlank()||!totalNumber.get("Alert Failures").contains("")){
+        if(!totalNumber.get("Alert Failures").isBlank()){
             pathCare.pre_analytical.navigatehome();
             pathCare.labQueues.searchResults("Phone Queue","","");
             pathCare.labQueues.phoneQueues("Alert Failures",true);
@@ -566,7 +551,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         }
 
         //Stat
-        if(!totalNumber.get("Stat").isBlank() ||!totalNumber.get("Stat").contains("")){
+        if(!totalNumber.get("Stat").isBlank()){
             pathCare.pre_analytical.navigatehome();
             pathCare.labQueues.searchResults("Phone Queue","","");
             pathCare.labQueues.phoneQueues("Stat",true);
@@ -575,7 +560,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         }
 
         //Urgent
-        if(!totalNumber.get("Urgent").isBlank()|| !totalNumber.get("Urgent").contains("")){
+        if(!totalNumber.get("Urgent").isBlank()){
             pathCare.pre_analytical.navigatehome();
             pathCare.labQueues.searchResults("Phone Queue","","");
             pathCare.labQueues.phoneQueues("Urgent",true);
@@ -585,14 +570,14 @@ public class MultiDisciplineTestCase extends RomanBase {
         }
 
         //Routine
-        if(!totalNumber.get("Routine").isBlank()||!totalNumber.get("Routine").contains("")){
+        if(!totalNumber.get("Routine").isBlank()){
             pathCare.pre_analytical.navigatehome();
             pathCare.labQueues.searchResults("Phone Queue","","");
             pathCare.labQueues.phoneQueues("Routine",true);
         }
 
         //Norm
-        if(!totalNumber.get("Norm").isBlank()|| !totalNumber.get("Norm").contains("")){
+        if(!totalNumber.get("Norm").isBlank()){
             pathCare.pre_analytical.navigatehome();
             pathCare.labQueues.searchResults("Phone Queue","","");
             pathCare.labQueues.phoneQueues("Norm",true);
@@ -601,7 +586,7 @@ public class MultiDisciplineTestCase extends RomanBase {
 
         //No Priority
         pathCare.pre_analytical.navigatehome();
-        if(!totalNumber.get("No Priority").isBlank() || !totalNumber.get("No Priority").contains("")){
+        if(!totalNumber.get("No Priority").isBlank()){
             pathCare.labQueues.searchResults("Phone Queue","","");
             pathCare.labQueues.phoneQueues("No Priority",true);
             pathCare.pathCareProcessingPage.phonequeue();

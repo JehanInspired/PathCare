@@ -1,11 +1,13 @@
 package applications.PathCareapplication.pages;
 
 import Roman.Roman;
+import applications.PathCareapplication.tool.AbstractExtension;
+import org.junit.Assert;
 import org.openqa.selenium.By;
-import selenium.AbstractPage;
 
-public class InterSystemloginPage extends AbstractPage {
+import javax.swing.plaf.IconUIResource;
 
+public class InterSystemLoginPage extends AbstractExtension {
     private final By usernametext = By.xpath("//input[@name='USERNAME']");
     private final By passwordtext = By.xpath("//input[@name='PASSWORD']");
     private final By loginBtn = By.xpath("//button[@type='submit']");
@@ -15,15 +17,15 @@ public class InterSystemloginPage extends AbstractPage {
     private final By logoffbutton = By.xpath("//button[@aria-label='Logout']");
     private final By footer = By.xpath("//div[@class='footer']");
 
-    private int timeout =15;
+    private final int  timeout =20;
 
     private String location = "";
 
     //Need to change
-    private  By accessProfile;
 
 
-    public InterSystemloginPage(Roman roman) {
+
+    public InterSystemLoginPage(Roman roman) {
         super(roman);
     }
 
@@ -47,34 +49,40 @@ public class InterSystemloginPage extends AbstractPage {
         sendKeys(usernametext,username);
         sendKeys(passwordtext,password);
         click(loginBtn);
-        Object navigationStart = getObjectFromJavaScript("return window.performance.timing.navigationStart");
-        Object responseStart = getObjectFromJavaScript("return window.performance.timing.responseStart");
-        Object domComplete = getObjectFromJavaScript("return window.performance.timing.domComplete");
-
         stepPassedWithScreenshot("User is directed to User Profile screen");
     }
     public void logoff(){
         click(changeUser);
         click(logoffbutton);
+        _driver.manage().deleteAllCookies();
+        _driver.navigate().refresh();
 
     }
 
     public void changelocation(){
-        click(changeUser);
-        click(locationchange);
+        click(changeUser,timeout);
+        click(locationchange,timeout);
     }
 
     public void userselection(){
-        accessProfile = By.xpath("//span[contains(text(),'%s')]".replace("%s",location));
+        By accessProfile = By.xpath("//span[contains(text(),'%s')]".replace("%s",location));
+        int counter = 0;
         scrollToElement(nextPage,timeout);
         scrollToElement(footer,timeout);
+
             while (!validateElement_Enabled_Displayed(accessProfile, timeout)) {
                 scrollToElement(footer, timeout);
                 scrollToElement(nextPage, timeout);
                 click(nextPage, timeout);
+                if(counter>=30){
+                    Assert.fail("Unable to view/click "+accessProfile+" ");
+                }
+                counter++;
             }
+
             scrollToElement(footer, timeout);
             scrollToElement(accessProfile, timeout);
+            awaitElement(accessProfile,timeout);
             click(accessProfile, timeout);
 
         stepPassedWithScreenshot("Lab queues screen "+location);

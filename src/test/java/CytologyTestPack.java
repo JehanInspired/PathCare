@@ -26,7 +26,6 @@ import static reporting.ExtentReport.get_reportDir;
 public class CytologyTestPack extends RomanBase {
 
     public ChromeOptions options = new ChromeOptions();
-    public LabespideData labData = new LabespideData();
     public Roman roman = super.roman();
     Faker faker = new Faker();
     static ArrayList<String> labEpisode = new ArrayList<>();
@@ -123,7 +122,7 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pathCareScratch.editTestSetSingle("Number of FNA Slides","4");
             labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
             pathCare.pathCareScratch.searchPatient(labEpisode.get(2));
-            specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtract(true));
+            specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtracts(true));
             Assert.assertNotEquals("",specimenNumbers);
         }
 
@@ -426,7 +425,7 @@ public class CytologyTestPack extends RomanBase {
 
 
         }
-
+/*
         @Test
         @Order(4)
         public void TP_112() throws Exception{

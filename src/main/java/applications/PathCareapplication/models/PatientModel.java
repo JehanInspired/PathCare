@@ -1,15 +1,18 @@
 package applications.PathCareapplication.models;
 
+import com.github.dockerjava.api.command.ListConfigsCmd;
 import com.poiji.annotation.ExcelCell;
 import com.poiji.annotation.ExcelCellName;
 import com.poiji.annotation.ExcelRow;
 import java.util.List;
+
 
 public class PatientModel {
     @ExcelRow
     private int rowIndex;
 
     @ExcelCell(0)
+    @ExcelCellName("PK")
     String pk ="";
     @ExcelCell(1)
     @ExcelCellName("userprofile_FK")

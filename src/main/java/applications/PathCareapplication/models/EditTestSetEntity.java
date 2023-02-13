@@ -5,7 +5,7 @@ import com.poiji.annotation.ExcelCellName;
 import com.poiji.annotation.ExcelCellRange;
 import com.poiji.annotation.ExcelRow;
 
-public class EditTestSet {
+public class EditTestSetEntity {
 
     @ExcelRow
     private int rowIndex;
@@ -193,6 +193,6 @@ public class EditTestSet {
 
     }
 
-    public EditTestSet() {
+    public EditTestSetEntity() {
     }
 }

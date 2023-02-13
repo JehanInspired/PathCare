@@ -1,10 +1,11 @@
 package applications.PathCareapplication.pages;
 
 import Roman.Roman;
+import applications.PathCareapplication.tool.AbstractExtension;
 import org.openqa.selenium.By;
 import selenium.AbstractPage;
 
-public class TransferLogistics extends AbstractPage {
+public class TransferLogistics extends AbstractExtension {
 
     private final By dropShipmentContainerNumbertext = By.xpath("//input[@name='DropOffNumber']");
     private final By pickUpShipment = By.xpath("//input[@name='PickUpNumber']");

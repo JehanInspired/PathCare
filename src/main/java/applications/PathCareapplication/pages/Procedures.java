@@ -1,6 +1,7 @@
 package applications.PathCareapplication.pages;
 
 import Roman.Roman;
+import applications.PathCareapplication.tool.AbstractExtension;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import selenium.AbstractPage;
@@ -9,7 +10,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class Procedures extends AbstractPage {
+public class Procedures extends AbstractExtension {
 
     private final By labEpisodeTextBox = By.xpath("//input[@name='LBEpisodeNo']");
     private final By findButton = By.xpath("//button[text()='Find']");

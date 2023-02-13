@@ -19,7 +19,7 @@ public class PathCareApplication
     public PathCareDashboardPage pathCareDashboardPage;
 
     public PathCareLabSpecimenReception pathCareLabSpecimenReception;
-    public InterSystemloginPage interSystemloginPage;
+    public InterSystemLoginPage interSystemloginPage;
 
     public PathCareScratch pathCareScratch;
 
@@ -42,7 +42,7 @@ public class PathCareApplication
         transferLogistics = new TransferLogistics(roman);
         pathCareLabSpecimenReception = new PathCareLabSpecimenReception(roman);
         pathCareScratch = new PathCareScratch(roman);
-        interSystemloginPage = new InterSystemloginPage(roman);
+        interSystemloginPage = new InterSystemLoginPage(roman);
         pre_analytical = new Pre_Analytical(roman);
         analytical = new Analytical(roman);
         resultEntry = new ResultEntry(roman);

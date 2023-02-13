@@ -1,16 +1,13 @@
 package applications.PathCareapplication.pages;
 
 import Roman.Roman;
+import applications.PathCareapplication.tool.AbstractExtension;
 import org.junit.Assert;
 import org.openqa.selenium.*;
-import selenium.AbstractPage;
-
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class PathCareLabTransferList extends AbstractPage {
+public class PathCareLabTransferList extends AbstractExtension {
 
 
   private final By analyticalbuttonmenu = By.xpath("//span[text()='Analytical']");
@@ -57,22 +54,23 @@ public class PathCareLabTransferList extends AbstractPage {
     private final By dateSentTo = By.xpath("//input[@id='DateSentTo']");
     private String description= "";
     private String url = "";
+    private int timeout = 20;
 
   public String shipmentNumber = "";
 
   public void tranferlistLabepisode(String text){
       switchToFrame(switchiFrame);
-      sendKeys(labEpisode,text,10);
-      if(validateElement_Enabled_Displayed(findbutton,10)){
-      click(findbutton,10);
+      sendKeys(labEpisode,text,timeout);
+      if(validateElement_Enabled_Displayed(findbutton,timeout)){
+      click(findbutton,timeout);
       stepPassedWithScreenshot("Successfully Entered lab Episode");
       }
   }
 
     public void tranferlistLabepisodewithoutframe(String text){
-        sendKeys(labEpisode,text,10);
-        if(validateElement_Enabled_Displayed(findbutton,10)){
-            click(findbutton,10);
+        sendKeys(labEpisode,text,timeout);
+        if(validateElement_Enabled_Displayed(findbutton,timeout)){
+            click(findbutton,timeout);
             stepPassedWithScreenshot("Successfully Entered lab Episode");
         }
     }
@@ -204,9 +202,9 @@ public class PathCareLabTransferList extends AbstractPage {
   public void createShipment(ArrayList<String> specimennumbers,boolean selectAll) throws InterruptedException {
       if(selectAll){click(selectallspecimen);}
       click(shipmentbutton);
-      click(addshipmentcontainerbutton,10);
-      if(validateElement_Displayed(shipmentnumbertext,10)){
-          shipmentNumber = getText(shipmentnumbertext,10);
+      click(addshipmentcontainerbutton,timeout);
+      if(validateElement_Displayed(shipmentnumbertext,timeout)){
+          shipmentNumber = getText(shipmentnumbertext,timeout);
           stepPassedWithScreenshot("Able to receive a shipment container number "+ shipmentNumber);
       } else{
           stepInfoWithScreenshot("Unable to to receive a shipment container number");
@@ -335,6 +333,7 @@ public class PathCareLabTransferList extends AbstractPage {
         switchToFrame(iframeSaveSearch);
         getDescriptionSaveSearchfromlist = By.xpath("//a[contains(text(),'%s')]".replace("%s",description));
         sendKeys(descriptiontextbox,description,10);
+        click(findbutton,timeout);
         if(getText(getDescriptionSaveSearchfromlist).contains(description)){
             stepPassedWithScreenshot("Able to view Saved Search Results");
             return true;
@@ -361,7 +360,7 @@ public class PathCareLabTransferList extends AbstractPage {
         super.findOne(by).click();
         super.findOne(by).clear();
         super.findOne(by).sendKeys(input);
-        super.findOne(by).sendKeys( Keys.TAB);
+        super.findOne(by).sendKeys(Keys.TAB);
     }
 
 

@@ -1,10 +1,11 @@
 package applications.PathCareapplication.pages;
 
 import Roman.Roman;
+import applications.PathCareapplication.tool.AbstractExtension;
 import org.openqa.selenium.By;
 import selenium.AbstractPage;
 
-public class PathCareDashboardPage extends AbstractPage {
+public class PathCareDashboardPage extends AbstractExtension {
 
   private final By mainmenu = By.xpath("//md-icon[@title='Main Menu']");
   private final By resultEntrybuttonmenu = By.xpath("//span[text()='Result Entry']");

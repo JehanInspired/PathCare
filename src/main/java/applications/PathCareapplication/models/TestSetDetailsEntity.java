@@ -5,7 +5,7 @@ import com.poiji.annotation.ExcelCell;
 import com.poiji.annotation.ExcelCellName;
 import com.poiji.annotation.ExcelRow;
 
-public class TestSetDetails {
+public class TestSetDetailsEntity {
 
     @ExcelRow
     private int rowIndex;
@@ -32,9 +32,6 @@ public class TestSetDetails {
 
     @ExcelCellName("Lesion")
     private String lesion;
-
-    @ExcelCellName("Enter")
-    private String Enter;
 
     public String getPatient_Key() {
         return patient_Key;
@@ -90,13 +87,5 @@ public class TestSetDetails {
 
     public void setLesion(String lesion) {
         this.lesion = lesion;
-    }
-
-    public String getEnter() {
-        return Enter;
-    }
-
-    public void setEnter(String enter) {
-        Enter = enter;
     }
 }

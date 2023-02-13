@@ -5,7 +5,7 @@ import com.poiji.annotation.ExcelCell;
 import com.poiji.annotation.ExcelCellName;
 import com.poiji.annotation.ExcelRow;
 
-public class TestSetCode {
+public class TestSetCodeEntity {
 
     @ExcelRow
     private int rowIndex;

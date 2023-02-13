@@ -1,10 +1,11 @@
 package applications.PathCareapplication.widget;
 
 import Roman.Roman;
+import applications.PathCareapplication.tool.AbstractExtension;
 import org.openqa.selenium.By;
 import selenium.AbstractPage;
 
-public class Pre_Analytical extends AbstractPage {
+public class Pre_Analytical extends AbstractExtension {
 
     private final By pre_Analytical   = By.xpath("//span[text()='Pre-Analytical']");
     private final By specimenRecived = By.xpath("//span[text()='Specimen Receive']");
@@ -21,6 +22,8 @@ public class Pre_Analytical extends AbstractPage {
     private final By mainmenu = By.xpath("//a//md-icon[@title='Main Menu']");
     private final By homelink = By.xpath("//md-icon[@title='Home']");
 
+    private int timeout = 20;
+
 
     public Pre_Analytical(Roman roman) {
         super(roman);
@@ -33,12 +36,12 @@ public class Pre_Analytical extends AbstractPage {
 
     public void navigatespecimenRecived() {
 
-            click(mainmenu,15);
+            click(mainmenu,timeout);
         if(validateElement_Enabled_Displayed(specimenRecived)){
-            click(specimenRecived,10);
+            click(specimenRecived,timeout);
         }else{
             click(pre_Analytical);
-            click(specimenRecived,10);
+            click(specimenRecived,timeout);
         }
 
             stepPassedWithScreenshot("Navigated to specimen received");
@@ -53,26 +56,26 @@ public class Pre_Analytical extends AbstractPage {
     }
 
     public void navigateWorkRecived(){
-        validateElement_Enabled_Displayed(findbutton,10);
-        click(mainmenu,10);
+        awaitElement(mainmenu,timeout);
+        click(mainmenu,timeout);
         if(validateElement_Enabled_Displayed(workAreaReceive)){
-            click(workAreaReceive,10);
+            click(workAreaReceive,timeout);
         }else{
             click(pre_Analytical);
-            click(workAreaReceive,10);
+            click(workAreaReceive,timeout);
         }
 
         stepPassedWithScreenshot("Navigated to Work Received");
     }
 
     public void navigateTransfer(){
-        validateElement_Enabled_Displayed(findbutton,10);
-        click(mainmenu,10);
+        awaitElement(mainmenu,timeout);
+        click(mainmenu,timeout);
         if(validateElement_Enabled_Displayed(transferbutton)){
-            click(transferbutton,10);
+            click(transferbutton,timeout);
         }else{
             click(pre_Analytical);
-            click(transferbutton,10);
+            click(transferbutton,timeout);
         }
 
 
@@ -82,12 +85,13 @@ public class Pre_Analytical extends AbstractPage {
 
 
     public void navigateRegistration(){
-        click(mainmenu,10);
+        awaitElement(mainmenu,timeout);
+        click(mainmenu,timeout);
         if(validateElement_Enabled_Displayed(subregistation)){
-            click(subregistation,10);
+            click(subregistation,timeout);
         }else{
             click(pre_Analytical);
-            click(subregistation,10);
+            click(subregistation,timeout);
         }
         stepPassedWithScreenshot("Patient Episode Search Menu appears");
 
@@ -95,12 +99,13 @@ public class Pre_Analytical extends AbstractPage {
 
 
     public void navigateLogistics(){
+        awaitElement(mainmenu,timeout);
         click(mainmenu);
         if(validateElement_Enabled_Displayed(logisticsMenubutton)){
-            click(logisticsMenubutton,10);
+            click(logisticsMenubutton,timeout);
         }else{
             click(pre_Analytical);
-            click(logisticsMenubutton,10);
+            click(logisticsMenubutton,timeout);
         }
         stepPassedWithScreenshot("Logistics page appears");
 
@@ -108,11 +113,12 @@ public class Pre_Analytical extends AbstractPage {
 
     public void navigateMenu(){
         switchtoMainiFrame();
-        click(mainmenu,15);
+        click(mainmenu,timeout);
     }
 
     public void navigatehome(){
         switchtoMainiFrame();
+        awaitElement(homelink,timeout);
         click(homelink);
     }
 

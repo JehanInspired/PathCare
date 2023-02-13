@@ -1,6 +1,10 @@
 package applications.PathCareapplication.pages;
 
 import Roman.Roman;
+import applications.PathCareapplication.models.ResultsEntry;
+import applications.PathCareapplication.models.SpecimenReceiveEntity;
+import applications.PathCareapplication.models.TestSetValuesEntity;
+import applications.PathCareapplication.tool.AbstractExtension;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -8,7 +12,6 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import selenium.AbstractPage;
 
 import java.io.File;
 import java.time.Duration;
@@ -17,7 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class ResultEntry extends AbstractPage {
+public class ResultEntry extends AbstractExtension {
 
     private final By specimenNumber = By.xpath("//input[@name='SpecimenNumber']");
     private final By labEpisode = By.xpath("//input[@name='LBEpisodeNo']");
@@ -35,8 +38,8 @@ public class ResultEntry extends AbstractPage {
     private final  By reportCollectionDate = By.xpath("//input[@name='DateFrom']");
 
     private final  By testSetComments = By.xpath("//a[@id='LBTSCommentsLink']");
-    private  By testSetOptionButtonDropDown = By.xpath("//a[text()='Test Set Options']");
-    private  By MultipleSpecimenContainer = By.xpath("//a[contains(@id,'LBProtocolz')]");
+    private final   By testSetOptionButtonDropDown = By.xpath("//a[text()='Test Set Options']");
+    private final By MultipleSpecimenContainer = By.xpath("//a[contains(@id,'LBProtocolz')]");
 
     private final By inputTestresults = By.xpath("//input[contains(@id,'Value')]");
     private final By lookupicon = By.xpath("//img[contains(@id,'Value')]");
@@ -70,35 +73,45 @@ public class ResultEntry extends AbstractPage {
     private final  By footer = By.xpath("//div[@id='tc_Footer']");
     private final  By nextpage = By.xpath("//a[text()='Next >']");
     private final By requiredfield = By.xpath("//span[@class='clsColourTab clsResultRequired']");
-    private By organismText = By.xpath("//div[contains(@id,'LBTSIValue')]/p");
-    private By labresultTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']");
+    private final By organismText = By.xpath("//div[contains(@id,'LBTSIValue')]/p");
+    private  By labresultTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']");
 
     private final By receivedTestList = By.xpath("//span[text()='Received']");
     private final By pinserttestreult = By.xpath("//img[contains(@id,'Value')]");
     private final By closelookup = By.xpath("//span[@id='OverlayCloseLookupOverlayDiv']");
     private final By iframeProcessing = By.xpath("//iframe[@id='TRAK_main']");
 
-    private By espiodeNumberLink = By.xpath("//a[@id='LBEPNumber']");
+    private final By espiodeNumberLink = By.xpath("//a[@id='LBEPNumber']");
 
-    private By requiredfieldblackbox = By.xpath("//span[contains(@title,'Required')]");
+    private final By requiredfieldblackbox = By.xpath("//span[contains(@title,'Required')]");
 
     private By selectSingletest= By.xpath("");
+
+    private String locationNew = "";
+
+    private Boolean firstTime =true;
+
+    private ArrayList<ResultsEntry> resultsEntryArrayList = new ArrayList<>();
 
     private By  episodeNumber;
    private  String desc = "";
 
     public String dir;
+
+    int timeout =20;
     public int numberfiles;
 
 
     public void testSetListSingle(String labespide) {
         episodeNumber = By.xpath("//span[contains(text(),'%s')]".replace("%s", labespide));
-        if (validateElement_Displayed(episodeNumber)) {
-            stepPassedWithScreenshot("Able to view testset " + getText(episodeNumber));
-            click(episodeNumber);
+        awaitElement(episodeNumber,timeout);
+        stepPassedWithScreenshot("Able to view testset " + getText(episodeNumber,timeout));
+        click(episodeNumber,timeout);
 
-        }
+
     }
+
+
     public void testSetListMultiple(String labespide) {
         episodeNumber = By.xpath("//span[contains(text(),'%s')]".replace("%s", labespide));
 
@@ -126,18 +139,112 @@ public class ResultEntry extends AbstractPage {
         }
     }
 
+    void changeLocation(String location,InterSystemLoginPage interSystemloginPage, Analytical analytical){
+
+        if (!locationNew.contentEquals(location)){
+            locationNew = location;
+            switchToDefaultContext();
+            interSystemloginPage.setLocation(location);
+            if(!firstTime) {
+                switchToDefaultContext();
+                interSystemloginPage.changelocation();
+
+            }else{
+                firstTime=false;
+            }
+            interSystemloginPage.userselection();
+            analytical.navigateResultEntry();
+
+        }
+    }
+    public void structureLabResultEntry(ArrayList<ResultsEntry> resultEntries, ArrayList<SpecimenReceiveEntity> specimenReceiveEntities, ArrayList<TestSetValuesEntity> testSetValueEntities, InterSystemLoginPage interSystemloginPage, Analytical analytical) throws IllegalAccessException {
+        changeLocation(testSetValueEntities.get(0).getUserprofile_FK(),interSystemloginPage,analytical);
+        for(ResultsEntry resultsEntry:resultEntries){
+
+            for(SpecimenReceiveEntity specimenReceiveEntity : specimenReceiveEntities){
+                if(specimenReceiveEntity.getPk().contains(resultsEntry.getSpecimenReceive_FK())){
+                    resultsEntry.setSpecimenReceive_FK(specimenReceiveEntity.getSpecimenNumber());
+                    resultsEntry.setPatient_FK(specimenReceiveEntity.getPatientKey_FK());
+                    resultsEntry.setTestSet(specimenReceiveEntity.getTestSet());
+                    resultsEntryArrayList.add(resultsEntry);
+
+                }
+            }
+
+        }
+        searchSpecimen(resultEntries, testSetValueEntities,interSystemloginPage, analytical);
+    }
+
+    public void searchSpecimen(ArrayList<ResultsEntry> data, ArrayList<TestSetValuesEntity> testSetValueEntities, InterSystemLoginPage interSystemloginPage, Analytical analytical) throws IllegalAccessException {
+
+        for(ResultsEntry resultsEntry:data)
+        {
+            specimenNumberEntry(resultsEntry.getTestSetValue_FK(),resultsEntry.getSpecimenReceive_FK(), testSetValueEntities, interSystemloginPage,  analytical);
+
+
+
+        }
+
+    }
+
+    private void specimenNumberEntry(String testSetValue_Fk, String specimenRecieve, ArrayList<TestSetValuesEntity> testSetValueEntities, InterSystemLoginPage interSystemloginPage, Analytical analytical) throws IllegalAccessException {
+
+        awaitElement(specimenNumber,timeout);
+        sendKeys(specimenNumber,specimenRecieve,true,true,timeout);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate todaydate = LocalDate.now();
+        sendKeys(reportCollectionDate, dtf.format(todaydate));
+        awaitElement(findButton,timeout);
+        click(findButton,timeout);
+        testSetListSingle(specimenRecieve);
+        enterdataResults(testSetValue_Fk, testSetValueEntities, interSystemloginPage,  analytical);
+
+        backtoTestSetList();
+    }
+
+    private void enterdataResults(String testvalueKey, ArrayList<TestSetValuesEntity> testSetValueslistEntity, InterSystemLoginPage interSystemloginPage, Analytical analytical) throws IllegalAccessException {
+        switchToDefaultContext();
+        switchToMainFrame();
+        for(TestSetValuesEntity testSetValue : testSetValueslistEntity){
+            if(testSetValue.getTestValueKey().contentEquals(testvalueKey)){
+                changeLocation(testSetValue.getUserprofile_FK(),interSystemloginPage,analytical);
+                for(String value :testSetValue.getTestvalues().keySet()){
+                    By resultValue = By.xpath("//a[contains(text(),'"+value.trim()+"')]//parent::td//parent::tr//parent::tr//img[contains(@id, 'Value')]");
+                      awaitElement(resultValue,timeout);
+                        click(resultValue);
+                            labresultTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s",testSetValue.getTestvalues().get(value)));
+                            click(labresultTextfield,timeout);
+                            if(validateElement_Displayed(closelookup,timeout)){
+                                click(closelookup,timeout);
+                            }
+                            //click(By.xpath(/));
+                            stepInfoWithScreenshot("Entered "+value.trim()+" result "+testSetValue.getTestvalues().get(value));
+
+
+                }
+                applyResultOnly();
+            }
+
+
+        }
+        switchToDefaultContext();
+    }
+
+
+
+
     public void testSetOption()  {
 
-        click(testSetOptionButtonDropDown, 10);
+        click(testSetOptionButtonDropDown, timeout);
         stepInfoWithScreenshot("Able to view specimen container ");
 
     }
     public void LabResultsEntry(String labespide){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate todaydate = LocalDate.now();
-            sendKeys(labEpisode,labespide);
+            sendKeys(labEpisode,labespide,true,true,timeout);
             sendKeys(reportCollectionDate, dtf.format(todaydate));
-            click(findButton,10);
+            click(findButton,timeout);
         }
 
     public void labEntryTestSpecialHandling(String testresult) throws InterruptedException {
@@ -175,7 +282,7 @@ public class ResultEntry extends AbstractPage {
 
     public void labEntryTestSpecialHandlinglist(String[] testresult,Boolean extrfield) throws InterruptedException {
         numberfiles = 2;
-        switchToFrame(resultEntryiFrame);
+        switchToMainFrame();
         int x =0;
 
         for(WebElement element:find(searchTestresultEntry ,5)){
@@ -399,18 +506,20 @@ public class ResultEntry extends AbstractPage {
     }
 
     public void reportPreview() throws InterruptedException {
-        Assert.assertTrue(validateElement_Displayed(applyTestResult));
-        click(applyTestResult,10);
-        if(validateElement_Displayed(notficationApply,10)){
-            stepPassedWithScreenshot("Successfully received  "+getText(notficationApply));
+        Assert.assertTrue(validateElement_Displayed(applyTestResult,timeout));
+        click(applyTestResult,timeout);
+        if(validateElement_Displayed(notficationApply,timeout)){
+            stepPassedWithScreenshot("Successfully received  "+getText(notficationApply,timeout));
         }else{
             Assert.fail("Unable to receive notification results for Test set");
         }
-        if(validateElement_Displayed(validate)){
-            click(validate);
+        awaitElement(validate,timeout);
+        if(validateElement_Displayed(validate,timeout)){
+            click(validate,timeout);
             stepPassedWithScreenshot("Successfully clicked validate button");
-            if(validateElement_Enabled_Displayed(reportpreview,10)) {
-                click(reportpreview, 10);
+            awaitElement(reportpreview,timeout);
+            if(validateElement_Enabled_Displayed(reportpreview,timeout)) {
+                click(reportpreview, timeout);
                 Thread.sleep(5000);
             }else{
                 Assert.fail("Unable to click report preview");
@@ -457,8 +566,8 @@ public class ResultEntry extends AbstractPage {
     }
 
     public void backtoTestSetList(){
-        click(backtotestSetList,10);
-        click(backtotestSetList,10);
+        click(backtotestSetList,timeout);
+        click(backtotestSetList,timeout);
     }
 
     public void mutlipleLabEntryTestSet(List<String> labespide, String labresults, String labresults2,String dir) throws InterruptedException {
@@ -535,7 +644,7 @@ public class ResultEntry extends AbstractPage {
         File file = new File(dir);
         int x = 0;
 
-     long endTime = System.nanoTime() + TimeUnit.NANOSECONDS.convert(15, TimeUnit.SECONDS);
+     long endTime = System.nanoTime() + TimeUnit.NANOSECONDS.convert(timeout, TimeUnit.SECONDS);
         while(System.nanoTime() < endTime) {
                 for (File files : Objects.requireNonNull(file.listFiles())) {
                     if (files.getName().contains(".pdf") && files.getName().contains("document")) {

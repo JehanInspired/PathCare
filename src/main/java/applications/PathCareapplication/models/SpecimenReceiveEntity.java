@@ -3,7 +3,7 @@ package applications.PathCareapplication.models;
 import com.poiji.annotation.ExcelCellName;
 import com.poiji.annotation.ExcelRow;
 
-public class SpecimenReceive {
+public class SpecimenReceiveEntity {
 
     @ExcelRow
     private int rowIndex;
@@ -11,17 +11,20 @@ public class SpecimenReceive {
     @ExcelCellName("PK")
     private String pk;
 
-    @ExcelCellName("PatientKey")
-    private String patientKey;
+    @ExcelCellName("PatientKey_FK")
+    private String patientKey_FK;
 
     @ExcelCellName("userprofile_FK")
     private String userprofile_FK;
 
-    @ExcelCellName("Container")
-    private String container;
-
     @ExcelCellName("Specimen Number")
     private String specimenNumber;
+
+    @ExcelCellName("test set")
+    private String testSet;
+
+    @ExcelCellName("Container")
+    private String container;
 
     @ExcelCellName("Anatomical Site")
     private String anatomicalSite;
@@ -38,13 +41,13 @@ public class SpecimenReceive {
     @ExcelCellName("Aliquot edit PK")
     private String aliquotEditPK;
 
-    @ExcelCellName("Aliquot Specimen Number")
+    @ExcelCellName("Specimen Number")
     private String aliquotSpecimenNumber;
 
-    @ExcelCellName("AliquotSpecimen")
+    @ExcelCellName("Specimen")
     private String aliquotspecimen;
 
-    @ExcelCellName("AliquotContainer")
+    @ExcelCellName("Container")
     private String aliquotcontainer;
 
     @ExcelCellName("Aliquot Volume")
@@ -56,12 +59,28 @@ public class SpecimenReceive {
     @ExcelCellName("AliquotTest Set")
     private String aliquotTestSet;
 
-    public String getPatientKey() {
-        return patientKey;
+    public SpecimenReceiveEntity(){}
+    public SpecimenReceiveEntity(String pk, String patientKey_FK, String specimenNumber, String testSet){
+        this.pk =pk;
+        this.patientKey_FK =patientKey_FK;
+        this.specimenNumber = specimenNumber;
+        this.testSet = testSet;
     }
 
-    public void setPatientKey(String patientKey) {
-        this.patientKey = patientKey;
+    public String getPk() {
+        return pk;
+    }
+
+    public void setPk(String pk) {
+        this.pk = pk;
+    }
+
+    public String getPatientKey_FK() {
+        return patientKey_FK;
+    }
+
+    public void setPatientKey_FK(String patientKey) {
+        this.patientKey_FK = patientKey;
     }
 
     public String getUserprofile_FK() {
@@ -174,5 +193,17 @@ public class SpecimenReceive {
 
     public void setAliquotTestSet(String aliquotTestSet) {
         this.aliquotTestSet = aliquotTestSet;
+    }
+
+    public String getTestSet() {
+        return testSet;
+    }
+
+    public void setTestSet(String testSet) {
+        this.testSet = testSet;
+    }
+
+    public String ToString(){
+        return getPk()+","+getPatientKey_FK()+","+getSpecimenNumber()+","+getTestSet();
     }
 }

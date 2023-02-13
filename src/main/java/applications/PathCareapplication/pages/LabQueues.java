@@ -1,27 +1,31 @@
 package applications.PathCareapplication.pages;
 
 import Roman.Roman;
+import applications.PathCareapplication.tool.AbstractExtension;
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-import selenium.AbstractPage;
+
 import java.util.*;
 
-public class LabQueues extends AbstractPage {
+public class LabQueues extends AbstractExtension {
 
-    private final By queueType = By.xpath("//select[@id='QueueTypeList']");
+    private final By queueType = By.xpath("//input[@id='QueueType']");
     private final By toolbox = By.xpath("//md-icon[@class='mainMenuToolsIcon']");
-    private final By testmenu = By.xpath("//span[text()='Test']");
+    private final By testMenu = By.xpath("//span[text()='Test']");
+
+    private final By advanceSearchParameter = By.xpath("//a[text()='Advanced Search Parameters']");
 
     private final By labInstrumentResultGenerator = By.xpath("//span[text()='Lab Instrument Result Generator']");
 
     private final By homeicon = By.xpath("//md-icon[@title='Home']");
-    private final By testSetStatus = By.xpath("//select[@id='TestSetStatusList']");
+    private final By inputtestSetStatus = By.xpath("//input[@id='TestSetStatus']");
 
 
     private final By switchiFrame = By.xpath("//iframe[@id='TRAK_main']");
 
-    private final By deparmentlist = By.xpath("//select[@id='DepartmentList']");
+    private final By deparmentlist = By.xpath("//input[@id='Department']");
     private final By testSetLabSite = By.xpath("//input[@id='TestSetLabSite']");
     private final By findbuttonLab = By.xpath("//input[@id='find1']");
     private final By saveSearch = By.xpath("//a[@id='SaveSearch']");
@@ -69,7 +73,7 @@ public class LabQueues extends AbstractPage {
 
     private String desc ="";
 
-    private int timer = 15;
+    private int timeout = 15;
 
 
 
@@ -85,16 +89,23 @@ public class LabQueues extends AbstractPage {
         desc = testsite+" Reference lab "+department+(new Random().nextDouble() - new Random().nextDouble());
         switchToFrame(switchiFrame);
         if(!queueTypeSelected.isEmpty()) {
-            setSelectedItem(queueType, queueTypeSelected);
+            sendKeys(queueType, queueTypeSelected, timeout);
+            findOne(queueType,timeout).sendKeys(Keys.TAB);
         }
         if(!department.isEmpty()){
-            setSelectedItem(deparmentlist,department);
+            sendKeys(deparmentlist,department,timeout);
+            findOne(deparmentlist,timeout).sendKeys(Keys.TAB);
         }
 
         if(!testSetStat.isEmpty()){
-            setSelectedItem(testSetStatus,testSetStat);
+            sendKeys(inputtestSetStatus,testSetStat,timeout);
+            findOne(inputtestSetStatus,timeout).sendKeys(Keys.TAB);
         }
-        sendKeys(testSetLabSite,testsite);
+        awaitElement(advanceSearchParameter,timeout);
+        click(advanceSearchParameter,timeout);
+        awaitElement(testSetLabSite,timeout);
+        sendKeys(testSetLabSite,testsite, timeout);
+        findOne(testSetLabSite,timeout).sendKeys(Keys.TAB);
         click(findbuttonLab);
         if(!(getAllElementText(SearchResults).size() == 0)){
             stepPassedWithScreenshot("Able to view query results");
@@ -146,17 +157,20 @@ public class LabQueues extends AbstractPage {
         switchToFrame(switchiFrame);
 
         if(!queueTypeSelected.isEmpty()) {
-            setSelectedItem(queueType, queueTypeSelected);
+            sendKeys(queueType, queueTypeSelected, timeout);
+            findOne(queueType,timeout).sendKeys(Keys.TAB);
         }
         if(!department.isEmpty()){
-            setSelectedItem(deparmentlist,department);
+            sendKeys(deparmentlist,department,timeout);
+            findOne(deparmentlist,timeout).sendKeys(Keys.TAB);
         }
 
         if(!testSetStat.isEmpty()){
-            setSelectedItem(testSetStatus,testSetStat);
+            sendKeys(inputtestSetStatus,testSetStat,timeout);
+            findOne(inputtestSetStatus,timeout).sendKeys(Keys.TAB);
         }
-        click(findbuttonLab);
 
+        click(findbuttonLab);
     }
 
     public void Selectrow(){
@@ -192,7 +206,7 @@ public class LabQueues extends AbstractPage {
         clinicalResultEpisode = By.xpath("//label[not(@disabled) and text()='%s']".replace("%s",labespide));
         List<String> texts;
         if(validateElement_Displayed(clinicalResultEpisode)) {
-            texts = getAllElementText(clinicalResultEpisode, timer);
+            texts = getAllElementText(clinicalResultEpisode, timeout);
             stepPassedWithScreenshot("Successfully received Episode "+texts.get(0));
             String value = texts.get(0);
             if(clicklastElementList){
@@ -215,7 +229,7 @@ public class LabQueues extends AbstractPage {
                 switchToDefaultContext();
                 switchToFrame(switchiFrame);
                 //next page
-                if(validateElement_Enabled_Displayed(nextpagequeue,timer)) {
+                if(validateElement_Enabled_Displayed(nextpagequeue, timeout)) {
                     click(nextpagequeue);
                 }else{
                     break;
@@ -223,7 +237,7 @@ public class LabQueues extends AbstractPage {
                 switchToDefaultContext();
                 switchToFrame(switchiFrame);
             }
-                if (validateElement_Displayed(episodeNumber, timer)) {
+                if (validateElement_Displayed(episodeNumber, timeout)) {
                     click(episodeNumber);
                     stepInfoWithScreenshot("clicked Lab Episode " + episode);
                 }
@@ -245,7 +259,7 @@ public class LabQueues extends AbstractPage {
               switchToDefaultContext();
               switchToFrame(switchiFrame);
               //next page
-              if(validateElement_Enabled_Displayed(nextpagequeue,timer)) {
+              if(validateElement_Enabled_Displayed(nextpagequeue, timeout)) {
                   click(nextpagequeue);
               }else{
                   break;
@@ -259,7 +273,7 @@ public class LabQueues extends AbstractPage {
 
         List<String> texts;
         if(validateElement_Displayed(clinicalResultEpisode)) {
-            texts = getAllElementText(clinicalResultEpisode, timer);
+            texts = getAllElementText(clinicalResultEpisode, timeout);
             stepPassedWithScreenshot("Successfully received Episode "+texts.get(0));
             String value = texts.get(0);
             if(clicklastElementList){
@@ -415,17 +429,24 @@ public class LabQueues extends AbstractPage {
     }
 
     public void navigatetoToolBox(){
-        click(mainmenu,timer);
-        click(toolbox,timer);
+
+        awaitElement(mainmenu, timeout);
+        click(mainmenu, timeout);
+        if(!validateElement_Displayed(testMenu, timeout)) {
+            click(toolbox, timeout);
+        }
     }
 
     public void navigateTestSet(){
 
-        if(validateElement_Enabled_Displayed(labInstrumentResultGenerator,timer)){
-            click(labInstrumentResultGenerator,timer);
+        if(validateElement_Enabled_Displayed(labInstrumentResultGenerator, timeout)){
+            awaitElement(labInstrumentResultGenerator, timeout);
+            click(labInstrumentResultGenerator, timeout);
         }else{
-            click(testmenu,timer);
-            click(labInstrumentResultGenerator,timer);
+            awaitElement(testMenu, timeout);
+            click(testMenu, timeout);
+            awaitElement(labInstrumentResultGenerator, timeout);
+            click(labInstrumentResultGenerator, timeout);
         }
 
     }

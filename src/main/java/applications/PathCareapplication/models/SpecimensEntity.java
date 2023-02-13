@@ -2,10 +2,9 @@ package applications.PathCareapplication.models;
 
 
 import com.poiji.annotation.ExcelCell;
-import com.poiji.annotation.ExcelCellName;
 import com.poiji.annotation.ExcelRow;
 
-public class Specimens {
+public class SpecimensEntity {
 
     @ExcelRow
     private int rowIndex;

@@ -2,6 +2,7 @@ package applications.PathCareapplication.pages;
 
 import Roman.Roman;
 
+import applications.PathCareapplication.tool.AbstractExtension;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -14,7 +15,7 @@ import selenium.AbstractPage;
 import java.time.Duration;
 
 
-public class SingleProcess extends AbstractPage {
+public class SingleProcess extends AbstractExtension {
 
     private final By iframeProcessing = By.xpath("//iframe[@id='TRAK_main']");
 

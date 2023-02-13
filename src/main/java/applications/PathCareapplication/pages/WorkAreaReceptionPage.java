@@ -2,14 +2,16 @@ package applications.PathCareapplication.pages;
 
 import Roman.Roman;
 import applications.PathCareapplication.models.TestDataModel;
+import applications.PathCareapplication.models.WorkAreaReceiveEntity;
+import applications.PathCareapplication.tool.AbstractExtension;
+import applications.PathCareapplication.widget.Pre_Analytical;
 import org.openqa.selenium.*;
 
-import selenium.AbstractPage;
 
 import java.util.*;
 
 
-public class WorkAreaReceptionPage extends AbstractPage {
+public class WorkAreaReceptionPage extends AbstractExtension {
 
     private final By specimenNumberText = By.xpath(" //td/input[@id='SpecimenNumber']");
 
@@ -37,7 +39,9 @@ public class WorkAreaReceptionPage extends AbstractPage {
     }
 
     public void labworkareaswitch() {
-        switchToFrame(workAreaReceptionframe);
+        awaitElement(mainframe,timeout);
+        switchToMainFrame();
+
     }
 
     public List<TestDataModel> setupdata(String[] departments, String[] testcollections, List<String> specimenNumbers) {
@@ -55,7 +59,7 @@ public class WorkAreaReceptionPage extends AbstractPage {
         List<TestDataModel> testDataModelList = new ArrayList<>();
 
         //2
-        for (ArrayList specimen : specimenNumbers) {
+        for (ArrayList<String> specimen : specimenNumbers) {
             for (int x = 0; x <= specimen.size() - 1; x++) {
 
                 testDataModelList.add(new TestDataModel(specimen.get(x), testcollections.length <= specimen.size() ? testcollections[0] : testcollections[x], "g", testcollections.length <= specimen.size() ? departments[0] : departments[x]));
@@ -69,7 +73,7 @@ public class WorkAreaReceptionPage extends AbstractPage {
         List<TestDataModel> testDataModelList = new ArrayList<>();
 
 
-        for (ArrayList specimen : specimenNumbers) {
+        for (ArrayList<String> specimen : specimenNumbers) {
             for (int x = 0; x <= specimen.size()-1; x++) {
                 //if(!"([a-z])|([A-Z])\\w+".matches(specimen.get(x).toString())) {
                     testDataModelList.add(new TestDataModel(specimen.get(x), "g", departments[0]));
@@ -80,11 +84,26 @@ public class WorkAreaReceptionPage extends AbstractPage {
 
     }
 
+    public List<TestDataModel> setupdataWorkReceive(List<WorkAreaReceiveEntity> workAreaReceiveEntityList){
+        List<TestDataModel> testDataModelList = new ArrayList<>();
+
+        for(WorkAreaReceiveEntity workAreaReceiveEntity : workAreaReceiveEntityList){
+            testDataModelList.add(new TestDataModel(workAreaReceiveEntity.getSpecimeNumber(), workAreaReceiveEntity.getTestSet(), workAreaReceiveEntity.getWorkArea(), workAreaReceiveEntity.getDepartment(), workAreaReceiveEntity.getUserprofile()));
+        }
+        return testDataModelList;
+    }
+
     public boolean departmentWorkArea(List<TestDataModel> data, boolean checking) {
 
         boolean checkingout = false;
         for (TestDataModel dataModel : data) {
 
+            switchToDefaultContext();
+            loadingBarChecker();
+            awaitElement(mainframe,timeout);
+            switchToMainFrame();
+
+            awaitElement(departmentText,timeout);
             sendKeys(departmentText, dataModel.department, timeout);
 
             click(lookuprowselection,timeout);
@@ -115,6 +134,57 @@ public class WorkAreaReceptionPage extends AbstractPage {
         }
         return checking;
     }
+
+    public boolean departmentWorkArea(List<TestDataModel> data, boolean checking, String location, InterSystemLoginPage interSystemloginPage, Pre_Analytical pre_analytical ) {
+
+        boolean checkingout = false;
+        for (TestDataModel dataModel : data) {
+            if (!dataModel.location.contentEquals(location)){
+                location=dataModel.location;
+                switchToDefaultContext();
+                interSystemloginPage.setLocation(location);
+                interSystemloginPage.changelocation();
+                interSystemloginPage.userselection();
+                pre_analytical.navigateWorkRecived();
+            }
+
+            switchToDefaultContext();
+            loadingBarChecker();
+            awaitElement(mainframe,timeout);
+            switchToMainFrame();
+
+
+            sendKeys(departmentText, dataModel.department, timeout);
+
+            click(lookuprowselection,timeout);
+            if (validateElement_Enabled_Displayed(workArea, timeout)) {
+                click(workAreaSearchbutton,timeout);
+            }
+            click(lookuprowselection,timeout);
+            findOne(specimenNumberText, dataModel.specimennumber);
+
+
+            try {
+                acceptAlert();
+            } catch (NoAlertPresentException ignored) {
+            }
+            if (checking && !checkingout) {
+                stepPassedWithScreenshot("Successfully Entered Lab Specimen under Lab episode: " + dataModel.specimennumber);
+                if(!validateElement_Enabled_Displayed(tobereceivedcontain)) {
+                    click(checkin);
+                }
+            } else {
+                if (validateElement_Displayed(resetbutton,timeout) && validateElement_Enabled_Displayed(checkout,timeout)) {
+                    stepPassedWithScreenshot("Available option : Reset & Check Out. " + dataModel.specimennumber);
+                    click(reset,timeout);
+                    checkingout = true;
+                    checking = true;
+                }
+            }
+        }
+        return checking;
+    }
+
 
 
     public boolean checkout_reset(String[] departments, String[] testcollections, List<String> specimenNumbers) {

@@ -1,14 +1,13 @@
 package applications.PathCareapplication.pages;
 
 import Roman.Roman;
+import applications.PathCareapplication.tool.AbstractExtension;
 import org.openqa.selenium.By;
-import selenium.AbstractPage;
 
-public class Analytical extends AbstractPage {
+public class Analytical extends AbstractExtension {
 
-    private final By mainmenu = By.xpath("//a//md-icon[@title='Main Menu']");
+    private final By mainMenu = By.xpath("//a//md-icon[@title='Main Menu']");
     private final By processing = By.xpath("//span[text()='Processing']");
-    private final By procedures = By.xpath("//span[text()='Procedures']");
     private final By resultEntry = By.xpath("//li//span[text()='Result Entry']");
     private  final By analytical = By.xpath("//li//span[text()='Analytical']");
 
@@ -16,9 +15,8 @@ public class Analytical extends AbstractPage {
         super(roman);
     }
 
-
     public void navigateResultEntry(){
-        click(mainmenu);
+        click(mainMenu);
         if(validateElement_Enabled_Displayed(resultEntry)){
             click(resultEntry,10);
         }else{
@@ -27,22 +25,9 @@ public class Analytical extends AbstractPage {
         }
     }
 
-    public void navigateProcedures() {
-
-        click(mainmenu,15);
-        if(validateElement_Enabled_Displayed(procedures)){
-            click(procedures,10);
-        }else{
-            click(analytical);
-            click(procedures,10);
-        }
-
-        stepPassedWithScreenshot("Navigated to specimen received");
-    }
-
     public void navigateProcessing() {
 
-        click(mainmenu,15);
+        click(mainMenu,15);
         if(validateElement_Enabled_Displayed(processing)){
             click(processing,10);
         }else{

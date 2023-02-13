@@ -1,18 +1,16 @@
 package applications.PathCareapplication.pages;
 
 import Roman.Roman;
-import applications.PathCareapplication.models.EditTestSet;
-import applications.PathCareapplication.models.LabespideData;
-import applications.PathCareapplication.models.Specimens;
-import applications.PathCareapplication.models.TestSetDetails;
+import applications.PathCareapplication.models.EditTestSetEntity;
+import applications.PathCareapplication.models.SpecimensEntity;
+import applications.PathCareapplication.models.TestSetDetailsEntity;
+import applications.PathCareapplication.tool.AbstractExtension;
 import com.github.javafaker.Faker;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-import selenium.AbstractPage;
-
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -20,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class PathCareScratch extends AbstractPage {
+public class PathCareScratch extends AbstractExtension {
 
     private final By switchiFrame = By.xpath("//iframe[@name='TRAK_main']");
     private final By surnametextbox = By.xpath("//input[@name='PAPERName']");
@@ -73,7 +71,10 @@ public class PathCareScratch extends AbstractPage {
 
     private final By findButton = By.xpath("//button[text()='Find']");
 
-    private final By specimenN = By.xpath("//input[contains(@ng-model,'LBSPC_SpecimenNumber')]");
+    private final By specimenWithAnatomicalSite = By.xpath("//input[  contains(@ng-model,'LBCAS_Desc')  or contains(@ng-model,'LBSPC_SpecimenNumber') ]");
+    private final By specimenNumberUnedit = By.xpath("//span[contains(@ng-bind,'LBCAS_Desc') or contains(@ng-bind,'LBSPC_SpecimenNumber')]");
+    private final By specimenText = By.xpath("//input[contains(@ng-model,'LBSPC_SpecimenNumber')]");
+    private final By specimenNumberTextUnedit = By.xpath("//span[contains(@ng-bind,'LBSPC_SpecimenNumber')]");
 
     private final By addSpecimenButton = By.xpath("//a[contains(@ng-class,'AddS')]");
 
@@ -98,10 +99,6 @@ public class PathCareScratch extends AbstractPage {
 
     private final By firstpatientEpisodeSearch = By.xpath("//a[contains(@id,'PAPerson') and  not(@aria-label='New') and not(@title)]");
 
-    private final By loadingBar = By.xpath("//div[@class='bar']");
-
-    private final By bodydom = By.xpath("//body[@ng-app='tcApp']");
-
     private final By editQuestionHideCollection =By.xpath("//md-icon[contains(@id,'LBTSSHHideForCollection') and not(@class)]");
     private final By editQuestionHideProcessing = By.xpath("//md-icon[contains(@id,'LBTSSHHideForProcessing') and not(@class)]");
     private final By getEditQuestionHideReceive = By.xpath("//md-icon[contains(@id,'LBTSSHHideForReceive') and not(@class)]");
@@ -111,7 +108,7 @@ public class PathCareScratch extends AbstractPage {
     private final By addtionalQuestionmarcodesciption = By.xpath("//input[contains(@name,'QA_ComboBoxz4') ]");
     private final By addtionalQuestionmEnterOfOxygen = By.xpath("//input[contains(@name,'QA_TextBoxz6')]");
     private final By addtionalQuestionmTimeBloodgasTaken = By.xpath("//input[contains(@name,'QA_Timez5')]");
-
+    private final By iframehidden = By.xpath("//iframe[@name='TRAK_hidden']");
     private final By continuelink = By.xpath("//a[text()='Continue']");
 
     private  By testdieditfield = By.xpath("//a[text()='%s']//following::md-input-container[@class='tcNumeric']//input[contains(@name,'QA')]");
@@ -234,21 +231,9 @@ public class PathCareScratch extends AbstractPage {
         }
             String lab_episode = getText(labEspiodeNum, timeout).replace("Lab Episode Number: ", "");
             stepPassedWithScreenshot("Label printed successfully " + lab_episode);
-            LabespideData labespideData = new LabespideData(lab_episode);
-            labespideData.setTestset(testset);
-
         return lab_episode;
     }
-    public void loadingBarChecker(){
-        int x = 5;
-        while(validateElement_Displayed(loadingBar,timeout)|| !validateElement_Displayed(bodydom,timeout)){
-            x--;
-            stepInfo("Page still loading");
-            if(x==0){
-                break;
-            }
-        }
-    }
+
     public void specimenSelect(){
         if(clickBackboneLabEpisodeSelect){click(backtoLabEpisodeNav);}
         loadingBarChecker();
@@ -286,12 +271,13 @@ public class PathCareScratch extends AbstractPage {
 
     }*/
 
-    public void editTestList(String testset, String pk,ArrayList<EditTestSet> editTestSetArrayList){
+    public void editTestList(String testset, String pk,ArrayList<EditTestSetEntity> editTestSetEntityArrayList){
 
-                for(EditTestSet editTestSet:editTestSetArrayList){
-                    if(editTestSet.getPk()!=null){
+                for(EditTestSetEntity editTestSetEntity : editTestSetEntityArrayList){
+                    if(editTestSetEntity.getPk()!=null){
                         if(pk.contentEquals(pk)){
-                            if(editTestSet.getTestcode().contentEquals(testset)){
+                            if(editTestSetEntity.getTestcode().contentEquals(testset)){
+                               // editTestSetEntity = By.xpath("//parent::span[ contains(@ng-bind,'LBTS_TestSet_DR') and text()='"+testsetname+"']//ancestor::tr//a[contains(@id,'LBEpisode_TestSet_List_"+Integer.parseInt(pk)-1+"-row-"+Integer.parseInt(pk)-1+"-item-Edit-link')]");
                                 if(validateElement_Enabled_Displayed(editPencil,timeout)){
                                     loadingBarChecker();
                                     scrollToElement(editPencil);
@@ -300,8 +286,8 @@ public class PathCareScratch extends AbstractPage {
                                 }else{
                                     Assert.fail("Unable to click Edit Pencil");
                                 }
-                                specialHandling(editTestSet.testSetSpecialHandling);
-                                additionalQuestion(editTestSet.additionalTestSetQuestions);
+                                specialHandling(editTestSetEntity.testSetSpecialHandling);
+                                additionalQuestion(editTestSetEntity.additionalTestSetQuestions);
                                 if(validateElement_Enabled_Displayed(acceptButtonEdit,timeout)) {
                                     click(acceptButtonEdit, timeout);
                                     stepInfoWithScreenshot("Accepting edit test set information");
@@ -314,7 +300,7 @@ public class PathCareScratch extends AbstractPage {
                     }
                 }
     }
-    public void specialHandling( EditTestSet.TestSetSpecialHandling testSetSpecialHandling){
+    public void specialHandling( EditTestSetEntity.TestSetSpecialHandling testSetSpecialHandling){
         if(testSetSpecialHandling != null) {
             if (testSetSpecialHandling.getHideforCollection() != null) {
                 click(editQuestionHideCollection);
@@ -335,7 +321,7 @@ public class PathCareScratch extends AbstractPage {
 
     }
 
-    public void additionalQuestion(EditTestSet.AdditionalTestSetQuestions additionalTestSetQuestions){
+    public void additionalQuestion(EditTestSetEntity.AdditionalTestSetQuestions additionalTestSetQuestions){
         if(!additionalTestSetQuestions.equals(null)) {
             if (additionalTestSetQuestions.getSpecimenContainer() != null) {
                 sendKeys(addtionalQuestionSpecimenContainer, additionalTestSetQuestions.getSpecimenContainer());
@@ -397,7 +383,7 @@ public class PathCareScratch extends AbstractPage {
        testdieditfield = By.xpath("//a[text()='%s']//following::md-input-container[@class='tcNumeric']//input[contains(@name,'QA')]".replace("%s",name));
        sendKeys(testdieditfield,value,timeout);
        stepPassedWithScreenshot("Added "+name+" "+value);
-       click(acceptButtonEdit,10);
+       click(acceptButtonEdit,timeout);
        loadingBarChecker();
 
     }
@@ -407,8 +393,8 @@ public class PathCareScratch extends AbstractPage {
         super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
         findEnterTab(collectionTime,collectiontime);
         click(updatebuton);
-         if(validateElement_Displayed(testsetrequimenttext,5)){
-             validateElement_Displayed(findbutton,4);
+         if(validateElement_Displayed(testsetrequimenttext,timeout)){
+             validateElement_Displayed(findbutton,timeout);
              stepPassedWithScreenshot("Successfully displayed: Error message appears  \"At least one test set is required\"");
              return true;
          }
@@ -416,50 +402,52 @@ public class PathCareScratch extends AbstractPage {
     }
 
     public void setClientdetails(String name, String surname, String dateOfBirth,String gender){
-        setName(name);
-        setSurname(surname);
-        setDateOfBirth(dateOfBirth);
-        setGender(gender);
+
+        setName(name.isBlank()? new Faker().name().firstName():name);
+        setSurname(surname.isBlank()? new Faker().name().lastName():surname);
+        setDateOfBirth(dateOfBirth.isEmpty()?  new SimpleDateFormat("dd/MM/yyyy").format(new Faker().date().birthday(11,55)):dateOfBirth);
+        setGender(gender.isBlank() ? new Faker().demographic().sex():gender);
     }
 
-    public void uncreatedSamePatient() throws InterruptedException {
+    public void createdSamePatient() {
         loadingBarChecker();
-        Thread.sleep(4000);
+        awaitElement(firstpatientEpisodeSearch,timeout);
         click(firstpatientEpisodeSearch,timeout);
-        if(validateElement_Displayed(newbutton2)){
+        awaitElement(continuelink,timeout);
+       if (validateElement_Displayed(continuelink,timeout)) {
+            click(continuelink,timeout);
             click(newbutton2,timeout);
-        }else if (validateElement_Displayed(continuelink))
-        {
-            click(continuelink);
+        }else{
+            Assert.fail("Unable to create patient details");
         }
-        stepInfo("Able to create new Patient");
+        loadingBarChecker();
+        stepInfoWithScreenshot("Able to create new Patient");
     }
 
-    public void patientdetails(String name, String surname, String dateOfBirth, String gender) throws InterruptedException {
-        sendKeys(surnametextbox,name,timeout);
-        sendKeys(givennametextbox,surname,timeout);
-        sendKeys(gendertextbox,gender,timeout);
+    public void patientdetails(String name, String surname, String dateOfBirth, String gender) {
         setClientdetails(name,surname,dateOfBirth,gender);
+        sendKeys(surnametextbox,this.surname,timeout);
+        sendKeys(givennametextbox,this.name,timeout);
+        sendKeys(gendertextbox,this.gender,timeout);
         click(findbutton);
+        loadingBarChecker();
         if(!newPatient){
-            loadingBarChecker();
-            Thread.sleep(4000);
+            awaitElement(firstpatientEpisodeSearch,timeout);
             click(firstpatientEpisodeSearch,timeout);
             loadingBarChecker();
-            if(validateElement_Displayed(continuelink,timeout)){
-                click(continuelink);
-            }
-            if(validateElement_Displayed(newbutton2,timeout)){
-                click(newbutton2,timeout);
-            }
+            awaitElement(continuelink,timeout);
+            click(continuelink);
+
+            awaitElement(newbutton2,timeout);
+             click(newbutton2,timeout);
         }else if(validateElement_Enabled_Displayed(newbutton,timeout)) {
             stepPassedWithScreenshot("The Patient list screen appears with no list");
             click(newbutton,timeout);
         }
 
         if(newPatient) {
-            findEnterTab(gendertextbox, gender);
-            findEnterTab(DateofBirth, dateOfBirth);
+            findEnterTab(gendertextbox, this.gender);
+            findEnterTab(DateofBirth, this.dateOfBirth);
             click(DateofBirth);
             stepPassedWithScreenshot("User is directed to Lab Episode screen");
         }
@@ -479,19 +467,23 @@ public class PathCareScratch extends AbstractPage {
 
     }
 
-    public void doctorSelection() throws InterruptedException {
+    public void doctorSelection()  {
 
         click(iconDoctorSearch,timeout);
         loadingBarChecker();
+        awaitElement(firstrowdoctorsearch,timeout);
         click(firstrowdoctorsearch,timeout );
-        Thread.sleep(4000);
         stepInfoWithScreenshot("Selected Doctor on list");
 
     }
-    public void doctorSelection(String doctor){
-        sendKeys(nameofDoctor,doctor);
-        super._driver.findElement(nameofDoctor).sendKeys(Keys.TAB);
-
+    public void doctorSelection(String doctor)  {
+        if(doctor.isBlank()) {
+            doctorSelection();
+        }else{
+            awaitElement(nameofDoctor, timeout);
+            sendKeys(nameofDoctor, doctor);
+            super._driver.findElement(nameofDoctor).sendKeys(Keys.TAB);
+        }
     }
 
 
@@ -516,12 +508,13 @@ public class PathCareScratch extends AbstractPage {
         return labEspideonumber;
     }
 
-    public String collectiondetailnewEditSpecimen(String patientKey, String collectiontime, String patienLocation , String[] testsetcollection, Boolean receiveDate, ArrayList<TestSetDetails> testSetlist, ArrayList<Specimens> specimensList, ArrayList<EditTestSet> editTestSetArrayList) {
+    public String collectiondetailnewEditSpecimen(String patientKey, String collectiontime, String patienLocation , String[] testsetcollection, Boolean receiveDate, ArrayList<TestSetDetailsEntity> testSetlist, ArrayList<SpecimensEntity> specimensEntityList, ArrayList<EditTestSetEntity> editTestSetEntityArrayList) {
 
-        sendKeys(patientSearchSelect,patienLocation);
+        sendKeys(patientSearchSelect,patienLocation.isBlank() ?"2100":patienLocation);
         super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
-        findEnterTab(collectionTime,collectiontime);
+        findEnterTab(collectionTime,collectiontime.isBlank()? "n-1":collectiontime);
         super._driver.findElement(collectionTime).sendKeys(Keys.TAB);
+
         if(receiveDate) {
             addReceivedDate(collectiontime);
         }
@@ -530,54 +523,79 @@ public class PathCareScratch extends AbstractPage {
             testCode = By.xpath("//span[text()='%s']".replace("%s",testset));
             sendKeys(testSetCollection,testset);
             super._driver.findElement(testSetCollection).sendKeys(Keys.TAB);
+            stepPassedWithScreenshot("Entered test set "+testset);
             if (validateElement_Displayed(supersetItemSelection)) {
                 stepInfoWithScreenshot("Reach to Superset Item Selection");
-                click(buttonSupersetItemSelectionAccept);
+                click(buttonSupersetItemSelectionAccept,timeout);
                 loadingBarChecker();
             }
             testSetDetails(testSetlist,testset,patientKey);
-            specimens(specimensList,testset,patientKey);
-            editTestList(testset,patientKey,editTestSetArrayList);
+            specimens(specimensEntityList,testset,patientKey);
+            editTestList(testset,patientKey, editTestSetEntityArrayList);
+            //dftTestset();
 
 
             stepPassedWithScreenshot("The correct Test Set appears under Tests : "+testset);
         }
 
-
         return updateClientDetails();
     }
 
-    private void testSetDetails(ArrayList<TestSetDetails> testSetlist, String testset,String patientkey){
+    private void testSetDetails(ArrayList<TestSetDetailsEntity> testSetlist, String testset, String patientkey){
         boolean checker= true;
-        for(TestSetDetails testSetDetail:testSetlist){
-            if(testSetDetail.getEnter().toLowerCase().contentEquals("yes") && testset.contentEquals(testSetDetail.getTestSetSuperSet()) && testSetDetail.getPatient_Key().contentEquals(patientkey)) {
+        for(TestSetDetailsEntity testSetDetail:testSetlist){
+            if(testset.contentEquals(testSetDetail.getTestSetSuperSet()) && testSetDetail.getPatient_Key().contentEquals(patientkey)) {
                 specimenEditSpecimen(testSetDetail.getSpecimen());
                 containerSpeciemen(testSetDetail.getContainer());
-                click(applybuttonSpecimenContainer);
+                stepInfo("Entered specimen"+testSetDetail.getSpecimen()+ "and Container "+testSetDetail.getContainer());
+                awaitElement(applybuttonSpecimenContainer,timeout);
+                click(applybuttonSpecimenContainer,timeout);
                checker= false;
              }
         }
 
     if(checker) {
-        for (TestSetDetails testSetDetail : testSetlist) {
-            if (testSetDetail.getEnter().toLowerCase().contentEquals("no")) {
+        for (TestSetDetailsEntity testSetDetail : testSetlist) {
+
                 if (validateElement_Displayed(backtoLabEpisodeNav)) {
                     click(backtoLabEpisodeNav, timeout);
                     stepInfoWithScreenshot("Clicked back to Lab Episode");
                 }
-            }
         }
     }
 
         }
-    private void specimens(ArrayList<Specimens> specimensArrayList,String testset,String patientKey){
-        for(Specimens specimens:specimensArrayList) {
-            if (specimens.getTestCode() != null) {
-                if (specimens.getTestCode().contentEquals(testset) && specimens.getPatient_Key().contentEquals(patientKey)) {
-                    click(selectlinkSpecimen);
+   /*private  void dftTestset(String testSetName,String dynamicTestSet,ArrayList<DFT> dynamicFunctionTest ){
+     //Need to build loop using list from spreadsheet
+      for(DFT dft:dynamicFunctionTest) {
+
+          if(dft.Patient_FK() != null) {
+
+              By testsetdftbox = By.xpath("//parent::span[ contains(@ng-bind,'LBTS_TestSet_DR') and text()='" + testSetName + "']//ancestor::tr//a[contains(@ng-class,'DFTToggleLink')]");
+              By dynamicfunctionTestlink = By.xpath("//a[text()='" + dynamicTestSet + "']");
+              By div = By.xpath("//div[@id='tc_Home-misc-alert']");
+              click(testsetdftbox, timeout);
+              switchToFrame(iframehidden);
+              click(dynamicfunctionTestlink, timeout);
+              click(div);
+              switchToDefaultContext();
+          }
+       }
+
+   }*/
+
+    private void specimens(ArrayList<SpecimensEntity> specimensEntityArrayList, String testset, String patientKey){
+        for(SpecimensEntity specimensEntity : specimensEntityArrayList) {
+            if (specimensEntity.getTestCode() != null) {
+                if (specimensEntity.getTestCode().contentEquals(testset) && specimensEntity.getPatient_Key().contentEquals(patientKey)) {
+                    click(selectlinkSpecimen,timeout);
                     switchToFrame(switchiFrame);
-                    click(By.xpath("//parent::td[label[contains(text(),'" + specimens.getSpecimens().trim() + "')]]//parent::tr//td//input[@type='checkbox']"));
-                    click(acceptButton);
+                    //need to click the tick box  and not un-tick  box
+                    WebElement element= findOne(By.xpath("//parent::td[label[contains(text(),'" + specimensEntity.getSpecimens().trim() + "')]]//parent::tr//td//input[@type='checkbox']"));
+                    if(!element.isSelected()) {
+                        click(By.xpath("//parent::td[label[contains(text(),'" + specimensEntity.getSpecimens().trim() + "')]]//parent::tr//td//input[@type='checkbox']"));
+                    }
+                    click(acceptButton,timeout);
                     switchToDefaultContext();
                 }
             }
@@ -589,6 +607,7 @@ public class PathCareScratch extends AbstractPage {
         String labepsiode ="";
         sendKeys(patientSearchSelect,"2100",timeout);
         super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
+        loadingBarChecker();
         findEnterTab(collectionTime,collectiontime);
         if(receiveDate) {
             addReceivedDate(collectiontime);
@@ -598,16 +617,16 @@ public class PathCareScratch extends AbstractPage {
             testCode = By.xpath("//span[text()='%s']".replace("%s",testset));
             sendKeys(testSetCollection,testset);
             super._driver.findElement(testSetCollection).sendKeys(Keys.TAB);
-            if(validateElement_Displayed(supersetItemSelection)){
+            if(validateElement_Displayed(supersetItemSelection,timeout)){
                 stepInfoWithScreenshot("Reach to Superset Item Selection");
-                click(buttonSupersetItemSelectionAccept);
-            } else if (validateElement_Displayed(backtoLabEpisodeNav) && !specimenSelect){
+                click(buttonSupersetItemSelectionAccept,timeout);
+            } else if (validateElement_Displayed(backtoLabEpisodeNav,timeout) && !specimenSelect){
                 testSetFilter(testSetFilter);
                 specimenEditSpecimen(specimen);
                 containerSpeciemen(container);
 
-                Assert.assertTrue("Unable to click apply button on Specimen Container",validateElement_Enabled_Displayed(applybuttonSpecimenContainer));
-                click(applybuttonSpecimenContainer);
+                Assert.assertTrue("Unable to click apply button on Specimen Container",validateElement_Enabled_Displayed(applybuttonSpecimenContainer,timeout));
+                click(applybuttonSpecimenContainer,timeout);
                 loadingBarChecker();
                /* if(validateElement_Enabled_Displayed(selectlinkSpecimen)){
                     click(selectlinkSpecimen);
@@ -676,9 +695,10 @@ public class PathCareScratch extends AbstractPage {
     public void searchPatientURN(String urn) throws InterruptedException {
         findOne(registrationNo).clear();
         sendKeys(registrationNo, urn);
-        click(findButton);
         stepInfoWithScreenshot("Entered Unique Registration Number "+ urn);
-        Thread.sleep(3000);
+
+        click(findButton);
+
     }
 
     public void specimenContainerList(String anatomical,String lesion,String anatomicalSite) throws InterruptedException {
@@ -756,6 +776,8 @@ public class PathCareScratch extends AbstractPage {
             speciemenlist.put(labnumber.split(",")[0],specimenNumberExtract(true));
             if (validateElement_Enabled_Displayed(backtoPatient,timeout)){
                 click(backtoPatient,timeout);
+                click(backtoPatient,timeout);
+                click(backtoPatient,timeout);
             }
         }
         return speciemenlist;
@@ -764,7 +786,7 @@ public class PathCareScratch extends AbstractPage {
     public List<String> addMultipleSpecimen(String testSetFilter,String specimen,String container,int numberSpecimen,boolean checkspecimen,boolean addSpecimen){
         if(addSpecimen) {
             for (int x = 0; x <= numberSpecimen - 1; x++) {
-                if (validateElement_Enabled_Displayed(addSpecimenButton, 10)) {
+                if (validateElement_Enabled_Displayed(addSpecimenButton, timeout)) {
                     scrollToElement(addSpecimenButton);
                     click(addSpecimenButton);
                     testSetFilter(testSetFilter);
@@ -822,17 +844,50 @@ public class PathCareScratch extends AbstractPage {
         }
     }
 
-    public ArrayList<String> specimenNumberExtract(boolean checkspecimen){
+    public ArrayList<String> specimenNumberExtracts(boolean checkspecimen){
         ArrayList<String> values =  new ArrayList<>();
         if(checkspecimen) {
-            if (validateElement_Displayed(specimenN)) {
-                scrollToElement(specimenN);
-                for (WebElement element : find(specimenN)) {
-                    values.add(element.getAttribute("value"));
+            if (validateElement_Displayed(specimenContainer,timeout)) {
+                scrollToElement(specimenText,timeout);
+                for (WebElement element : find(specimenText,timeout)) {
+                        values.add(element.getAttribute("value"));
+
                 }
                 stepInfoWithScreenshot("Able to receive Specimen Number " + values);
                 return values;
-            } else {
+            } else if(validateElement_Displayed(specimenNumberTextUnedit,timeout)) {
+                scrollToElement(specimenNumberTextUnedit,timeout);
+                for (WebElement element : find(specimenNumberTextUnedit,timeout)) {
+                    values.add(element.getText());
+                }
+                stepInfoWithScreenshot("Able to receive Specimen Number " + values);
+                return values;
+            }else{
+                Assert.fail("Unable to Find specimen Number");
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<String> specimenNumberExtract(boolean checkspecimen){
+        ArrayList<String> values =  new ArrayList<>();
+        if(checkspecimen) {
+            if (validateElement_Displayed(specimenWithAnatomicalSite,timeout)) {
+                scrollToElement(specimenWithAnatomicalSite,timeout);
+                for (WebElement element : find(specimenWithAnatomicalSite,timeout)) {
+                    values.add(element.getAttribute("value"));
+
+                }
+                stepInfoWithScreenshot("Able to receive Specimen Number " + values);
+                return values;
+            } else if(validateElement_Displayed(specimenNumberUnedit,timeout)) {
+                scrollToElement(specimenNumberUnedit,timeout);
+                for (WebElement element : find(specimenNumberUnedit,timeout)) {
+                    values.add(element.getText());
+                }
+                stepInfoWithScreenshot("Able to receive Specimen Number " + values);
+                return values;
+            }else{
                 Assert.fail("Unable to Find specimen Number");
             }
         }
@@ -863,9 +918,9 @@ public class PathCareScratch extends AbstractPage {
 
 
     public void findEnterTab(By by, String input) {
-        validateElement_Enabled_Displayed(by,timeout);
-        super.sendKeys(by,input,timeout);
-        super.findOne(by,timeout).click();
+        awaitElement(by,timeout);
+        sendKeys(by,input,timeout);
+        click(by,timeout);
 
     }
     private void setTestset(String testset) {
