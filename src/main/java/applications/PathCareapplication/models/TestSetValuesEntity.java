@@ -8,13 +8,23 @@ import java.util.Map;
 
 public class TestSetValuesEntity {
 
+    @ExcelCellName("PK")
+    private String pk;
     @ExcelCellName("TestValueKey")
     private String testValueKey;
 
     @ExcelCellName("userprofile_FK")
     private String userprofile_FK;
 
+    @ExcelCellName("Apply")
+    private String apply;
 
+    @ExcelCellName("Validate")
+    private String validate;
+
+
+    @ExcelCellName("Reflex")
+    private String reflex;
 
     @ExcelUnknownCells
     private Map<String,String>  testvalues = new HashMap<>();
@@ -36,9 +46,42 @@ public class TestSetValuesEntity {
         return userprofile_FK;
     }
 
+
+    public String getApply() {
+        return apply;
+    }
+
+    public void setApply(String apply) {
+        this.apply = apply;
+    }
+
+    public String getValidate() {
+        return validate;
+    }
+
+    public void setValidate(String validate) {
+        this.validate = validate;
+    }
     public void setUserprofile_FK(String userprofile_FK) {
         this.userprofile_FK = userprofile_FK;
     }
+
+    public String getPk() {
+        return pk;
+    }
+
+    public void setPk(String pk) {
+        this.pk = pk;
+    }
+
+    public String getReflex() {
+        return reflex;
+    }
+
+    public void setReflex(String reflex) {
+        this.reflex = reflex;
+    }
+
 /*
     public void setTestvalues(Map<String, String> testvalues) {
         this.testvalues = testvalues;

@@ -71,7 +71,9 @@ public class PathCareScratch extends AbstractExtension {
 
     private final By findButton = By.xpath("//button[text()='Find']");
 
-    private final By specimenWithAnatomicalSite = By.xpath("//input[  contains(@ng-model,'LBCAS_Desc')  or contains(@ng-model,'LBSPC_SpecimenNumber') ]");
+    private final By reportTitle = By.xpath("//span[text()='Reports']");
+
+    private final By specimenAnatomicalSiteWithTestSet = By.xpath("//*[ contains(@aria-label,'Anatomical Site Lookup')  or contains(@ng-model,'LBSPC_SpecimenNumber') or contains(@ng-bind,'TestSetList') ]");
     private final By specimenNumberUnedit = By.xpath("//span[contains(@ng-bind,'LBCAS_Desc') or contains(@ng-bind,'LBSPC_SpecimenNumber')]");
     private final By specimenText = By.xpath("//input[contains(@ng-model,'LBSPC_SpecimenNumber')]");
     private final By specimenNumberTextUnedit = By.xpath("//span[contains(@ng-bind,'LBSPC_SpecimenNumber')]");
@@ -110,8 +112,10 @@ public class PathCareScratch extends AbstractExtension {
     private final By addtionalQuestionmTimeBloodgasTaken = By.xpath("//input[contains(@name,'QA_Timez5')]");
     private final By iframehidden = By.xpath("//iframe[@name='TRAK_hidden']");
     private final By continuelink = By.xpath("//a[text()='Continue']");
+    private final By volumeCollectedTextBox = By.xpath("//input[contains(@name,'VolumeCollected')]");
 
     private  By testdieditfield = By.xpath("//a[text()='%s']//following::md-input-container[@class='tcNumeric']//input[contains(@name,'QA')]");
+    private  By  nextpageURN = By.xpath("//a[text()='Next >']");
 
     public  String testset ="";
     private boolean newPatient = true;
@@ -547,6 +551,8 @@ public class PathCareScratch extends AbstractExtension {
             if(testset.contentEquals(testSetDetail.getTestSetSuperSet()) && testSetDetail.getPatient_Key().contentEquals(patientkey)) {
                 specimenEditSpecimen(testSetDetail.getSpecimen());
                 containerSpeciemen(testSetDetail.getContainer());
+                //Need to add Volume collected
+                //Need to add Volume Currently
                 stepInfo("Entered specimen"+testSetDetail.getSpecimen()+ "and Container "+testSetDetail.getContainer());
                 awaitElement(applybuttonSpecimenContainer,timeout);
                 click(applybuttonSpecimenContainer,timeout);
@@ -686,6 +692,14 @@ public class PathCareScratch extends AbstractExtension {
                 }
                 Thread.sleep(5000);
                 By editTestsetlink = By.xpath("//parent::tr/td/div/span//span[text()='%s']//parent::span//parent::span//parent::span//parent::div//parent::td//parent::tr//td//a[not(contains(@id,'CreateCopy')) ]".replace("%s",lapespido));
+                while(!validateElement_Displayed(editTestsetlink,timeout)){
+                    scrollToElement(nextpageURN,timeout);
+                    click(nextpageURN,timeout);
+                    if(!validateElement_Displayed(nextpageURN,timeout)){
+                        break;
+                    }
+                }
+
                 if(validateElement_Displayed(editTestsetlink,timeout)){
                     click(editTestsetlink,timeout);
                 }else{
@@ -844,6 +858,14 @@ public class PathCareScratch extends AbstractExtension {
         }
     }
 
+    public void volumeCollected(String volume){
+        findOne(volumeCollectedTextBox,timeout).sendKeys(volume);
+        if(!getAttribute(volumeCollectedTextBox,"value",timeout).isBlank()){
+            stepInfo("Entered Volume Collected "+getAttribute(volumeCollectedTextBox,"value",timeout));
+        }
+
+    }
+
     public ArrayList<String> specimenNumberExtracts(boolean checkspecimen){
         ArrayList<String> values =  new ArrayList<>();
         if(checkspecimen) {
@@ -872,10 +894,14 @@ public class PathCareScratch extends AbstractExtension {
     public ArrayList<String> specimenNumberExtract(boolean checkspecimen){
         ArrayList<String> values =  new ArrayList<>();
         if(checkspecimen) {
-            if (validateElement_Displayed(specimenWithAnatomicalSite,timeout)) {
-                scrollToElement(specimenWithAnatomicalSite,timeout);
-                for (WebElement element : find(specimenWithAnatomicalSite,timeout)) {
-                    values.add(element.getAttribute("value"));
+            if (validateElement_Displayed(specimenAnatomicalSiteWithTestSet,timeout)) {
+                scrollToElement(reportTitle,timeout);
+                for (WebElement element : find(specimenAnatomicalSiteWithTestSet,timeout)) {
+                    if(element.getText().isBlank()) {
+                        values.add(element.getAttribute("value").trim());
+                    }else{
+                        values.add(element.getText().trim());
+                    }
 
                 }
                 stepInfoWithScreenshot("Able to receive Specimen Number " + values);
@@ -893,6 +919,7 @@ public class PathCareScratch extends AbstractExtension {
         }
         return null;
     }
+
     public ArrayList<ArrayList<String>> specimenNumberList(ArrayList<String> listLapEpisode) throws InterruptedException {
         ArrayList<ArrayList<String>> specimenArrayList = new ArrayList<>();
         for(String labEpisode:listLapEpisode){

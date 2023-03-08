@@ -88,7 +88,7 @@ public class WorkAreaReceptionPage extends AbstractExtension {
         List<TestDataModel> testDataModelList = new ArrayList<>();
 
         for(WorkAreaReceiveEntity workAreaReceiveEntity : workAreaReceiveEntityList){
-            testDataModelList.add(new TestDataModel(workAreaReceiveEntity.getSpecimeNumber(), workAreaReceiveEntity.getTestSet(), workAreaReceiveEntity.getWorkArea(), workAreaReceiveEntity.getDepartment(), workAreaReceiveEntity.getUserprofile()));
+            testDataModelList.add(new TestDataModel(workAreaReceiveEntity.getSpecimeNumber(), workAreaReceiveEntity.getTestSet().toString(), workAreaReceiveEntity.getWorkArea(), workAreaReceiveEntity.getDepartment(), workAreaReceiveEntity.getUserprofile()));
         }
         return testDataModelList;
     }
@@ -110,6 +110,8 @@ public class WorkAreaReceptionPage extends AbstractExtension {
             if (validateElement_Enabled_Displayed(workArea, timeout)) {
                 click(workAreaSearchbutton,timeout);
             }
+
+            awaitElement(lookuprowselection,timeout);
             click(lookuprowselection,timeout);
             findOne(specimenNumberText, (String) dataModel.labespode);
 
@@ -153,16 +155,17 @@ public class WorkAreaReceptionPage extends AbstractExtension {
             awaitElement(mainframe,timeout);
             switchToMainFrame();
 
-
             sendKeys(departmentText, dataModel.department, timeout);
 
             click(lookuprowselection,timeout);
             if (validateElement_Enabled_Displayed(workArea, timeout)) {
                 click(workAreaSearchbutton,timeout);
             }
+
             click(lookuprowselection,timeout);
             findOne(specimenNumberText, dataModel.specimennumber);
 
+            aliqout();
 
             try {
                 acceptAlert();
@@ -196,6 +199,9 @@ public class WorkAreaReceptionPage extends AbstractExtension {
             departmentWorkArea(setupdata(departments, testcollections, specimenNumbers), false);
         }
         return condition;
+
+    }
+    public void aliqout(){
 
     }
 

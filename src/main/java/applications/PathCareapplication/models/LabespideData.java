@@ -10,11 +10,9 @@ import static applications.PathCareapplication.tool.ExcelExtractorList.*;
 public  class LabespideData  {
 
 
-
     private List<PatientModel> patientModelList = new ArrayList<>();
 
     private List<WorkAreaReceiveEntity> workAreaReceiveEntities = new ArrayList<>();
-
 
     //Result Generator
     private List<ResultsGenerator_AbbottAlinityc> resultsGenerator_AbbottAlinityc = new ArrayList<>();
@@ -25,7 +23,17 @@ public  class LabespideData  {
 
     private List<ResultsGenerator_PCPBioFireFilm> resultsGenerator_pcpBioFireFilmList = new ArrayList<>();
 
-    private ArrayList<TestSetDetailsEntity> testSetDetailsEntityList = new ArrayList();
+    private List<ResultsGenerator_Aquios1> resultsGenerator_aquios1s = new ArrayList<>();
+
+
+    private List<ResultsGenerator_RocheSysmexXGE> resultsGenerator_rocheSysmexXGES = new ArrayList<>();
+
+    private List<ResultsGenerator_AAGeorge> resultsGeneratorAaGeorges = new ArrayList<>();
+
+
+    private List<ResultsGenerator_Sysmexca620Geo> resultsGenerator_sysmexca620Geos = new ArrayList<>();
+
+    private ArrayList<TestSetDetailsEntity> testSetDetailsEntityList = new ArrayList<>();
 
     private ArrayList<SpecimensEntity> specimensEntityArrayList = new ArrayList<>();
 
@@ -34,7 +42,7 @@ public  class LabespideData  {
 
     private ArrayList<SpecimenReceiveEntity> specimenReceiveEntityArrayList = new ArrayList<>();
 
-    private List<List> ResultGene = new ArrayList();
+    private List<List> ResultGene = new ArrayList<>();
 
 
     private String fileLocation ="src/main/resources/TestCaseResources.txt";
@@ -48,7 +56,15 @@ public  class LabespideData  {
 
     private ArrayList<TestSetValuesEntity> testSetValuesEntityList = new ArrayList<>();
 
+    //LabQueue
+    private  ArrayList<LabQueueEntity> labQueueEntities = new ArrayList<>();
 
+
+    //WorkSheet
+    private ArrayList<WorkSheetResultEntry> workSheetResultEntryArrayList = new ArrayList<>();
+
+
+    private ArrayList<WorkSheetResultValues> workSheetResultValuesArrayList = new ArrayList<>();
 
     public ArrayList<TestSetValuesEntity> getTestSetValuesList() {
         return testSetValuesEntityList;
@@ -108,6 +124,24 @@ public  class LabespideData  {
     public void setWorkReceive(List<WorkAreaReceiveEntity> workAreaReceiveEntityList){
         this.workAreaReceiveEntities = workAreaReceiveEntityList;
     }
+    //Work Sheets
+    public ArrayList<WorkSheetResultEntry> getWorkSheetResultEntryArrayList() {
+        return workSheetResultEntryArrayList;
+    }
+
+    public void setWorkSheetResultEntryArrayList(ArrayList<WorkSheetResultEntry> workSheetResultEntryArrayList) {
+        this.workSheetResultEntryArrayList = workSheetResultEntryArrayList;
+    }
+
+    public ArrayList<WorkSheetResultValues> getWorkSheetResultValuesArrayList() {
+        return workSheetResultValuesArrayList;
+    }
+
+    public void setWorkSheetResultValuesArrayList(ArrayList<WorkSheetResultValues> workSheetResultValuesArrayList) {
+        this.workSheetResultValuesArrayList = workSheetResultValuesArrayList;
+    }
+    //End WorkSheet
+
 
     //Being  Result Generator
 
@@ -126,6 +160,40 @@ public  class LabespideData  {
     public void setResultsGenerator_pcpBioFireFilmList(List<ResultsGenerator_PCPBioFireFilm> resultsGenerator_pcpBioFireFilmList){
         this.resultsGenerator_pcpBioFireFilmList = resultsGenerator_pcpBioFireFilmList;
     }
+
+    public List<ResultsGenerator_Aquios1> getResultsGenerator_aquios1s() {
+        return resultsGenerator_aquios1s;
+    }
+    public List<ResultsGenerator_RocheSysmexXGE> getResultsGenerator_rocheSysmexXGES() {
+        return resultsGenerator_rocheSysmexXGES;
+    }
+
+    public List<ResultsGenerator_AAGeorge> getResultsGeneratorAaGeorges() {
+        return resultsGeneratorAaGeorges;
+    }
+
+    public List<ResultsGenerator_Sysmexca620Geo> getResultsGenerator_sysmexca620Geos() {
+        return resultsGenerator_sysmexca620Geos;
+    }
+
+    public void setResultsGenerator_aquios1s(List<ResultsGenerator_Aquios1> resultsGenerator_aquios1s) {
+        this.resultsGenerator_aquios1s = resultsGenerator_aquios1s;
+    }
+
+    public void setResultsGenerator_rocheSysmexXGES(List<ResultsGenerator_RocheSysmexXGE> resultsGenerator_rocheSysmexXGES) {
+        this.resultsGenerator_rocheSysmexXGES = resultsGenerator_rocheSysmexXGES;
+    }
+
+
+    public void setResultsGenerator_sysmexca620Geos(List<ResultsGenerator_Sysmexca620Geo> resultsGenerator_sysmexca620Geos) {
+        this.resultsGenerator_sysmexca620Geos = resultsGenerator_sysmexca620Geos;
+    }
+
+
+    public void setResultsGeneratorAaGeorges(List<ResultsGenerator_AAGeorge> resultsGeneratorAaGeorges) {
+        this.resultsGeneratorAaGeorges = resultsGeneratorAaGeorges;
+    }
+
 
     public List<WorkAreaReceiveEntity> getWorkAreaReceives() {
         return workAreaReceiveEntities;
@@ -162,7 +230,19 @@ public  class LabespideData  {
     public void setResultGene(List<List> resultGene) {
         this.ResultGene = resultGene;
     }
+
     //End Results Generator
+
+    //Begin Queue
+    public ArrayList<LabQueueEntity> getLabQueueEntities() {
+        return labQueueEntities;
+    }
+
+    public void setLabQueueEntities(ArrayList<LabQueueEntity> labQueueEntities) {
+        this.labQueueEntities = labQueueEntities;
+    }
+    //Begin Queue
+
 
     public ArrayList<TestSetDetailsEntity> getTestSetDetailsList() {
         return testSetDetailsEntityList;
@@ -226,7 +306,7 @@ public  class LabespideData  {
                     vsalue.split(",")[2]==null ?"":vsalue.split(",")[2],
                     vsalue.split(",")[3]==null ?"":vsalue.split(",")[3],
                     vsalue.split(",")[4]==null ?"":vsalue.split(",")[4],
-                    vsalue.split(",")[5]==null ?"":vsalue.split(",")[5]);
+                    vsalue.split(",")[5] == null ? "" : vsalue.split(",")[5]);
                values.add(workAreaReceiveEntity);
 
 
@@ -251,7 +331,7 @@ public  class LabespideData  {
                         vsalue.split(",")[0]==null ? "":vsalue.split(",")[0],
                         vsalue.split(",")[1]==null ?"": vsalue.split(",")[1],
                         vsalue.split(",")[2]==null ?"":vsalue.split(",")[2],
-                        vsalue.split(",")[3]==null ?"":vsalue.split(",")[3]);
+                        vsalue.split(",")[3] == null ? "" : vsalue.split(",")[3]);
                 values.add(specimenReceiveEntity);
 
 
@@ -302,7 +382,7 @@ public  class LabespideData  {
 
 
 
-    public void patientInform() throws IllegalAccessException {
+    public void patientInform() {
 
         for(SpecimenReceiveEntity specimenReceiveEntity :specimenReceives())
         {
@@ -313,19 +393,13 @@ public  class LabespideData  {
                     }
                 }
             }
-            if(specimenReceiveEntity.getTestSet() !=null){
-                for(TestSetCodeEntity testSetCodeEntity :testSetCode()){
-                    if (specimenReceiveEntity.getTestSet().contentEquals(testSetCodeEntity.PK_testCode)) {
-                        specimenReceiveEntity.setTestSet(testSetCodeEntity.getTestSet().trim());
-                    }
-                }
-            }
 
             for (UserProfileEntity userProfileEntity : userProfile()) {
                 if (userProfileEntity.getPK().contentEquals(specimenReceiveEntity.getUserprofile_FK())) {
                     specimenReceiveEntity.setUserprofile_FK(userProfileEntity.getAccessProfile());
                 }
             }
+            Collections.sort(specimenReceiveEntity.getTestSet());
             specimenReceiveEntityArrayList.add(specimenReceiveEntity);
         }
 
@@ -383,21 +457,16 @@ public  class LabespideData  {
             //Work Area Receive
             for(WorkAreaReceiveEntity workAreaReceiveEntity :workAreaReceives())
             {
-                if(workAreaReceiveEntity.getUserprofile() !=null){
-                    for(UserProfileEntity userProfileEntity :userProfile()){
+                if(workAreaReceiveEntity.getUserprofile() !=null) {
+                    for (UserProfileEntity userProfileEntity : userProfile()) {
                         if (workAreaReceiveEntity.getUserprofile().contentEquals(userProfileEntity.getPK())) {
                             workAreaReceiveEntity.setUserprofile(userProfileEntity.getAccessProfile());
                         }
                     }
                 }
-                    if(workAreaReceiveEntity.getTestSet() !=null){
-                        for(TestSetCodeEntity testSetCodeEntity :testSetCode()){
-                            if (workAreaReceiveEntity.getTestSet().contentEquals(testSetCodeEntity.PK_testCode)) {
-                                workAreaReceiveEntity.setTestSet(testSetCodeEntity.getTestSet().trim());
-                            }
-                        }
-                    }
-                    this.workAreaReceiveEntities.add(workAreaReceiveEntity);
+
+                Collections.sort(workAreaReceiveEntity.getTestSet());
+                this.workAreaReceiveEntities.add(workAreaReceiveEntity);
             }
 
         //Result Generator
@@ -454,11 +523,86 @@ public  class LabespideData  {
 
         }
 
+        for(ResultsGenerator_Aquios1 resultsGenerator_Aquios1: ExcelExtractorList.resultsGenerator_Aquios1()) {
+
+            if (resultsGenerator_Aquios1.getUserprofile() != null) {
+                for (UserProfileEntity userProfileEntity : userProfile()) {
+                    if (resultsGenerator_Aquios1.getUserprofile().contentEquals(userProfileEntity.getPK())) {
+                        resultsGenerator_Aquios1.setUserprofile(userProfileEntity.getAccessProfile());
+                    }
+                }
+                this.resultsGenerator_aquios1s.add(resultsGenerator_Aquios1);
+            }
+
+        }
+
+        for(ResultsGenerator_RocheSysmexXGE resultsGenerator_rocheSysmexXGE: ExcelExtractorList.resultsGenerator_RocheSysmexXGE()) {
+
+            if (resultsGenerator_rocheSysmexXGE.getUserprofile() != null) {
+                for (UserProfileEntity userProfileEntity : userProfile()) {
+                    if (resultsGenerator_rocheSysmexXGE.getUserprofile().contentEquals(userProfileEntity.getPK())) {
+                        resultsGenerator_rocheSysmexXGE.setUserprofile(userProfileEntity.getAccessProfile());
+                    }
+                }
+                this.resultsGenerator_rocheSysmexXGES.add(resultsGenerator_rocheSysmexXGE);
+            }
+
+        }
+
+        for(ResultsGenerator_Sysmexca620Geo resultsGenerator_sysmexca620Geo: ExcelExtractorList.resultsGenerator_Sysmexca620Geo()) {
+
+            if (resultsGenerator_sysmexca620Geo.getUserprofile() != null) {
+                for (UserProfileEntity userProfileEntity : userProfile()) {
+                    if (resultsGenerator_sysmexca620Geo.getUserprofile().contentEquals(userProfileEntity.getPK())) {
+                        resultsGenerator_sysmexca620Geo.setUserprofile(userProfileEntity.getAccessProfile());
+                    }
+                }
+                this.resultsGenerator_sysmexca620Geos.add(resultsGenerator_sysmexca620Geo);
+            }
+
+        }
+
+        for(ResultsGenerator_AAGeorge resultsGenerator_aaGeorge: ExcelExtractorList.resultsGenerator_AAGeorge()) {
+
+            if (resultsGenerator_aaGeorge.getUserprofile() != null) {
+                for (UserProfileEntity userProfileEntity : userProfile()) {
+                    if (resultsGenerator_aaGeorge.getUserprofile().contentEquals(userProfileEntity.getPK())) {
+                        resultsGenerator_aaGeorge.setUserprofile(userProfileEntity.getAccessProfile());
+                    }
+                }
+                this.resultsGeneratorAaGeorges.add(resultsGenerator_aaGeorge);
+            }
+
+        }
+        //End of Result Generator
+
+        //Lab Queue
+        for(LabQueueEntity labQueueEntity:ExcelExtractorList.labQueues()) {
+
+            if (labQueueEntity.getUserProfile() != null) {
+                for (UserProfileEntity userProfileEntity : userProfile()) {
+                    if (labQueueEntity.getUserProfile().contentEquals(userProfileEntity.getPK())) {
+                        labQueueEntity.setUserProfile(userProfileEntity.getAccessProfile());
+                    }
+                }
+            }
+
+            this.labQueueEntities.add(labQueueEntity);
+        }
+        //End of Lab Queue
+
+
         //Lab Result Entry
         for(ResultsEntry resultsEntry:ExcelExtractorList.resultsEntries()) {
 
-                this.resultsEntries.add(resultsEntry);
 
+                for(TestSetCodeEntity testSetCodeEntity : testSetCode()) {
+                    if (resultsEntry.getTestSet().contentEquals(testSetCodeEntity.PK_testCode)) {
+                        resultsEntry.setTestSet(testSetCodeEntity.getTestSet());
+                    }
+
+            }
+                this.resultsEntries.add(resultsEntry);
         }
 
         for (TestSetValuesEntity testSetValue:ExcelExtractorList.testSetValues()){
@@ -474,6 +618,27 @@ public  class LabespideData  {
             }
         }
 
+        //Work Sheet
+        for (WorkSheetResultEntry workSheetResultEntry:ExcelExtractorList.workSheetResultEntries()){
+
+            if (workSheetResultEntry.getUserprofile_FK()!= null) {
+                for (UserProfileEntity userProfileEntity : userProfile()) {
+                    if (workSheetResultEntry.getUserprofile_FK().contentEquals(userProfileEntity.getPK())) {
+                        workSheetResultEntry.setUserprofile_FK(userProfileEntity.getAccessProfile());
+                    }
+
+                }
+                this.workSheetResultEntryArrayList.add(workSheetResultEntry);
+            }
+        }
+
+        for (WorkSheetResultValues workSheetResultValues :ExcelExtractorList.workSheetResultValues()){
+
+                this.workSheetResultValuesArrayList.add(workSheetResultValues);
+
+        }
+        //WorkSheet End
+
 
             setPatientModelList(patientModelList);
             setTestCodeList(testSetCode());
@@ -482,22 +647,34 @@ public  class LabespideData  {
             setEditTestArrayList(editTestArrayList);
             setSpecimenReceiveArrayList(specimenReceiveEntityArrayList);
             setWorkReceive(workAreaReceiveEntities);
+            setWorkSheetResultEntryArrayList(workSheetResultEntryArrayList);
+            setWorkSheetResultValuesArrayList(workSheetResultValuesArrayList);
             setResultGenerator_AbbottAliinityc(resultsGenerator_AbbottAlinityc);
             setResultsGenerator_rocheSysmexXN1List(resultsGenerator_rocheSysmexXN1List);
             setResultsGenerator_pcpBioFireFilmList(resultsGenerator_pcpBioFireFilmList);
             setResultsGenerator_sysmexCS2500s(resultsGenerator_sysmexCS2500s);
+            setResultsGenerator_aquios1s(resultsGenerator_aquios1s);
+            setResultsGenerator_rocheSysmexXGES(resultsGenerator_rocheSysmexXGES);
+            setResultsGenerator_sysmexca620Geos(resultsGenerator_sysmexca620Geos);
+            setResultsGeneratorAaGeorges(resultsGeneratorAaGeorges);
 
             List<List> resultGenerator = new ArrayList<>();
             resultGenerator.add(resultsGenerator_AbbottAlinityc);
             resultGenerator.add(resultsGenerator_sysmexCS2500s);
             resultGenerator.add(resultsGenerator_rocheSysmexXN1List);
             resultGenerator.add(resultsGenerator_pcpBioFireFilmList);
+            resultGenerator.add(resultsGeneratorAaGeorges);
+            resultGenerator.add(resultsGenerator_aquios1s);
+            resultGenerator.add(resultsGenerator_rocheSysmexXGES);
+            resultGenerator.add(resultsGenerator_sysmexca620Geos);
             setResultGene(resultGenerator);
 
             setResultsEntries(resultsEntries);
+            setLabQueueEntities(labQueueEntities);
 
     }
 
 
 
 }
+

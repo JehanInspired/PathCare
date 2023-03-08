@@ -1,13 +1,12 @@
 package applications.PathCareapplication.models;
 
-import com.poiji.annotation.ExcelCell;
-import com.poiji.annotation.ExcelCellName;
-import com.poiji.annotation.ExcelRow;
+import com.poiji.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 public class WorkAreaReceiveEntity {
-    @ExcelRow
-    private int rowIndex;
 
     @ExcelCell(0)
     String pk ;
@@ -30,20 +29,20 @@ public class WorkAreaReceiveEntity {
 
     @ExcelCell(5)
     @ExcelCellName("Test Set")
-    String testSet ;
+    List<String> testSet ;
 
     public WorkAreaReceiveEntity(){
 
     }
 
-        public WorkAreaReceiveEntity(String pk, String userprofile, String specimeNumber, String department, String workArea, String testSet){
+        public WorkAreaReceiveEntity(String pk, String userprofile, String specimeNumber, String department, String workArea,String testSet){
 
             this.pk =pk;
             this.userprofile =userprofile;
             this.specimeNumber = specimeNumber;
             this.department = department;
             this.workArea = workArea;
-            this.testSet = testSet;
+            this.testSet = Arrays.stream(testSet.split(",")).toList();
         }
 
 
@@ -87,11 +86,11 @@ public class WorkAreaReceiveEntity {
         this.workArea = workArea;
     }
 
-    public String getTestSet() {
+    public List<String> getTestSet() {
         return testSet;
     }
 
-    public void setTestSet(String testSet) {
+    public void setTestSet(List<String> testSet) {
         this.testSet = testSet;
     }
 

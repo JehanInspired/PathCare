@@ -5,7 +5,6 @@ import applications.PathCareapplication.tool.AbstractExtension;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 
-import javax.swing.plaf.IconUIResource;
 
 public class InterSystemLoginPage extends AbstractExtension {
     private final By usernametext = By.xpath("//input[@name='USERNAME']");
@@ -18,6 +17,7 @@ public class InterSystemLoginPage extends AbstractExtension {
     private final By footer = By.xpath("//div[@class='footer']");
 
     private final int  timeout =20;
+    private final int polling = 3;
 
     private String location = "";
 
@@ -65,9 +65,10 @@ public class InterSystemLoginPage extends AbstractExtension {
     }
 
     public void userselection(){
-        By accessProfile = By.xpath("//span[contains(text(),'%s')]".replace("%s",location));
+        By accessProfile = By.xpath("//span[contains(text(),'"+location+"')]");
         int counter = 0;
-        scrollToElement(nextPage,timeout);
+        //Checking first page for element
+        awaitElement(footer,timeout);
         scrollToElement(footer,timeout);
 
             while (!validateElement_Enabled_Displayed(accessProfile, timeout)) {
@@ -80,10 +81,16 @@ public class InterSystemLoginPage extends AbstractExtension {
                 counter++;
             }
 
-            scrollToElement(footer, timeout);
-            scrollToElement(accessProfile, timeout);
-            awaitElement(accessProfile,timeout);
-            click(accessProfile, timeout);
+
+            if(validateElement_Enabled_Displayed(accessProfile,timeout)){
+                scrollToElement(footer,timeout);
+                awaitClickableElement(accessProfile,timeout,polling).click();
+            }else{
+                awaitElement(accessProfile,timeout);
+                scrollToElement(accessProfile,timeout);
+                awaitClickableElement(accessProfile, timeout,polling).click();
+            }
+
 
         stepPassedWithScreenshot("Lab queues screen "+location);
     }

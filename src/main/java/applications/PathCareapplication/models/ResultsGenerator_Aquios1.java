@@ -1,18 +1,21 @@
 package applications.PathCareapplication.models;
 
 import com.poiji.annotation.ExcelCellName;
+import com.poiji.annotation.ExcelRow;
 import com.poiji.annotation.ExcelUnknownCells;
 
 import java.util.HashMap;
-//0860 222 762
 
-public class ResultsGenerator_PCPBioFireFilm {
+
+public class ResultsGenerator_Aquios1 {
+    @ExcelRow
+    private int rowIndex;
 
     @ExcelCellName("LabResult Key")
-    String labResult_Key ;
+    String LabResult_Key ;
 
     @ExcelCellName("User Profile")
-    String user_Profile ;
+    String userprofile ;
 
     @ExcelCellName("Patient Key")
     String patient_Key ;
@@ -20,34 +23,29 @@ public class ResultsGenerator_PCPBioFireFilm {
     @ExcelCellName("Instrument")
     String instrument ;
 
-
     @ExcelCellName("Test Group")
-    String testGroup ;
+    String Test_Group ;
 
     @ExcelCellName("specimen receive_FK")
-    String specimenReceive_FK ;
+    String specimen_receive_FK ;
 
     @ExcelUnknownCells
     private HashMap<String, String> stringValueMap = new HashMap<>();
 
-    public HashMap<String,String> getValues(){
-        return stringValueMap;
-    }
-
     public String getLabResult_Key() {
-        return labResult_Key;
+        return LabResult_Key;
     }
 
     public void setLabResult_Key(String labResult_Key) {
-        this.labResult_Key = labResult_Key;
+        LabResult_Key = labResult_Key;
     }
 
-    public String getUser_Profile() {
-        return user_Profile;
+    public String getUserprofile() {
+        return userprofile;
     }
 
-    public void setUser_Profile(String user_Profile) {
-        this.user_Profile = user_Profile;
+    public void setUserprofile(String userprofile) {
+        this.userprofile = userprofile;
     }
 
     public String getPatient_Key() {
@@ -66,20 +64,26 @@ public class ResultsGenerator_PCPBioFireFilm {
         this.instrument = instrument;
     }
 
-    public String getTestGroup() {
-        return testGroup;
+    public String getTest_Group() {
+        return Test_Group;
     }
 
-    public void setTestGroup(String testGroup) {
-        this.testGroup = testGroup;
+    public void setTest_Group(String test_Group) {
+        Test_Group = test_Group;
     }
 
-    public String getSpecimenReceive_FK() {
-        return specimenReceive_FK;
+    public String getSpecimen_receive_FK() {
+        return specimen_receive_FK;
     }
 
-    public void setSpecimenReceive_FK(String specimenReceive_FK) {
-        this.specimenReceive_FK = specimenReceive_FK;
+    public void setSpecimen_receive_FK(String specimen_receive_FK) {
+        this.specimen_receive_FK = specimen_receive_FK;
     }
+
+
+    public HashMap<String,String> getValues(){
+        return this.stringValueMap;
+    }
+
 
 }

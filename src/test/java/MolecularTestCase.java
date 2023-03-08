@@ -9,8 +9,6 @@ import com.github.javafaker.Faker;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.util.ArrayList;
@@ -186,7 +184,7 @@ public class MolecularTestCase extends RomanBase {
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PathCare PCP Molecular Virologist");
         pathCare.interSystemloginPage.userselection();
-        pathCare.labQueues.findresultonlistsearch(labespides.get(1),true,2,true); //Patient 2.1
+        pathCare.labQueues.findresultonlistsearch(labespides.get(1),true,3,true); //Patient 2.1
         pathCare.resultEntry.authorise();
 
         pathCare.labQueues.switchToDefaultContext();
@@ -201,7 +199,7 @@ public class MolecularTestCase extends RomanBase {
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PathCare PCP Molecular Virologist");
         pathCare.interSystemloginPage.userselection();
-        pathCare.labQueues.findresultonlistsearch(labespides.get(2),true,2,true); //Patient 3
+        pathCare.labQueues.findresultonlistsearch(labespides.get(2),true,3,true); //Patient 3
         pathCare.resultEntry.authorise();
 
         pathCare.labQueues.switchToDefaultContext();
@@ -230,14 +228,14 @@ public class MolecularTestCase extends RomanBase {
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PathCare PCP Molecular Virologist");
         pathCare.interSystemloginPage.userselection();
-        pathCare.labQueues.findresultonlistsearch(labespides.get(3),true,2,true); //Patient 4.2
+        pathCare.labQueues.findresultonlistsearch(labespides.get(3),true,3,true); //Patient 4.2
         pathCare.resultEntry.authorise();
 
         pathCare.labQueues.switchToDefaultContext();
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PathCare PCP Molecular Virologist");
         pathCare.interSystemloginPage.userselection();
-        pathCare.labQueues.findresultonlistsearch(labespides.get(4),true,2,true); //Patient 5.1
+        pathCare.labQueues.findresultonlistsearch(labespides.get(4),true,3,true); //Patient 5.1
         pathCare.resultEntry.authorise();
 
         pathCare.labQueues.switchToDefaultContext();

@@ -214,6 +214,7 @@ public class PathCareLabTransferList extends AbstractExtension {
       for(String value:specimennumbers) {
           findOne(packSpecimenNumber,value);
       }
+
       click(closeShipment,5);
       acceptAlert();
       Thread.sleep(3000);
@@ -357,10 +358,10 @@ public class PathCareLabTransferList extends AbstractExtension {
     }
 
     public void findOne(By by,String input) {
-        super.findOne(by).click();
-        super.findOne(by).clear();
-        super.findOne(by).sendKeys(input);
-        super.findOne(by).sendKeys(Keys.TAB);
+        super.findOne(by,timeout).click();
+        super.findOne(by,timeout).clear();
+        super.findOne(by,timeout).sendKeys(input);
+        super.findOne(by,timeout).sendKeys(Keys.TAB);
     }
 
 

@@ -6,7 +6,6 @@ import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import selenium.AbstractPage;
 
 import java.io.File;
 import java.time.Duration;
@@ -434,29 +433,29 @@ public class PathCareProcessingPage extends AbstractExtension {
             Thread.sleep(4000);
             click(antibioticslink);
         }
-
-        switchToDefaultContext();
-        switchToFrame(iframeInfoObservation);
-        if (validateElement_Enabled_Displayed(antibioticsPanel, 10)) {
-            click(antibioticsPanel);
-        } else {
-            Thread.sleep(4000);
-            try {
-                acceptAlert();
+        if(!value.isBlank()) {
+            switchToDefaultContext();
+            switchToFrame(iframeInfoObservation);
+            if (validateElement_Enabled_Displayed(antibioticsPanel, 10)) {
                 click(antibioticsPanel);
-            } catch (NoAlertPresentException ignore) {
-                if (validateElement_Enabled_Displayed(antibioticsPanel, 10)) {
+            } else {
+                Thread.sleep(4000);
+                try {
+                    acceptAlert();
                     click(antibioticsPanel);
+                } catch (NoAlertPresentException ignore) {
+                    if (validateElement_Enabled_Displayed(antibioticsPanel, 10)) {
+                        click(antibioticsPanel);
+                    }
                 }
             }
-        }
 
-        By antibioticsList = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s", value));
-        if (validateElement_Enabled_Displayed(tableListSearch)) {
-            click(antibioticsList);
-            click(addAntibioticsPanel);
-            stepInfoWithScreenshot("Added " + value + " on Antibiotic list");
-        }
+            By antibioticsList = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s", value));
+            if (validateElement_Enabled_Displayed(tableListSearch)) {
+                click(antibioticsList);
+                click(addAntibioticsPanel);
+                stepInfoWithScreenshot("Added " + value + " on Antibiotic list");
+            }
 
 
             /*try {
@@ -466,7 +465,8 @@ public class PathCareProcessingPage extends AbstractExtension {
                 }catch (NoAlertPresentException ignore){
 
                 }*/
-        stepInfo("Entered Antibiotic Panel " + value);
+            stepInfo("Entered Antibiotic Panel " + value);
+        }
     }
 
     public void antibiotics(String[][] antibios, String mic) throws InterruptedException {

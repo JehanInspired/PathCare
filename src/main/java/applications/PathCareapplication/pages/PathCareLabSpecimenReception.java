@@ -20,12 +20,11 @@ import java.util.List;
 
 public class PathCareLabSpecimenReception extends AbstractExtension {
 
-
     private final By specimenNumberText = By.xpath("//input[@id='SpecimenNumber']");
     private final By specimenNumberUpdateButton = By.xpath("//input[@name='update']");
     private final By aliquotUpdateButton = By.xpath("//button[text()='Update']");
 
-    private final By aliquotConfirmbutton = By.xpath("//button[@aria-label='Confirm']");
+    private final By aliquotConfirmButton = By.xpath("//button[@aria-label='Confirm']");
     private final By aliquotCloseButton = By.xpath("//button[text()='Close']");
 
     private final By specimenNumberStatus = By.xpath("//label[@name='Status']");
@@ -179,19 +178,21 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
                 awaitElement(mainframe,timeout);
                 switchToMainFrame();
 
-                findOne(specimenNumberText, labespisodesSpecimen.get(patientkey).get(x));
+                String labespisode = labespisodesSpecimen.get(patientkey).get(x);
                 String value = labespisodesSpecimen.get(patientkey).get(++x);
+
+                String registertestsetValue = labespisodesSpecimen.get(patientkey).get(++x);
                 String anatomicalSiteRegistration = value !=null ? value: null;
 
+                findOne(specimenNumberText, labespisode);
                 String labEpisode = getText(By.xpath("//label[@id='LabEpisodeNumber']"),timeout);
-                 value = labespisodesSpecimen.get(patientkey).get(--x);
-                String specimenReceiveTestSetValue= getText(By.xpath("//parent::td[label[text()='"+value+"']]//parent::tr//td//label[contains(@id,'TestSetListz')]"),timeout);
+                String specimenReceiveTestSetValue= getText(By.xpath("//parent::td[label[text()='"+labespisode+"']]//parent::tr//td//label[contains(@id,'TestSetListz')]"),timeout);
                 aliquot(patientkey, numtestset, specimenReceiveEntities);
                 //editSpecimenReceiver(specimenReceiveEntities);
-                stepPassedWithScreenshot("Successfully Entered Lab Specimen under Lab episode: " + labespisodesSpecimen.get(patientkey).get(x));
-                specimenWorkRecieveUpdateData(labEpisode,patientkey,anatomicalSiteRegistration,labespisodesSpecimen.get(patientkey).get(x),specimenReceiveTestSetValue, specimenReceiveEntities, workAreaReceiveEntityArrayList, testSetCodeEntities);
+                stepPassedWithScreenshot("Successfully Entered Lab Specimen under Lab episode: " + labespisode);
+                specimenWorkRecieveUpdateData(labEpisode,patientkey,anatomicalSiteRegistration,labespisode,registertestsetValue,specimenReceiveTestSetValue, specimenReceiveEntities, workAreaReceiveEntityArrayList, testSetCodeEntities);
                         numtestset++;
-                        x++;
+                        //x++;
                 }
                 if(!aliqout) {
                     click(specimenNumberUpdateButton);
@@ -200,36 +201,45 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
             }
 
     }
-    public  void specimenWorkRecieveUpdateData(String labEpisode, String patientKey, String anatomicalSiteRegistration, String specimenvalue, String specimenReceiveTestSetValue, ArrayList<SpecimenReceiveEntity> specimenReceiveEntities, List<WorkAreaReceiveEntity> workAreaReceiveEntityArrayList, List<TestSetCodeEntity> testSetCodeEntities){
+    public  void specimenWorkRecieveUpdateData(String labEpisode, String patientKey, String anatomicalSiteRegistration, String specimenvalue,String registerSpecimen, String specimenReceiveTestSetValue, ArrayList<SpecimenReceiveEntity> specimenReceiveEntities, List<WorkAreaReceiveEntity> workAreaReceiveEntityArrayList, List<TestSetCodeEntity> testSetCodeEntities){
         String antomicalSiteSpecimen = getAttribute(By.xpath("//parent::td[label[text()='"+specimenvalue+"']]//parent::tr//td//input[not(@type='hidden') and  contains(@id,'AnatomicalSite') and not(contains(@id,'AnatomicalSiteQualifier'))]"),"value",timeout);
         boolean found =false;
         boolean found2 = false;
+        List<String> testSet =new ArrayList<>();
+        boolean containsTestSet = registerSpecimen.toLowerCase().contains(specimenReceiveTestSetValue.toLowerCase());
+
         for(WorkAreaReceiveEntity workAreaReceiveEntity : workAreaReceiveEntityArrayList){
 
             for(SpecimenReceiveEntity specimenReceiveEntity : specimenReceiveEntities) {
                 if (!found){
-                        if (anatomicalSiteRegistration == null) {
-                            if (specimenReceiveEntity.getTestSet().contentEquals(specimenReceiveTestSetValue)  && specimenReceiveEntity.getPatientKey_FK().contentEquals(patientKey)) {
+
+
+                    if (anatomicalSiteRegistration == null) {
+
+                            if (containsTestSet && specimenReceiveEntity.getPatientKey_FK().contentEquals(patientKey)) {
                                 specimenReceiveEntity.setSpecimenNumber(specimenvalue);
                                 specimenReceiveEntity.setPatientKey_FK(labEpisode);
                                 specimenReceiveEntityArrayList.add(specimenReceiveEntity);
+                                testSet = specimenReceiveEntity.getTestSet();
                                 found = true;
                                 break;
                             }
-                        } else if (specimenReceiveEntity.getTestSet().toLowerCase().contentEquals(specimenReceiveTestSetValue.toLowerCase()) && anatomicalSiteRegistration.contentEquals(antomicalSiteSpecimen) && specimenReceiveEntity.getPatientKey_FK().contentEquals(patientKey)) {
+                        } else if (containsTestSet && anatomicalSiteRegistration.contentEquals(antomicalSiteSpecimen) && specimenReceiveEntity.getPatientKey_FK().contentEquals(patientKey)) {
                             specimenReceiveEntity.setSpecimenNumber(specimenvalue);
                             specimenReceiveEntity.setPatientKey_FK(labEpisode);
                             specimenReceiveEntityArrayList.add(specimenReceiveEntity);
+                            testSet = specimenReceiveEntity.getTestSet();
                             found = true;
                             found2= false;
                             break;
                         }
-                }
+                    }
             }
 
             if(workAreaReceiveEntity.getPk() !=null) {
                 if (!found2) {
-                    if (workAreaReceiveEntity.getTestSet().toLowerCase().contentEquals(specimenReceiveTestSetValue.toLowerCase()) && workAreaReceiveEntity.getSpecimeNumber() == null) {
+                   //
+                    if (workAreaReceiveEntity.getTestSet().equals(testSet) && workAreaReceiveEntity.getSpecimeNumber() == null) {
                         workAreaReceiveEntity.setSpecimeNumber(specimenvalue);
                         this.workAreaReceiveEntityArrayList.add(workAreaReceiveEntity);
                         found2=true;
@@ -265,8 +275,8 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
                           }
                           click(aliquotUpdateButton, timeout);
                           stepPassedWithScreenshot("Updated aliquot for patient " + patientKey);
-                          if (validateElement_Displayed(aliquotConfirmbutton, timeout)) {
-                              click(aliquotConfirmbutton, timeout);
+                          if (validateElement_Displayed(aliquotConfirmButton, timeout)) {
+                              click(aliquotConfirmButton, timeout);
                           }
                           click(aliquotCloseButton, timeout);
                           aliqout = true;
@@ -367,7 +377,7 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
     }
 
     private void mutlipleSpeicmenRecivedOne(int x,boolean Non_GynaeSpecimen,ArrayList<ArrayList<String>> specimen,HashMap<String,List<String>> specimenDetail) throws InterruptedException {
-        String num = "";
+        String num;
         int z=x;
             for (String value : specimen.get(0)) {
                 findOne(specimenNumberText, value);
@@ -399,7 +409,7 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
     private void mutlipleSpeicmenRecived(int x, boolean Non_GynaeSpecimen, ArrayList<ArrayList<String>> specimen, HashMap<String,List<String>> specimenDetail) throws InterruptedException {
 
         for(ArrayList<String> values :specimen) {
-                String num ="";
+                String num;
             for (String value : values) {
                 findOne(specimenNumberText, value);
                 stepPassedWithScreenshot("Successfully Entered Lab Specimen under Lab episode: " + value);

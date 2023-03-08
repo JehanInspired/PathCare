@@ -213,9 +213,14 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
     }
 
 //Just need to loop each Result from each sheet 
-    public void multipleEspisode(List<ResultsGenerator_PCPBioFireFilm> pcpBioFireFilmList,
-                           List<ResultsGenerator_SysmexCS2500> SysmexCS2500,
-                           List<ResultsGenerator_RocheSysmexXN1> rocheSysmexXN1,
+    public void multipleEspisode(
+                                 List<ResultsGenerator_Sysmexca620Geo> resultsGenerator_sysmexca620GeoList,
+                                 List<ResultsGenerator_RocheSysmexXGE> resultsGenerator_rocheSysmexXGEList,
+                                 List<ResultsGenerator_AAGeorge> resultsGenerator_aaGeorgeList,
+                                 List<ResultsGenerator_Aquios1> resultsGenerator_aquios1s,
+                                 List<ResultsGenerator_PCPBioFireFilm> pcpBioFireFilmList,
+                                 List<ResultsGenerator_SysmexCS2500> SysmexCS2500,
+                                 List<ResultsGenerator_RocheSysmexXN1> rocheSysmexXN1,
                                  List<ResultsGenerator_AbbottAlinityc> abbottAlinityc,
                                  ArrayList<SpecimenReceiveEntity> specimenReceiveEntityArrayList,
                                  LabQueues labQueues,
@@ -227,6 +232,10 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
         data.add(SysmexCS2500);
         data.add(rocheSysmexXN1);
         data.add(abbottAlinityc);
+        data.add(resultsGenerator_aaGeorgeList);
+        data.add(resultsGenerator_aquios1s);
+        data.add(resultsGenerator_rocheSysmexXGEList);
+        data.add(resultsGenerator_sysmexca620GeoList);
 
         for(int x=0;x<data.size()-1;x++){
 
@@ -292,6 +301,66 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                     }
                 }
 
+            } else if(x==4){
+                for (ResultsGenerator_AAGeorge resultsGenerator_aaGeorge : ((List<ResultsGenerator_AAGeorge>) data.get(x))) {
+                    for(SpecimenReceiveEntity specimenReceivesEntity : specimenReceiveEntityArrayList) {
+                        changeLocation(resultsGenerator_aaGeorge.getUserprofile(), interSystemLoginPage, labQueues);
+                        switchToDefaultContext();
+                        switchToFrame(iframeMain);
+
+                        if (resultsGenerator_aaGeorge.getSpecimen_receive_FK().contentEquals(specimenReceivesEntity.getPk())) {
+                            intrumenSpecimenfield(resultsGenerator_aaGeorge.getInstrument(), resultsGenerator_aaGeorge.getTest_Group(), specimenReceivesEntity.getSpecimenNumber());
+                            testItemCodeResult(resultsGenerator_aaGeorge.getValues());
+                            acceptdataResult();
+
+                        }
+                    }
+                }
+            } else if(x==5){
+                for (ResultsGenerator_Aquios1 resultsGenerator_aquios1 : ((List<ResultsGenerator_Aquios1>) data.get(x))) {
+                    for(SpecimenReceiveEntity specimenReceivesEntity : specimenReceiveEntityArrayList) {
+                        changeLocation(resultsGenerator_aquios1.getUserprofile(), interSystemLoginPage, labQueues);
+                        switchToDefaultContext();
+                        switchToFrame(iframeMain);
+
+                        if (resultsGenerator_aquios1.getSpecimen_receive_FK().contentEquals(specimenReceivesEntity.getPk())) {
+                            intrumenSpecimenfield(resultsGenerator_aquios1.getInstrument(), resultsGenerator_aquios1.getTest_Group(), specimenReceivesEntity.getSpecimenNumber());
+                            testItemCodeResult(resultsGenerator_aquios1.getValues());
+                            acceptdataResult();
+
+                        }
+                    }
+                }
+            }else if(x==6){
+                for (ResultsGenerator_RocheSysmexXGE resultsGenerator_rocheSysmexXGE : ((List<ResultsGenerator_RocheSysmexXGE>) data.get(x))) {
+                    for(SpecimenReceiveEntity specimenReceivesEntity : specimenReceiveEntityArrayList) {
+                        changeLocation(resultsGenerator_rocheSysmexXGE.getUserprofile(), interSystemLoginPage, labQueues);
+                        switchToDefaultContext();
+                        switchToFrame(iframeMain);
+
+                        if (resultsGenerator_rocheSysmexXGE.getSpecimen_receive_FK().contentEquals(specimenReceivesEntity.getPk())) {
+                            intrumenSpecimenfield(resultsGenerator_rocheSysmexXGE.getInstrument(), resultsGenerator_rocheSysmexXGE.getTest_Group(), specimenReceivesEntity.getSpecimenNumber());
+                            testItemCodeResult(resultsGenerator_rocheSysmexXGE.getValues());
+                            acceptdataResult();
+
+                        }
+                    }
+                }
+            }else if(x==7){
+                for (ResultsGenerator_Sysmexca620Geo resultsGenerator_sysmexca620Geo : ((List<ResultsGenerator_Sysmexca620Geo>) data.get(x))) {
+                    for(SpecimenReceiveEntity specimenReceivesEntity : specimenReceiveEntityArrayList) {
+                        changeLocation(resultsGenerator_sysmexca620Geo.getUserprofile(), interSystemLoginPage, labQueues);
+                        switchToDefaultContext();
+                        switchToFrame(iframeMain);
+
+                        if (resultsGenerator_sysmexca620Geo.getSpecimen_receive_FK().contentEquals(specimenReceivesEntity.getPk())) {
+                            intrumenSpecimenfield(resultsGenerator_sysmexca620Geo.getInstrument(), resultsGenerator_sysmexca620Geo.getTest_Group(), specimenReceivesEntity.getSpecimenNumber());
+                            testItemCodeResult(resultsGenerator_sysmexca620Geo.getValues());
+                            acceptdataResult();
+
+                        }
+                    }
+                }
             }
 
         }
@@ -332,17 +401,17 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
         switchToFrame(iframeMain);
 
         findOne(intrumentTextBox,intrument);
-        if(!getText(intrumentTextBox).isBlank()){
+        if(!getAttribute(intrumentTextBox,"value").isBlank()){
             stepPassedWithScreenshot("Entered instrument test item "+intrument);
         }
         Thread.sleep(3000);
         findOne(testGroup,testGroupField);
-        if(!getText(testGroup).isBlank()){
+        if(!getAttribute(testGroup,"value").isBlank()){
             stepPassedWithScreenshot("Entered test group test item "+testGroupField);
         }
         Thread.sleep(3000);
         findOne(speciemenNumber,materialNumber);
-        if(!getText(speciemenNumber).isBlank()){
+        if(!getAttribute(speciemenNumber,"value").isBlank()){
             stepPassedWithScreenshot("Entered material number test item "+materialNumber);
         }
     }
@@ -351,10 +420,10 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
     void testItemCodeResult(HashMap<String, String> testitems){
 
     for(String value:testitems.keySet()) {
-        By testiteminputboxes = By.xpath("//td[preceding-sibling::td[contains(.,'" + value + "')]]//input[not(@disabled) and(not(contains(@type,'hidden')))]");
+        By testiteminputboxes = By.xpath("//td[preceding-sibling::td[label[text()='"+value+"']]]//input[not(@disabled) and(not(contains(@type,'hidden')))]");
         find(testiteminputboxes,timeout).get(1).sendKeys(testitems.get(value));
-        stepPassedWithScreenshot("Entered Results test item " + value);
-        By testitemtickbox = By.xpath("//td[following-sibling::td[contains(.,'" + value + "')]]//input[not(@disabled) and(not(contains(@type,'hidden')))]");
+        stepPassedWithScreenshot("Entered "+value+" Results test item " +testitems.get(value));
+        By testitemtickbox = By.xpath("//parent::td[label[text()='"+value+"']]//parent::tr//td//input[contains(@type,'checkbox')]");
         click(testitemtickbox,timeout);
         stepPassedWithScreenshot("Ticked test item " + value);
     }

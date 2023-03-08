@@ -1,6 +1,8 @@
 package applications.PathCareapplication.pages;
 
 import Roman.Roman;
+import applications.PathCareapplication.models.LabQueueEntity;
+import applications.PathCareapplication.models.SpecimenReceiveEntity;
 import applications.PathCareapplication.tool.AbstractExtension;
 import org.junit.Assert;
 import org.openqa.selenium.By;
@@ -14,15 +16,11 @@ public class LabQueues extends AbstractExtension {
     private final By queueType = By.xpath("//input[@id='QueueType']");
     private final By toolbox = By.xpath("//md-icon[@class='mainMenuToolsIcon']");
     private final By testMenu = By.xpath("//span[text()='Test']");
-
     private final By advanceSearchParameter = By.xpath("//a[text()='Advanced Search Parameters']");
-
     private final By labInstrumentResultGenerator = By.xpath("//span[text()='Lab Instrument Result Generator']");
-
     private final By homeicon = By.xpath("//md-icon[@title='Home']");
     private final By inputtestSetStatus = By.xpath("//input[@id='TestSetStatus']");
-
-
+    private final By inputTestSet = By.xpath("//input[@id='TestSet']");
     private final By switchiFrame = By.xpath("//iframe[@id='TRAK_main']");
 
     private final By deparmentlist = By.xpath("//input[@id='Department']");
@@ -64,13 +62,15 @@ public class LabQueues extends AbstractExtension {
     private final By rowcount = By.xpath("//label[@name='rowCount']");
 
     private final By firstrowQueueResult = By.xpath("//tr[contains(@class,'LBVerificationQueueP RowOdd')]//td[not(contains(@style,'display:none'))and not(contains(@class,'clsRowColourTabLBVerificationQueueP')) and  not(contains(@style,'#'))]");
+    private final By tableQueue = By.xpath("//table[@class='tblList']");
 
     private boolean recent =false;
+    private String locationNew = "";
 
     private List<String> allSearchelement  =new ArrayList<>();
     public HashMap<String,String> totalNumber = new HashMap<>();
     public HashMap<String,String> totalNumber2 = new HashMap<>();
-
+    private Boolean firstTime = true;
     private String desc ="";
 
     private int timeout = 15;
@@ -88,16 +88,16 @@ public class LabQueues extends AbstractExtension {
 
         desc = testsite+" Reference lab "+department+(new Random().nextDouble() - new Random().nextDouble());
         switchToFrame(switchiFrame);
-        if(!queueTypeSelected.isEmpty()) {
+        if(!queueTypeSelected.isBlank()) {
             sendKeys(queueType, queueTypeSelected, timeout);
             findOne(queueType,timeout).sendKeys(Keys.TAB);
         }
-        if(!department.isEmpty()){
+        if(!department.isBlank()){
             sendKeys(deparmentlist,department,timeout);
             findOne(deparmentlist,timeout).sendKeys(Keys.TAB);
         }
 
-        if(!testSetStat.isEmpty()){
+        if(!testSetStat.isBlank()){
             sendKeys(inputtestSetStatus,testSetStat,timeout);
             findOne(inputtestSetStatus,timeout).sendKeys(Keys.TAB);
         }
@@ -150,7 +150,11 @@ public class LabQueues extends AbstractExtension {
         return false;
     }
 
-    public void searchResults(String queueTypeSelected,String department,String testSetStat) throws InterruptedException {
+    public void SearchResultTable(String colunmHeader,String tableHeader,int timeout){
+        tableExtactionIndex(tableQueue,colunmHeader,tableHeader,timeout);
+    }
+
+    public void searchResults(String queueTypeSelected,String department,String testSet,String testSetStat) throws InterruptedException {
         switchToDefaultContext();
         Thread.sleep(4000);
 
@@ -165,6 +169,12 @@ public class LabQueues extends AbstractExtension {
             findOne(deparmentlist,timeout).sendKeys(Keys.TAB);
         }
 
+        if(!testSet.isEmpty()){
+            sendKeys(inputTestSet,testSet,timeout);
+            findOne(inputTestSet,timeout).sendKeys(Keys.TAB);
+        }
+
+
         if(!testSetStat.isEmpty()){
             sendKeys(inputtestSetStatus,testSetStat,timeout);
             findOne(inputtestSetStatus,timeout).sendKeys(Keys.TAB);
@@ -177,7 +187,10 @@ public class LabQueues extends AbstractExtension {
         switchToFrame(switchiFrame);
         click(secondrow);
     }
-    private void  selecSearch(int totalrow){
+    public void  selecSearch(int totalrow) throws InterruptedException {
+        switchToDefaultContext();
+        awaitElement(switchiFrame,timeout);
+        switchToFrame(switchiFrame);
         switch (totalrow) {
             case 1 -> click(totalResults);
             case 2 -> click(totalResults2);
@@ -247,7 +260,7 @@ public class LabQueues extends AbstractExtension {
         return found;
     }
 
-    public String findresultonlistsearch(String labespide, boolean clicklastElementList, int totalrow, boolean single){
+    public String findresultonlistsearch(String labespide, boolean clicklastElementList, int totalrow, boolean single) throws InterruptedException {
         switchToDefaultContext();
         switchToFrame(switchiFrame);
         selecSearch(totalrow);
@@ -281,6 +294,7 @@ public class LabQueues extends AbstractExtension {
             }
             return value;
         }else{
+            stepInfoWithScreenshot("Unable to view  "+labespide +" on lab queues");
             Assert.fail("Unable to view  "+labespide +" on lab queues");
         }
 
@@ -288,7 +302,7 @@ public class LabQueues extends AbstractExtension {
         return null;
     }
 
-    public void clickAnyElementlist(int totalrow, boolean single){
+    public void clickAnyElementlist(int totalrow, boolean single) throws InterruptedException {
         selecSearch(totalrow);
         clickLastElementAny();
 
@@ -307,15 +321,14 @@ public class LabQueues extends AbstractExtension {
           }
           //Queues
           if((!totalNumber.get(titleHeader).isBlank() && totalNumber.get(titleHeader).contentEquals(element.getText())) && !found || totalNumber2.getOrDefault(titleHeader,"").contentEquals(element.getText()) ){
-                if (element.isEnabled()) {
-                    element.click();
-                    found = true;
-                }
+              SearchResultTable(titleHeader,"Phone Queue",timeout);
+              found = true;
+              break;
             }
       }
-      if(found) {
-          clickLastElementAny();
-      }
+        if(found) {
+            clickLastElementAny();
+        }
 
     }
 
@@ -420,9 +433,36 @@ public class LabQueues extends AbstractExtension {
             }
 
         }
-
-
     }
+
+    public void labQueueSheet(List<LabQueueEntity> labQueueEntities, List<SpecimenReceiveEntity> specimenReceiveEntities, Analytical analytical,InterSystemLoginPage interSystemLoginPage) throws InterruptedException {
+       for(LabQueueEntity labQueueEntity:labQueueEntities) {
+           changeLocation(labQueueEntity.getUserProfile(), interSystemLoginPage, analytical);
+           searchResults(labQueueEntity.getSearchOptionQueue(),labQueueEntity.getDepartment(),"","");
+           SearchResultTable(labQueueEntity.getSearchOption(),labQueueEntity.getSearchOptionQueue(),timeout);
+
+       }
+    }
+
+    void changeLocation(String location,InterSystemLoginPage interSystemloginPage, Analytical analytical ){
+
+        if (!locationNew.contentEquals(location)){
+            locationNew =location;
+            switchToDefaultContext();
+            interSystemloginPage.setLocation(location);
+            if(!firstTime) {
+                switchToDefaultContext();
+                interSystemloginPage.changelocation();
+
+            }else{
+                firstTime=false;
+            }
+            interSystemloginPage.userselection();
+            analytical.navigateWorkSheetRes();
+        }
+    }
+
+
 
     public void navigatetoHomepage(){
         click(homeicon);

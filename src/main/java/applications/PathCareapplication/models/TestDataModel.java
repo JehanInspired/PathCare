@@ -1,8 +1,5 @@
 package applications.PathCareapplication.models;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.File;
 
 public class TestDataModel {
     public Object labespode;
@@ -13,10 +10,10 @@ public class TestDataModel {
     public String location;
 
 
-    public TestDataModel(Object labespodespecimen, String testset, String workArea, String department)
+    public TestDataModel(Object labespodespecimen, String testsets, String workArea, String department)
     {
         this.labespode = labespodespecimen;
-        this.testset = testset;
+        this.testset = testsets;
         this.department = department;
         this.workArea = workArea;
 

@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static reporting.ExtentReport.get_reportDir;
 
@@ -36,6 +37,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         chromeOptionsMap.put("download.default_directory", dir);
         options.setExperimentalOption("prefs", chromeOptionsMap);
         roman._driver = roman().selenium.getChromeDriver(options);
+        roman._driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
         pathCare = new PathCareApplication(roman);
 
 
@@ -171,6 +173,7 @@ public class MultiDisciplineTestCase extends RomanBase {
 
 
     @Test
+    @Disabled("Manual Testing")
     public void TP_110() throws Exception {
         Faker faker = new Faker();
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
@@ -188,7 +191,6 @@ public class MultiDisciplineTestCase extends RomanBase {
     @Test
     public void TP_13() throws Exception {
         Faker faker = new Faker();
-
         String[] testcollection = new String[]{"HCD4", "BAA1"};
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
@@ -351,7 +353,6 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.resultEntry.mutlipleLabEntryTestSet(labespides, coldAgg.testresult, coldAgg.testresult2, dir);
         Assertions.assertEquals(labespides.size(), pathCare.resultEntry.fileChecker(dir,"TP_25-"));
 
-
     }
 
     @Test
@@ -439,9 +440,6 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateTransfer();
        Assertions.assertTrue(pathCare.pathCareLabTransferList.labSearches());
 
-
-
-
     }
 
     @Test
@@ -505,7 +503,6 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.labQueues.navigateTestSet();
         pathCare.pathCareLabIntrumentResultGeneratorpage.testItemListGroup(new BUCUTestItem().value,"Abbott Alinity ci PCP","Alinity Tests",mutlipleSpeicmen_patientmultiple.get(labespides.get(0)).get(0));
 
-
         //logout
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.logoff();
@@ -514,7 +511,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Med Lab Professional RL Chem/Endo 3");
         pathCare.interSystemloginPage.userselection();
-        pathCare.labQueues.searchResults("Verification Queue","Endocrinology","Entered");
+        pathCare.labQueues.searchResults("Verification Queue","Endocrinology","","Entered");
 
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.labQueues.findlastresultlist(labespides.get(0),true,1,true);
@@ -522,7 +519,7 @@ public class MultiDisciplineTestCase extends RomanBase {
 
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.labQueues.navigatetoHomepage();
-        pathCare.labQueues.searchResults("Failure Queue","Biochemistry","Entered");
+        pathCare.labQueues.searchResults("Failure Queue","Biochemistry","","Entered");
         pathCare.labQueues.findlastresultlist(labespides.get(0),true,1,true);
         pathCare.resultEntry.onlyapplyandvalidate(true);
 
@@ -535,7 +532,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Help Desk Operator RL");
         pathCare.interSystemloginPage.userselection();
-        pathCare.labQueues.searchResults("Phone Queue","","");
+        pathCare.labQueues.searchResults("Phone Queue","","","");
         pathCare.labQueues.phoneQueues("Max Failures",false);
         HashMap<String,String> totalNumber = pathCare.labQueues.totalNumber;
         pathCare.pathCareProcessingPage.phonequeue();
@@ -544,7 +541,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         //Alert Failures
         if(!totalNumber.get("Alert Failures").isBlank()){
             pathCare.pre_analytical.navigatehome();
-            pathCare.labQueues.searchResults("Phone Queue","","");
+            pathCare.labQueues.searchResults("Phone Queue","","","");
             pathCare.labQueues.phoneQueues("Alert Failures",true);
             pathCare.pathCareProcessingPage.phonequeue();
 
@@ -553,7 +550,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         //Stat
         if(!totalNumber.get("Stat").isBlank()){
             pathCare.pre_analytical.navigatehome();
-            pathCare.labQueues.searchResults("Phone Queue","","");
+            pathCare.labQueues.searchResults("Phone Queue","","","");
             pathCare.labQueues.phoneQueues("Stat",true);
             pathCare.pathCareProcessingPage.phonequeue();
 
@@ -562,24 +559,23 @@ public class MultiDisciplineTestCase extends RomanBase {
         //Urgent
         if(!totalNumber.get("Urgent").isBlank()){
             pathCare.pre_analytical.navigatehome();
-            pathCare.labQueues.searchResults("Phone Queue","","");
+            pathCare.labQueues.searchResults("Phone Queue","","","");
             pathCare.labQueues.phoneQueues("Urgent",true);
             pathCare.pathCareProcessingPage.phonequeue();
-
 
         }
 
         //Routine
         if(!totalNumber.get("Routine").isBlank()){
             pathCare.pre_analytical.navigatehome();
-            pathCare.labQueues.searchResults("Phone Queue","","");
+            pathCare.labQueues.searchResults("Phone Queue","","","");
             pathCare.labQueues.phoneQueues("Routine",true);
         }
 
         //Norm
         if(!totalNumber.get("Norm").isBlank()){
             pathCare.pre_analytical.navigatehome();
-            pathCare.labQueues.searchResults("Phone Queue","","");
+            pathCare.labQueues.searchResults("Phone Queue","","","");
             pathCare.labQueues.phoneQueues("Norm",true);
             pathCare.pathCareProcessingPage.phonequeue();
         }
@@ -587,7 +583,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         //No Priority
         pathCare.pre_analytical.navigatehome();
         if(!totalNumber.get("No Priority").isBlank()){
-            pathCare.labQueues.searchResults("Phone Queue","","");
+            pathCare.labQueues.searchResults("Phone Queue","","","");
             pathCare.labQueues.phoneQueues("No Priority",true);
             pathCare.pathCareProcessingPage.phonequeue();
         }
@@ -686,7 +682,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PC Med Lab Professional RL Chem/Endo 3");
         pathCare.interSystemloginPage.userselection();
-        pathCare.labQueues.searchResults("Verification Queue","Endocrinology","Entered");
+        pathCare.labQueues.searchResults("Verification Queue","Endocrinology","","Entered");
 
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.labQueues.findlastresultlist(labespides.get(0),true,1,true);
@@ -694,17 +690,16 @@ public class MultiDisciplineTestCase extends RomanBase {
 
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.labQueues.navigatetoHomepage();
-        pathCare.labQueues.searchResults("Failure Queue","Biochemistry","Entered");
+        pathCare.labQueues.searchResults("Failure Queue","Biochemistry","","Entered");
         pathCare.labQueues.findlastresultlist(labespides.get(0),true,1,true);
         pathCare.resultEntry.onlyapplyandvalidate(true);
-
 
         //Change location
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PC Pathologist Chemistry");
         pathCare.interSystemloginPage.userselection();
-        pathCare.labQueues.searchResults("","Endocrinology","Entered");
+        pathCare.labQueues.searchResults("","Endocrinology","","Entered");
 
         //result
         pathCare.labQueues.findresultonlistsearch(labespides.get(0),true,3,true);
@@ -712,10 +707,9 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.labQueues.navigatetoHomepage();
         // 2nd result
-        pathCare.labQueues.searchResults("","Biochemistry","Entered");
+        pathCare.labQueues.searchResults("","Biochemistry","","Entered");
         pathCare.labQueues.findresultonlistsearch(labespides.get(0),true,2,true);
         pathCare.resultEntry.authorise();
-
 
     }
 
@@ -763,12 +757,22 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.interSystemloginPage.userselection();
 
         //lab Queue
-        pathCare.labQueues.searchResults("Verification Queue","Haematology","Entered");
+        pathCare.labQueues.searchResults("Verification Queue","Haematology","","Entered");
        pathCare.labQueues.findlastresultlist(labespides.get(0),true,4,false);
 
         //Lab Results
-        pathCare.resultEntry.reportPreview();
+        pathCare.resultEntry.onlyapplyandvalidate(true);
 
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PathCare Pathologist Clinical GEO");
+        pathCare.interSystemloginPage.userselection();
+
+
+        pathCare.labQueues.selecSearch(1);
+        pathCare.labQueues.searchResults("","","Malaria screen","");
+        pathCare.labQueues.findlastresultlist(labespides.get(0),true,1,false);
+        pathCare.resultEntry.authorise();
 
     }
 

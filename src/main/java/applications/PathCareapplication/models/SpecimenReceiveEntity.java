@@ -3,10 +3,11 @@ package applications.PathCareapplication.models;
 import com.poiji.annotation.ExcelCellName;
 import com.poiji.annotation.ExcelRow;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class SpecimenReceiveEntity {
 
-    @ExcelRow
-    private int rowIndex;
 
     @ExcelCellName("PK")
     private String pk;
@@ -21,7 +22,7 @@ public class SpecimenReceiveEntity {
     private String specimenNumber;
 
     @ExcelCellName("test set")
-    private String testSet;
+    private List<String> testSet;
 
     @ExcelCellName("Container")
     private String container;
@@ -64,7 +65,7 @@ public class SpecimenReceiveEntity {
         this.pk =pk;
         this.patientKey_FK =patientKey_FK;
         this.specimenNumber = specimenNumber;
-        this.testSet = testSet;
+        this.testSet = Arrays.stream(testSet.split(",")).toList();
     }
 
     public String getPk() {
@@ -195,15 +196,15 @@ public class SpecimenReceiveEntity {
         this.aliquotTestSet = aliquotTestSet;
     }
 
-    public String getTestSet() {
+    public List<String> getTestSet() {
         return testSet;
     }
 
-    public void setTestSet(String testSet) {
+    public void setTestSet(List<String> testSet) {
         this.testSet = testSet;
     }
 
     public String ToString(){
-        return getPk()+","+getPatientKey_FK()+","+getSpecimenNumber()+","+getTestSet();
+        return getPk()+","+getPatientKey_FK()+","+getSpecimenNumber()+","+getTestSet().toString();
     }
 }

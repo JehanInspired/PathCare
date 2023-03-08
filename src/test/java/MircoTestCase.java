@@ -236,6 +236,7 @@ public class MircoTestCase extends RomanBase {
         //Processing
         pathCare.analytical.navigateProcessing();
         pathCare.pathCareProcessingPage.searchSpecimenReceive(mutlipleSpeicmen_patientmultiple.get(labespides.get(0)).get(0).concat(".1"));
+        pathCare.pathCareProcessingPage.antibioticsPanel("");
         pathCare.pathCareProcessingPage.antibiotics(new String[][]{{"Ampicillin-amoxicillin","Susceptible"},{"Ceftriaxone","Susceptible"},{"Sulfamethoxazole-trimethoprim","Susceptible"}},"0.016");
         pathCare.pathCareProcessingPage.SingleProcessingTestSet("","",true,"",new String[]{"Prelim-Unverified","Growth present."," "},true,true);
 

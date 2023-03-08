@@ -4,7 +4,6 @@ import com.poiji.annotation.ExcelCellName;
 import com.poiji.annotation.ExcelRow;
 
 public class ResultsEntry {
-
     @ExcelRow
     private int rowIndex;
 

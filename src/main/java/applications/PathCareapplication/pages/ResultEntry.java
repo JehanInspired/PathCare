@@ -62,7 +62,7 @@ public class ResultEntry extends AbstractExtension {
     private final By Firstlistrow  = By.xpath("//tr[@id='LBTestSet_Find_0-item-TestSetSelect-lookupRow-1']");
     private final By updatebutton = By.xpath("//button[text()='Update']");
 
-    private final By notficationApply = By.xpath("//div[@class='notification_message']");
+    private final By notfication = By.xpath("//div[@class='notification_message']");
 
     private final By savedSearches = By.xpath("//a[text()='Saved Searches']");
 
@@ -159,15 +159,15 @@ public class ResultEntry extends AbstractExtension {
     }
     public void structureLabResultEntry(ArrayList<ResultsEntry> resultEntries, ArrayList<SpecimenReceiveEntity> specimenReceiveEntities, ArrayList<TestSetValuesEntity> testSetValueEntities, InterSystemLoginPage interSystemloginPage, Analytical analytical) throws IllegalAccessException {
         changeLocation(testSetValueEntities.get(0).getUserprofile_FK(),interSystemloginPage,analytical);
+        String testSetValue ="";
         for(ResultsEntry resultsEntry:resultEntries){
 
             for(SpecimenReceiveEntity specimenReceiveEntity : specimenReceiveEntities){
                 if(specimenReceiveEntity.getPk().contains(resultsEntry.getSpecimenReceive_FK())){
                     resultsEntry.setSpecimenReceive_FK(specimenReceiveEntity.getSpecimenNumber());
                     resultsEntry.setPatient_FK(specimenReceiveEntity.getPatientKey_FK());
-                    resultsEntry.setTestSet(specimenReceiveEntity.getTestSet());
-                    resultsEntryArrayList.add(resultsEntry);
 
+                    resultsEntryArrayList.add(resultsEntry);
                 }
             }
 
@@ -179,24 +179,22 @@ public class ResultEntry extends AbstractExtension {
 
         for(ResultsEntry resultsEntry:data)
         {
-            specimenNumberEntry(resultsEntry.getTestSetValue_FK(),resultsEntry.getSpecimenReceive_FK(), testSetValueEntities, interSystemloginPage,  analytical);
-
-
+            specimenNumberEntry(resultsEntry.getTestSetValue_FK(),resultsEntry.getTestSet(),resultsEntry.getSpecimenReceive_FK(), testSetValueEntities, interSystemloginPage,  analytical);
 
         }
 
     }
 
-    private void specimenNumberEntry(String testSetValue_Fk, String specimenRecieve, ArrayList<TestSetValuesEntity> testSetValueEntities, InterSystemLoginPage interSystemloginPage, Analytical analytical) throws IllegalAccessException {
+    private void specimenNumberEntry(String testSetValue_Fk,String testSet ,String specimenRecieve, ArrayList<TestSetValuesEntity> testSetValueEntities, InterSystemLoginPage interSystemloginPage, Analytical analytical) throws IllegalAccessException {
 
         awaitElement(specimenNumber,timeout);
         sendKeys(specimenNumber,specimenRecieve,true,true,timeout);
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate todaydate = LocalDate.now();
+        LocalDate todaydate = LocalDate.now().minusDays(3);
         sendKeys(reportCollectionDate, dtf.format(todaydate));
         awaitElement(findButton,timeout);
         click(findButton,timeout);
-        testSetListSingle(specimenRecieve);
+        testSetListSingle(testSet);
         enterdataResults(testSetValue_Fk, testSetValueEntities, interSystemloginPage,  analytical);
 
         backtoTestSetList();
@@ -208,21 +206,48 @@ public class ResultEntry extends AbstractExtension {
         for(TestSetValuesEntity testSetValue : testSetValueslistEntity){
             if(testSetValue.getTestValueKey().contentEquals(testvalueKey)){
                 changeLocation(testSetValue.getUserprofile_FK(),interSystemloginPage,analytical);
+                reflexLabEpisode(testSetValue.getReflex());
                 for(String value :testSetValue.getTestvalues().keySet()){
                     By resultValue = By.xpath("//a[contains(text(),'"+value.trim()+"')]//parent::td//parent::tr//parent::tr//img[contains(@id, 'Value')]");
                       awaitElement(resultValue,timeout);
                         click(resultValue);
                             labresultTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s",testSetValue.getTestvalues().get(value)));
-                            click(labresultTextfield,timeout);
+                            if(validateElement_Enabled_Displayed(labresultTextfield,timeout)){
+                                awaitElement(labresultTextfield,timeout);
+                                awaitClickableElement(labresultTextfield,timeout,6).click();
+
+                            }else{
+                                findOne(By.xpath("//a[text()='"+value.trim()+"']//parent::td//parent::tr//parent::tr//input"),timeout).clear();
+                                awaitElement(By.xpath("//a[text()='"+value.trim()+"']//parent::td//parent::tr//parent::tr//input"),timeout);
+                                sendKeys(By.xpath("//a[text()='"+value.trim()+"']//parent::td//parent::tr//parent::tr//input"),testSetValue.getTestvalues().get(value),timeout);
+                            }
+
                             if(validateElement_Displayed(closelookup,timeout)){
                                 click(closelookup,timeout);
                             }
                             //click(By.xpath(/));
                             stepInfoWithScreenshot("Entered "+value.trim()+" result "+testSetValue.getTestvalues().get(value));
 
+                }
+
+                if(testSetValue.getValidate() !=null){
+                    switchToDefaultContext();
+                    switchToMainFrame();
+                    if(testSetValue.getValidate().equalsIgnoreCase("yes")) {
+                        onlyapplyandvalidate(true);
+                    }
 
                 }
-                applyResultOnly();
+
+                if(testSetValue.getApply() !=null){
+                    switchToDefaultContext();
+                    switchToMainFrame();
+                    if(testSetValue.getApply().toLowerCase().contentEquals("yes")) {
+                        applyResultOnly();
+                    }
+                }
+
+
             }
 
 
@@ -230,6 +255,14 @@ public class ResultEntry extends AbstractExtension {
         switchToDefaultContext();
     }
 
+    public void reflexLabEpisode(String reflexYesNo){
+        if(reflexYesNo != null){
+            if(reflexYesNo.equalsIgnoreCase("yes")){
+                interactEspiodeNumber();
+            }
+
+        }
+    }
 
 
 
@@ -303,7 +336,6 @@ public class ResultEntry extends AbstractExtension {
                 Thread.sleep(3000);
                     element1.click();
                     element1.sendKeys(Keys.TAB);
-
             }
         }
 
@@ -319,8 +351,8 @@ public class ResultEntry extends AbstractExtension {
         if(validateElement_Enabled_Displayed(authoriseButton,10)) {
             stepInfoWithScreenshot("Able to view Results Entry");
             click(authoriseButton);
-            if(validateElement_Displayed(notficationApply,10)){
-                stepPassedWithScreenshot("Successfully received  "+getText(notficationApply));
+            if(validateElement_Displayed(notfication,10)){
+                stepPassedWithScreenshot("Successfully received  "+getText(notfication));
             }else{
                 Assert.fail("Unable to receive a notification");
             }
@@ -434,6 +466,7 @@ public class ResultEntry extends AbstractExtension {
         if(!comment.isEmpty()||!comment.contentEquals("")){
             comments(comment);
         }
+
         labEntryTestFieldMutatable(testresult,lasttestvalue);
         switchToDefaultContext();
         switchToFrame(resultEntryiFrame);
@@ -470,8 +503,8 @@ public class ResultEntry extends AbstractExtension {
     public void applyResultOnly(){
         Assert.assertTrue(validateElement_Displayed(applyTestResult));
         click(applyTestResult,10);
-        if(validateElement_Displayed(notficationApply,10)){
-        stepPassedWithScreenshot("Successfully received  "+getText(notficationApply));
+        if(validateElement_Displayed(notfication,10)){
+        stepPassedWithScreenshot("Successfully received  "+getText(notfication));
         }
 
     }
@@ -486,8 +519,8 @@ public class ResultEntry extends AbstractExtension {
               Assert.assertTrue(validateElement_Displayed(applyTestResult));
               click(applyTestResult, 10);
 
-              if (validateElement_Displayed(notficationApply, 10)) {
-                  stepPassedWithScreenshot("Successfully received " + getText(notficationApply));
+              if (validateElement_Displayed(notfication, 10)) {
+                  stepPassedWithScreenshot("Successfully received " + getText(notfication));
 
               } else {
                   Assert.fail("Unable to receive notification results for Test set");
@@ -498,7 +531,7 @@ public class ResultEntry extends AbstractExtension {
         if(validateElement_Displayed(validate,10)) {
             stepInfoWithScreenshot("Able to view Results Entry");
             click(validate);
-            stepPassedWithScreenshot("Successfully received "+getText(notficationApply,5));
+            stepPassedWithScreenshot("Successfully received "+getText(notfication,5));
             stepPassedWithScreenshot("Successfully clicked validate button");
         }else{
             Assert.fail("Unable to receive notification to validate");
@@ -508,8 +541,8 @@ public class ResultEntry extends AbstractExtension {
     public void reportPreview() throws InterruptedException {
         Assert.assertTrue(validateElement_Displayed(applyTestResult,timeout));
         click(applyTestResult,timeout);
-        if(validateElement_Displayed(notficationApply,timeout)){
-            stepPassedWithScreenshot("Successfully received  "+getText(notficationApply,timeout));
+        if(validateElement_Displayed(notfication,timeout)){
+            stepPassedWithScreenshot("Successfully received  "+getText(notfication,timeout));
         }else{
             Assert.fail("Unable to receive notification results for Test set");
         }
@@ -527,10 +560,11 @@ public class ResultEntry extends AbstractExtension {
 
 
             if(waitForDisplayed()){
+                loadingBarChecker();
+                Thread.sleep(10000);
                 Set<String> currentWindow =  super._driver.getWindowHandles();
                 _driver.switchTo().window(switchToWindowHandleFirst(currentWindow,false)).close();
                 _driver.switchTo().window( switchToWindowHandleFirst(currentWindow,true));
-
             }
 
 
@@ -682,9 +716,10 @@ public class ResultEntry extends AbstractExtension {
     @Override
     public boolean waitForDisplayed() {
 
-        WebDriverWait wait = new WebDriverWait(super._driver,30L);
-        wait.pollingEvery(Duration.ofSeconds(10L));
-        return wait.until(EventFiringWebDriver::new).getWindowHandles().size() == 2;
+        WebDriverWait wait = new WebDriverWait(super._driver,35L);
+        return wait.pollingEvery(Duration.ofSeconds(10L)).withMessage("Waiting for 2nd Window")
+                .until(EventFiringWebDriver::new)
+                .getWindowHandles().size() == 2;
 
     }
 

@@ -61,6 +61,7 @@ public class TestSetDataSheet extends RomanBase {
                 pathCare.pre_analytical.navigateRegistration();
             }else if(!pathCare.interSystemloginPage.getLocation().contentEquals(patient.getUserprofile())){
                 pathCare.interSystemloginPage.setLocation(patient.getUserprofile());
+                pathCare.interSystemloginPage.changelocation();
                 pathCare.interSystemloginPage.userselection();
                 pathCare.pre_analytical.navigateRegistration();
             }
@@ -147,7 +148,11 @@ public class TestSetDataSheet extends RomanBase {
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.pathCareLabIntrumentResultGeneratorpage.
-                multipleEspisode(dataPatient.getResultsGenerator_pcpBioFireFilmList(),
+                multipleEspisode(dataPatient.getResultsGenerator_sysmexca620Geos(),
+                        dataPatient.getResultsGenerator_rocheSysmexXGES(),
+                        dataPatient.getResultsGeneratorAaGeorges(),
+                        dataPatient.getResultsGenerator_aquios1s(),
+                        dataPatient.getResultsGenerator_pcpBioFireFilmList(),
                         dataPatient.getResultsGenerator_sysmexCS2500s(),
                         dataPatient.getResultsGenerator_rocheSysmexXN1List(),
                         dataPatient.getResultsGenerator_AbbottAlinityc()
@@ -157,7 +162,7 @@ public class TestSetDataSheet extends RomanBase {
 
     @Test
     public void labResult() throws Exception{
-        if (dataPatient.readerList().isEmpty()) {
+       if (dataPatient.readerList().isEmpty()) {
             registerPatient();
             pathCare.pre_analytical.switchtoMainiFrame();
             pathCare.interSystemloginPage.logoff();
@@ -170,13 +175,39 @@ public class TestSetDataSheet extends RomanBase {
             labInstrumentResultGenerator();
             pathCare.pre_analytical.switchtoMainiFrame();
             pathCare.interSystemloginPage.logoff();
+            workSheet();
+            pathCare.pre_analytical.switchtoMainiFrame();
+            pathCare.interSystemloginPage.logoff();
+
         }
+
+
 
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.resultEntry.structureLabResultEntry(dataPatient.getResultEntry(),
                 pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList.isEmpty()? dataPatient.readSpecimenReceivList():pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList,dataPatient.getTestSetValuesList(),
                 pathCare.interSystemloginPage,pathCare.analytical);
+    }
+
+    @Test
+    public void workSheet() throws Exception {
+
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.pathCareLabWorkSheetResEntry.workSheetEntry(dataPatient.getWorkSheetResultEntryArrayList(),dataPatient.getWorkSheetResultValuesArrayList(),
+                pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList.isEmpty()? dataPatient.readSpecimenReceivList():pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList, pathCare.analytical,pathCare.interSystemloginPage);
+
+    }
+
+    @Test
+    public void queue() throws Exception {
+
+        labResult();
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.labQueues.labQueueSheet(dataPatient.getLabQueueEntities(),
+                pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList.isEmpty()? dataPatient.readSpecimenReceivList():pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList, pathCare.analytical,pathCare.interSystemloginPage);
     }
 
 }
