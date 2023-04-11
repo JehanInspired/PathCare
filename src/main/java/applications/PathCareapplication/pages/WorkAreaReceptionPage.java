@@ -5,6 +5,7 @@ import applications.PathCareapplication.models.TestDataModel;
 import applications.PathCareapplication.models.WorkAreaReceiveEntity;
 import applications.PathCareapplication.tool.AbstractExtension;
 import applications.PathCareapplication.widget.Pre_Analytical;
+import org.junit.Assert;
 import org.openqa.selenium.*;
 
 
@@ -31,6 +32,20 @@ public class WorkAreaReceptionPage extends AbstractExtension {
     private final By workAreaSearchbutton = By.xpath("//img[@id='ld8066iWorkArea']");
 
     private final By workAreaReceptionframe = By.xpath("//iframe[@id='TRAK_main']");
+    private final By aliqoutbutton = By.xpath("//input[@name='UpdateAndProceedToAliquot']");
+    private final By aliquoutPencilIcon = By.xpath("//md-icon[@md-svg-icon='system-edit']");
+
+    private final By aliquotSpecimenFieldEdit = By.xpath("//input[@name='LBSPCSpecimenDR']");
+    private final By specimenNumberAliquot = By.xpath("//input[@name='LBSPCSpecimenNumber']");
+    private final By specimenVolumeAliquot = By.xpath("//input[@name='LBSPCVolumeCollected']");
+
+    private final By specimenNewSourceVolume = By.xpath("//input[@name='SourceNewVolume']");
+    private final By aliquoutSpecimenContainerTextField = By.xpath("//input[@name='LBSPCContainerDR']");
+
+    private final By aliquotUpdateButton = By.xpath("//button[text()='Update']");
+
+    private final By aliquotConfirmButton = By.xpath("//button[@aria-label='Confirm']");
+    private final By aliquotCloseButton = By.xpath("//button[text()='Close']");
 
     int timeout = 20;
 
@@ -137,7 +152,7 @@ public class WorkAreaReceptionPage extends AbstractExtension {
         return checking;
     }
 
-    public boolean departmentWorkArea(List<TestDataModel> data, boolean checking, String location, InterSystemLoginPage interSystemloginPage, Pre_Analytical pre_analytical ) {
+    public boolean departmentWorkArea(List<TestDataModel> data, boolean checking, String location,List<WorkAreaReceiveEntity> workAreaReceiveEntityList, InterSystemLoginPage interSystemloginPage, Pre_Analytical pre_analytical ) {
 
         boolean checkingout = false;
         for (TestDataModel dataModel : data) {
@@ -154,18 +169,22 @@ public class WorkAreaReceptionPage extends AbstractExtension {
             loadingBarChecker();
             awaitElement(mainframe,timeout);
             switchToMainFrame();
+            if(dataModel.department !=null ||!dataModel.department.isBlank()) {
+                sendKeys(departmentText, dataModel.department, timeout);
+                click(lookuprowselection,timeout);
 
-            sendKeys(departmentText, dataModel.department, timeout);
+            }
 
-            click(lookuprowselection,timeout);
+
             if (validateElement_Enabled_Displayed(workArea, timeout)) {
+                sendKeys(workArea,dataModel.workArea);
                 click(workAreaSearchbutton,timeout);
             }
 
             click(lookuprowselection,timeout);
             findOne(specimenNumberText, dataModel.specimennumber);
 
-            aliqout();
+          //  aliqout(workAreaReceiveEntityList);
 
             try {
                 acceptAlert();
@@ -201,14 +220,109 @@ public class WorkAreaReceptionPage extends AbstractExtension {
         return condition;
 
     }
-    public void aliqout(){
+     public void aliqout(List<WorkAreaReceiveEntity> workAreaReceiveEntityList,String patientKey) throws InterruptedException {
+        for(WorkAreaReceiveEntity workAreaReceiveEntity : workAreaReceiveEntityList) {
+            if (workAreaReceiveEntity.getPk().contentEquals(patientKey)) {
+               /* if (workAreaReceiveEntityList.getAliquotEditPK() != null) {
+                    click(aliqoutbutton, timeout);
+                    click(aliquoutPencilIcon, timeout);
+
+                    if (workAreaReceiveEntityList.getAliquotspecimen() != null) {
+                        setAliquotbuttonSpecimenEditSpecimen(specimenReceiveEntity.getAliquotspecimen());
+                    }
+                    //specimenNumbersAliquot
+
+                    if (workAreaReceiveEntityList.getAliquotcontainer() != null) {
+                        aliquotecontainerSpeciemen(specimenReceiveEntity.getAliquotcontainer());
+                    }
+                    if (workAreaReceiveEntityList.getAliquotVolume() != null) {
+                        aliquoteVolumeSpeciemen(specimenReceiveEntity.getAliquotVolume());
+                    }
+                    if (workAreaReceiveEntityList.getNewSourceVolume() != null) {
+                        aliquoteNewVolumeSpeciemen(specimenReceiveEntity.getAliquotVolume());
+                    }
+                    if (workAreaReceiveEntityList.getAliquotTestSet() != null) {
+                        aliqoutSelectTickBox(specimenReceiveEntity.getAliquotTestSet());
+                    }
+                    click(aliquotUpdateButton, timeout);
+                    stepPassedWithScreenshot("Updated aliquot for patient " + patientKey);
+                    if (validateElement_Displayed(aliquotConfirmButton, timeout)) {
+                        click(aliquotConfirmButton, timeout);
+                    }
+                    click(aliquotCloseButton, timeout);
+                    aliqout = true;
+                }*/
+
+            }
+        }
 
     }
 
+    private void setAliquotbuttonSpecimenEditSpecimen(String specimen) throws InterruptedException {
+            findOne(aliquotSpecimenFieldEdit).sendKeys(specimen);
+            By lookupOnList = By.xpath("//span[contains(@id,'LBSpecimenContainer_Msg_Edit_0') and contains(text(),'%s')]".replace("%s", specimen));
+            if(findOne(aliquotSpecimenFieldEdit).getAttribute("value").contentEquals(specimen)){
+                super._driver.findElement(aliquotSpecimenFieldEdit).sendKeys(Keys.TAB);
+                stepInfoWithScreenshot("Entered container "+specimen);
+                Thread.sleep(5000);
+            }else{
+                Assert.fail("Unable to find specimen "+specimen);
+            }
+        }
+
+
+        private void aliquotecontainerSpeciemen(String container) throws InterruptedException {
+
+            findOne(aliquoutSpecimenContainerTextField).sendKeys(container);
+            By lookupOnList = By.xpath("//span[contains(@id,'LBSpecimenContainer_Msg_Edit_0') and contains(text(),'%s')]".replace("%s", container));
+            if(findOne(aliquoutSpecimenContainerTextField).getAttribute("value").contentEquals(container)){
+                super._driver.findElement(aliquoutSpecimenContainerTextField).sendKeys(Keys.TAB);
+                stepInfoWithScreenshot("Entered container "+container);
+                Thread.sleep(5000);
+            }else{
+                Assert.fail("Unable to find Container Specimen "+container);
+            }
+        }
+
+        private void aliquoteNewVolumeSpeciemen(String container) throws InterruptedException {
+
+            findOne(specimenNewSourceVolume).sendKeys(container);
+            By lookupOnList = By.xpath("//span[contains(@id,'LBSpecimenContainer_Msg_Edit_0') and contains(text(),'%s')]".replace("%s", container));
+            if(findOne(specimenNewSourceVolume).getAttribute("value").contentEquals(container)){
+                super._driver.findElement(specimenNewSourceVolume).sendKeys(Keys.TAB);
+                stepInfoWithScreenshot("Entered container "+container);
+                Thread.sleep(5000);
+            }else{
+                Assert.fail("Unable to find Container Specimen "+container);
+            }
+        }
+
+        private void aliquoteVolumeSpeciemen(String container) throws InterruptedException {
+
+            findOne(specimenVolumeAliquot).sendKeys(container);
+            By lookupOnList = By.xpath("//span[contains(@id,'LBSpecimenContainer_Msg_Edit_0') and contains(text(),'%s')]".replace("%s", container));
+            if(findOne(specimenVolumeAliquot).getAttribute("value").contentEquals(container)){
+                super._driver.findElement(specimenVolumeAliquot).sendKeys(Keys.TAB);
+                stepInfoWithScreenshot("Entered container "+container);
+                Thread.sleep(5000);
+            }else{
+                Assert.fail("Unable to find Container Specimen "+container);
+            }
+        }
+
+    private void aliqoutSelectTickBox(String testSetName) throws InterruptedException {
+        By tickboxselection = By.xpath("//span[contains(text(),'%s')]//ancestor::tr//md-checkbox".replace("%s", testSetName));
+        if (validateElement_Displayed(tickboxselection, timeout)) {
+            click(tickboxselection, timeout);
+            stepInfoWithScreenshot("Ticked Test set selection " + testSetName);
+            Thread.sleep(5000);
+        } else {
+            Assert.fail("Unable to tick Test set selection " + testSetName);
+        }
+    }
 
     public void findOne(By by, String input) {
         super.findOne(by).click();
-        super.findOne(by).clear();
         super.findOne(by).sendKeys(input);
         super.findOne(by).sendKeys(Keys.TAB);
     }

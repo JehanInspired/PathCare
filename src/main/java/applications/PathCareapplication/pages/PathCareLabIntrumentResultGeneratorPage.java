@@ -213,7 +213,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
     }
 
 //Just need to loop each Result from each sheet 
-    public void multipleEspisode(
+    public void multipleEpisode(
                                  List<ResultsGenerator_Sysmexca620Geo> resultsGenerator_sysmexca620GeoList,
                                  List<ResultsGenerator_RocheSysmexXGE> resultsGenerator_rocheSysmexXGEList,
                                  List<ResultsGenerator_AAGeorge> resultsGenerator_aaGeorgeList,
@@ -222,11 +222,10 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                                  List<ResultsGenerator_SysmexCS2500> SysmexCS2500,
                                  List<ResultsGenerator_RocheSysmexXN1> rocheSysmexXN1,
                                  List<ResultsGenerator_AbbottAlinityc> abbottAlinityc,
+                                 List<ResultsGenerator_Abbott> resultAbbot,
                                  ArrayList<SpecimenReceiveEntity> specimenReceiveEntityArrayList,
                                  LabQueues labQueues,
                                  InterSystemLoginPage interSystemLoginPage) throws InterruptedException {
-
-
         List<Object> data = new ArrayList<>();
         data.add(pcpBioFireFilmList);
         data.add(SysmexCS2500);
@@ -236,10 +235,11 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
         data.add(resultsGenerator_aquios1s);
         data.add(resultsGenerator_rocheSysmexXGEList);
         data.add(resultsGenerator_sysmexca620GeoList);
+        data.add(resultAbbot);
 
-        for(int x=0;x<data.size()-1;x++){
+        for(int x=0;x<data.size();x++){
 
-            if(x==0){
+           if(x==0 && !(pcpBioFireFilmList.size()==0)){
                 for (ResultsGenerator_PCPBioFireFilm resultsGenerator_pcpBioFireFilm : ((List<ResultsGenerator_PCPBioFireFilm>) data.get(x))) {
                     for(SpecimenReceiveEntity specimenReceivesEntity : specimenReceiveEntityArrayList) {
                         changeLocation(resultsGenerator_pcpBioFireFilm.getUser_Profile(),interSystemLoginPage,labQueues);
@@ -253,7 +253,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                         }
                     }
                 }
-            } else if (x==1) {
+            } else if (x==1 &&(SysmexCS2500.size()==0)) {
                 for (ResultsGenerator_SysmexCS2500 resultsGenerator_sysmexCS2500 : ((List<ResultsGenerator_SysmexCS2500>) data.get(x))) {
                     for(SpecimenReceiveEntity specimenReceivesEntity : specimenReceiveEntityArrayList) {
                         changeLocation(resultsGenerator_sysmexCS2500.getUser_Profile(), interSystemLoginPage, labQueues);
@@ -268,7 +268,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                     }
                 }
 
-            } else if (x==2) {
+            } else if (x==2 && !(rocheSysmexXN1.size() == 0)) {
                 for (ResultsGenerator_RocheSysmexXN1 resultsGenerator_rocheSysmexXN1 : ((List<ResultsGenerator_RocheSysmexXN1>) data.get(x))) {
                     for(SpecimenReceiveEntity specimenReceivesEntity : specimenReceiveEntityArrayList) {
 
@@ -285,7 +285,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                     }
                 }
 
-            } else if (x==3) {
+            } else if (x==3 && !(abbottAlinityc.size() == 0)) {
                 for (ResultsGenerator_AbbottAlinityc resultsGenerator_abbottAlinityc : ((List<ResultsGenerator_AbbottAlinityc>) data.get(x))) {
                     for(SpecimenReceiveEntity specimenReceivesEntity : specimenReceiveEntityArrayList) {
                         changeLocation(resultsGenerator_abbottAlinityc.getUserprofile(), interSystemLoginPage, labQueues);
@@ -301,28 +301,25 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                     }
                 }
 
-            } else if(x==4){
+            } else if(x==4 && !(resultsGenerator_aaGeorgeList.size() ==0)){
                 for (ResultsGenerator_AAGeorge resultsGenerator_aaGeorge : ((List<ResultsGenerator_AAGeorge>) data.get(x))) {
                     for(SpecimenReceiveEntity specimenReceivesEntity : specimenReceiveEntityArrayList) {
                         changeLocation(resultsGenerator_aaGeorge.getUserprofile(), interSystemLoginPage, labQueues);
                         switchToDefaultContext();
                         switchToFrame(iframeMain);
-
                         if (resultsGenerator_aaGeorge.getSpecimen_receive_FK().contentEquals(specimenReceivesEntity.getPk())) {
                             intrumenSpecimenfield(resultsGenerator_aaGeorge.getInstrument(), resultsGenerator_aaGeorge.getTest_Group(), specimenReceivesEntity.getSpecimenNumber());
                             testItemCodeResult(resultsGenerator_aaGeorge.getValues());
                             acceptdataResult();
-
                         }
                     }
                 }
-            } else if(x==5){
+            } else if(x==5 && !(resultsGenerator_aquios1s.size() ==0)){
                 for (ResultsGenerator_Aquios1 resultsGenerator_aquios1 : ((List<ResultsGenerator_Aquios1>) data.get(x))) {
                     for(SpecimenReceiveEntity specimenReceivesEntity : specimenReceiveEntityArrayList) {
                         changeLocation(resultsGenerator_aquios1.getUserprofile(), interSystemLoginPage, labQueues);
                         switchToDefaultContext();
                         switchToFrame(iframeMain);
-
                         if (resultsGenerator_aquios1.getSpecimen_receive_FK().contentEquals(specimenReceivesEntity.getPk())) {
                             intrumenSpecimenfield(resultsGenerator_aquios1.getInstrument(), resultsGenerator_aquios1.getTest_Group(), specimenReceivesEntity.getSpecimenNumber());
                             testItemCodeResult(resultsGenerator_aquios1.getValues());
@@ -331,7 +328,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                         }
                     }
                 }
-            }else if(x==6){
+            }else if(x==6 && !(resultsGenerator_rocheSysmexXGEList.size() ==0)){
                 for (ResultsGenerator_RocheSysmexXGE resultsGenerator_rocheSysmexXGE : ((List<ResultsGenerator_RocheSysmexXGE>) data.get(x))) {
                     for(SpecimenReceiveEntity specimenReceivesEntity : specimenReceiveEntityArrayList) {
                         changeLocation(resultsGenerator_rocheSysmexXGE.getUserprofile(), interSystemLoginPage, labQueues);
@@ -346,7 +343,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                         }
                     }
                 }
-            }else if(x==7){
+            }else if(x==7 && !(resultsGenerator_sysmexca620GeoList.size() ==0)){
                 for (ResultsGenerator_Sysmexca620Geo resultsGenerator_sysmexca620Geo : ((List<ResultsGenerator_Sysmexca620Geo>) data.get(x))) {
                     for(SpecimenReceiveEntity specimenReceivesEntity : specimenReceiveEntityArrayList) {
                         changeLocation(resultsGenerator_sysmexca620Geo.getUserprofile(), interSystemLoginPage, labQueues);
@@ -361,7 +358,22 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                         }
                     }
                 }
-            }
+            }else if(x==8 && !(resultAbbot.size()==0) ){
+               for (ResultsGenerator_Abbott resultsGenerator_abbott : ((List<ResultsGenerator_Abbott>) data.get(x))) {
+                   for(SpecimenReceiveEntity specimenReceivesEntity : specimenReceiveEntityArrayList) {
+                       changeLocation(resultsGenerator_abbott.getUserprofile(), interSystemLoginPage, labQueues);
+                       switchToDefaultContext();
+                       switchToFrame(iframeMain);
+
+                       if (resultsGenerator_abbott.getSpecimen_receive_FK().contentEquals(specimenReceivesEntity.getPk())) {
+                           intrumenSpecimenfield(resultsGenerator_abbott.getInstrument(), resultsGenerator_abbott.getTest_Group(), specimenReceivesEntity.getSpecimenNumber());
+                           testItemCodeResult(resultsGenerator_abbott.getValues());
+                           acceptdataResult();
+
+                       }
+                   }
+               }
+           }
 
         }
 

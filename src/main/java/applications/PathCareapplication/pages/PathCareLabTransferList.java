@@ -215,9 +215,10 @@ public class PathCareLabTransferList extends AbstractExtension {
           findOne(packSpecimenNumber,value);
       }
 
-      click(closeShipment,5);
+      awaitElement(closeShipment,timeout);
+      click(closeShipment,timeout);
       acceptAlert();
-      Thread.sleep(3000);
+      loadingBarChecker();
       stepPassedWithScreenshot("Successfully clicked closed shipment");
 
   }
@@ -238,8 +239,16 @@ public class PathCareLabTransferList extends AbstractExtension {
                 Thread.sleep(3000);
             }
         }
-        click(closeShipment,5);
-        acceptAlert();
+
+        try{
+            click(closeShipment,timeout);
+            acceptAlert();
+        } catch (UnhandledAlertException ignored) {
+            click(closeShipment,timeout);
+            acceptAlert();
+
+        }
+
         stepPassedWithScreenshot("Successfully clicked closed shipment");
 
     }
@@ -293,11 +302,11 @@ public class PathCareLabTransferList extends AbstractExtension {
          while(!validateElement_Enabled_Displayed(labEpisodefield,10)){
              if(validateElement_Displayed(nextpageTransferlist)){
                  click(nextpageTransferlist);
-             }else{
-                 break;
+             }else {
+                 Assert.fail("Unable to find " + labEpisode.toArray().toString());
              }
-
          }
+
          for(WebElement element: find(labEpisodefield)){
 
              element.click();
@@ -358,10 +367,19 @@ public class PathCareLabTransferList extends AbstractExtension {
     }
 
     public void findOne(By by,String input) {
-        super.findOne(by,timeout).click();
+        try {
+         //super.findOne(by,timeout).click();
         super.findOne(by,timeout).clear();
         super.findOne(by,timeout).sendKeys(input);
         super.findOne(by,timeout).sendKeys(Keys.TAB);
+        } catch (UnhandledAlertException ignored) {
+            switchToDefaultContext();
+            switchToMainFrame();
+            super.findOne(by,timeout).clear();
+            super.findOne(by,timeout).sendKeys(input);
+            super.findOne(by,timeout).sendKeys(Keys.TAB);
+
+        }
     }
 
 

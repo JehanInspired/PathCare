@@ -29,7 +29,7 @@ public class PathCareScratch extends AbstractExtension {
     private final By gendertextbox = By.xpath("//input[@name='CTSEXDesc']");
     //dd/mm/yyyy
     private final By DateofBirth = By.xpath("//input[@name='PAPERDob']");
-    private final By saveAndclose = By.xpath("//button[text()='Save & Close']");
+    private final By saveAndclose = By.xpath("//button[@type='submit']");
     private final By iconDoctorSearch = By.xpath("//md-icon[@id='LBEpisode_Edit_0-item-LBEPReferringDoctorDR-lookupIcon']");
     private final By nameofDoctor = By.xpath("//input[@name='LBEPReferringDoctorDR']");
 
@@ -225,9 +225,9 @@ public class PathCareScratch extends AbstractExtension {
     }
 
     public String updateClientDetails(){
-        if(validateElement_Enabled_Displayed(updatebuton,10)) {
-            loadingBarChecker();
-            click(updatebuton, 15);
+        if(validateElement_Enabled_Displayed(updatebuton,timeout)) {
+            awaitElement(updatebuton,timeout);
+            click(updatebuton, timeout);
             stepInfo("Successfully clicked Update button "+updatebuton);
 
         } else {
@@ -240,9 +240,9 @@ public class PathCareScratch extends AbstractExtension {
 
     public void specimenSelect(){
         if(clickBackboneLabEpisodeSelect){click(backtoLabEpisodeNav);}
-        loadingBarChecker();
-        scrollToElement(linkSelectSpecimen);
-        click(linkSelectSpecimen,10);
+
+        scrollToElement(linkSelectSpecimen,timeout);
+        click(linkSelectSpecimen,timeout);
         switchToDefaultContext();
         switchToFrame(switchiFrame);
         for(WebElement element:find(tickboxSpecimens)){
@@ -326,7 +326,7 @@ public class PathCareScratch extends AbstractExtension {
     }
 
     public void additionalQuestion(EditTestSetEntity.AdditionalTestSetQuestions additionalTestSetQuestions){
-        if(!additionalTestSetQuestions.equals(null)) {
+        if(additionalTestSetQuestions != null) {
             if (additionalTestSetQuestions.getSpecimenContainer() != null) {
                 sendKeys(addtionalQuestionSpecimenContainer, additionalTestSetQuestions.getSpecimenContainer());
                 super._driver.findElement(addtionalQuestionSlides).sendKeys(Keys.TAB);
@@ -783,6 +783,23 @@ public class PathCareScratch extends AbstractExtension {
         return speciemenlist;
     }
 
+    public ArrayList<ArrayList<String>> searchMutliplePatients(List<String> lapsiode) throws InterruptedException {
+        ArrayList<ArrayList<String>> speciemenlist = new ArrayList<>();
+        for(String labnumber: lapsiode) {
+            searchPatient(labnumber);
+            speciemenlist.add(specimenNumberExtracts(true));
+            if (validateElement_Enabled_Displayed(backtoPatient,timeout)){
+                click(backtoPatient,timeout);
+                if(validateElement_Enabled_Displayed(backtoPatient,timeout)){
+                    click(backtoPatient,timeout);
+                    click(backtoPatient,timeout);
+                }
+
+            }
+        }
+        return speciemenlist;
+    }
+
     public HashMap<String ,ArrayList<String>> searchMutliplePatientKeys(List<String> lapsiode) throws InterruptedException {
         HashMap<String,ArrayList<String>> speciemenlist = new HashMap<>();
         for(String labnumber: lapsiode) {
@@ -869,7 +886,7 @@ public class PathCareScratch extends AbstractExtension {
     public ArrayList<String> specimenNumberExtracts(boolean checkspecimen){
         ArrayList<String> values =  new ArrayList<>();
         if(checkspecimen) {
-            if (validateElement_Displayed(specimenContainer,timeout)) {
+            if (validateElement_Displayed(specimenText,timeout) ) {
                 scrollToElement(specimenText,timeout);
                 for (WebElement element : find(specimenText,timeout)) {
                         values.add(element.getAttribute("value"));

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ExcelExtractorList {
 
-    static String path ="Registration and Result entry Template With DTF 4March.xlsx";
+    static String path = "Registration and Result entry Template With DTF 20Marchu.xlsx";
 
     public static List<PatientModel> patientData(){
         PoijiOptions options = PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Registration").addListDelimiter(",")
@@ -97,6 +97,11 @@ public class ExcelExtractorList {
         PoijiOptions options  = PoijiOptions.PoijiOptionsBuilder.settings().headerCount(2).sheetName("ResultsGenerator_Aquios1").build();
         return Poiji.fromExcel(new File("src/main/resources/".concat(path)), ResultsGenerator_Aquios1.class,options);
     }
+    static public List<ResultsGenerator_Abbott> resultsGenerator_Abbott(){
+        PoijiOptions options  = PoijiOptions.PoijiOptionsBuilder.settings().headerCount(2).sheetName("ResultsGenerator_").build();
+        return Poiji.fromExcel(new File("src/main/resources/".concat(path)), ResultsGenerator_Abbott.class,options);
+    }
+    //End
 
     //Result Entries
     static public List<ResultsEntry> resultsEntries(){
@@ -125,6 +130,11 @@ public class ExcelExtractorList {
     static public List<LabQueueEntity> labQueues(){
         PoijiOptions options  = PoijiOptions.PoijiOptionsBuilder.settings().headerCount(2).sheetName("Queues").build();
         return Poiji.fromExcel(new File("src/main/resources/".concat(path)), LabQueueEntity.class,options);
+    }
+
+    static public List<LabQueueValuesEntity> labQueueValues(){
+        PoijiOptions options  = PoijiOptions.PoijiOptionsBuilder.settings().sheetName("QueuesValues").build();
+        return Poiji.fromExcel(new File("src/main/resources/".concat(path)), LabQueueValuesEntity.class,options);
     }
     //End Queue
 

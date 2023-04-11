@@ -548,10 +548,10 @@ public class MultiDisciplineTestCase extends RomanBase {
         }
 
         //Stat
-        if(!totalNumber.get("Stat").isBlank()){
+        if(!totalNumber.get("STAT").isBlank()){
             pathCare.pre_analytical.navigatehome();
             pathCare.labQueues.searchResults("Phone Queue","","","");
-            pathCare.labQueues.phoneQueues("Stat",true);
+            pathCare.labQueues.phoneQueues("STAT",true);
             pathCare.pathCareProcessingPage.phonequeue();
 
         }

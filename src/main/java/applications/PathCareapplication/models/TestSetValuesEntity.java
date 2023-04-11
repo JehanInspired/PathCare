@@ -23,7 +23,7 @@ public class TestSetValuesEntity {
     private String validate;
 
 
-    @ExcelCellName("Reflex")
+    @ExcelCellName("Reflex Testing")
     private String reflex;
 
     @ExcelUnknownCells

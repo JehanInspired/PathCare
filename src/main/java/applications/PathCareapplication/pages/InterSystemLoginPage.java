@@ -72,7 +72,7 @@ public class InterSystemLoginPage extends AbstractExtension {
         scrollToElement(footer,timeout);
 
             while (!validateElement_Enabled_Displayed(accessProfile, timeout)) {
-                scrollToElement(footer, timeout);
+                scrollToElement(footer,timeout);
                 scrollToElement(nextPage, timeout);
                 click(nextPage, timeout);
                 if(counter>=30){
@@ -83,8 +83,9 @@ public class InterSystemLoginPage extends AbstractExtension {
 
 
             if(validateElement_Enabled_Displayed(accessProfile,timeout)){
-                scrollToElement(footer,timeout);
-                awaitClickableElement(accessProfile,timeout,polling).click();
+                //scrollToElement(footer,timeout);
+                scrollToElement(accessProfile,timeout);
+                click(accessProfile,timeout);
             }else{
                 awaitElement(accessProfile,timeout);
                 scrollToElement(accessProfile,timeout);

@@ -3,7 +3,6 @@ package applications.PathCareapplication.widget;
 import Roman.Roman;
 import applications.PathCareapplication.tool.AbstractExtension;
 import org.openqa.selenium.By;
-import selenium.AbstractPage;
 
 public class Pre_Analytical extends AbstractExtension {
 
@@ -14,6 +13,7 @@ public class Pre_Analytical extends AbstractExtension {
 
     private final By findbutton = By.xpath("//input[@name='find1']");
     private final By subregistation = By.xpath("//span[text()='Registration']");
+
 
 
     private final By logisticsMenubutton = By.xpath("//li//span[text()='Transfer Logistics']");
@@ -36,7 +36,8 @@ public class Pre_Analytical extends AbstractExtension {
 
     public void navigatespecimenRecived() {
 
-            click(mainmenu,timeout);
+        awaitElement(mainmenu,timeout);
+        click(mainmenu,timeout);
         if(validateElement_Enabled_Displayed(specimenRecived)){
             click(specimenRecived,timeout);
         }else{
@@ -110,6 +111,8 @@ public class Pre_Analytical extends AbstractExtension {
         stepPassedWithScreenshot("Logistics page appears");
 
     }
+
+
 
     public void navigateMenu(){
         switchtoMainiFrame();

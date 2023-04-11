@@ -12,11 +12,27 @@ public class Analytical extends AbstractExtension {
 
     private final By workSheetREsEntry = By.xpath("//li//span[text()='Worksheet Res. Entry']");
     private  final By analytical = By.xpath("//li//span[text()='Analytical']");
+    private final By mainmenu = By.xpath("//a//md-icon[@title='Main Menu']");
+    private final By proceduresButton = By.xpath("//span[text()='Procedures']");
 
     private int timeout = 15;
 
     public Analytical(Roman roman) {
         super(roman);
+    }
+
+    public void navigateProcedures(){
+
+        awaitElement(mainmenu,timeout);
+        click(mainmenu);
+        if(validateElement_Enabled_Displayed(proceduresButton)){
+            click(proceduresButton,timeout);
+        }else{
+            click(analytical);
+            click(proceduresButton,timeout);
+        }
+        stepPassedWithScreenshot("Procedures page appears");
+
     }
 
     public void navigateResultEntry(){
@@ -39,7 +55,7 @@ public class Analytical extends AbstractExtension {
             click(processing,10);
         }
 
-        stepPassedWithScreenshot("Navigated to specimen received");
+        stepPassedWithScreenshot("Navigated to Processing");
     }
 
     public void navigateWorkSheetRes(){

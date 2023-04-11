@@ -9,16 +9,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static reporting.ExtentReport.get_reportDir;
-
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TestSetDataSheet extends RomanBase {
     public ChromeOptions options = new ChromeOptions();
     public Roman roman = super.roman();
     public PathCareApplication pathCare = null;
     public String dir = " ";
-    private LabespideData dataPatient = new LabespideData();
+    private final LabespideData dataPatient = new LabespideData();
 
     @BeforeEach
-    public void startup() throws IllegalAccessException {
+    public void startup() {
         dir = get_reportDir();
         options = new ChromeOptions();
         dataPatient.patientInform();
@@ -48,7 +48,7 @@ public class TestSetDataSheet extends RomanBase {
 
 
     @Test
-    @Disabled
+    @Order(1)
     public void registerPatient() throws Exception {
 
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
@@ -78,6 +78,7 @@ public class TestSetDataSheet extends RomanBase {
     }
 
     @Test
+    @Order(2)
     public void speciemenReceive() throws Exception {
         if (dataPatient.readerList().isEmpty()) {
             registerPatient();
@@ -100,12 +101,12 @@ public class TestSetDataSheet extends RomanBase {
         pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingle(pathCare.pre_analytical, pathCare.interSystemloginPage, labespisodesSpecimen, location, dataPatient.getSpecimenReceiveArrayList(), dataPatient.getWorkAreaReceives(), dataPatient.getTestCodeList());
         if (!pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList.isEmpty()){
             for (WorkAreaReceiveEntity workAreaReceiveEntity : pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList) {
-                dataPatient.write(workAreaReceiveEntity.toString(),"WorkRecieve.txt");
+                dataPatient.write(workAreaReceiveEntity.toString().replace("[","").replace("]",""),"WorkRecieve.txt");
             }
         }
         if (!pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList.isEmpty()){
             for (SpecimenReceiveEntity specimenReceiveEntity : pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList) {
-                dataPatient.write(specimenReceiveEntity.ToString(),"SpecimenRecieve.txt");
+                dataPatient.write(specimenReceiveEntity.ToString().replace("[","").replace("]",""),"SpecimenRecieve.txt");
             }
         }
 
@@ -115,6 +116,7 @@ public class TestSetDataSheet extends RomanBase {
 
 
     @Test
+    @Order(3)
     public void work_Receive() throws Exception{
 
         if(pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList.isEmpty()){
@@ -127,11 +129,12 @@ public class TestSetDataSheet extends RomanBase {
         pathCare.interSystemloginPage.setLocation(location);
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateWorkRecived();
-        pathCare.workAreaReceptionPage.departmentWorkArea(pathCare.workAreaReceptionPage.setupdataWorkReceive(pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList),true,location,pathCare.interSystemloginPage,pathCare.pre_analytical);
+        pathCare.workAreaReceptionPage.departmentWorkArea(pathCare.workAreaReceptionPage.setupdataWorkReceive(pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList),true,location,pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList,pathCare.interSystemloginPage,pathCare.pre_analytical);
 
     }
 
     @Test
+    @Order(4)
     public void labInstrumentResultGenerator() throws Exception{
         if (dataPatient.readerList().isEmpty()) {
             registerPatient();
@@ -148,19 +151,21 @@ public class TestSetDataSheet extends RomanBase {
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.pathCareLabIntrumentResultGeneratorpage.
-                multipleEspisode(dataPatient.getResultsGenerator_sysmexca620Geos(),
+                multipleEpisode(dataPatient.getResultsGenerator_sysmexca620Geos(),
                         dataPatient.getResultsGenerator_rocheSysmexXGES(),
                         dataPatient.getResultsGeneratorAaGeorges(),
                         dataPatient.getResultsGenerator_aquios1s(),
                         dataPatient.getResultsGenerator_pcpBioFireFilmList(),
                         dataPatient.getResultsGenerator_sysmexCS2500s(),
                         dataPatient.getResultsGenerator_rocheSysmexXN1List(),
-                        dataPatient.getResultsGenerator_AbbottAlinityc()
+                        dataPatient.getResultsGenerator_AbbottAlinityc(),
+                        dataPatient.getResultsGenerator_Abbott()
                         ,pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList.isEmpty()? dataPatient.readSpecimenReceivList():pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList,
                 pathCare.labQueues,pathCare.interSystemloginPage);
     }
 
     @Test
+    @Order(5)
     public void labResult() throws Exception{
        if (dataPatient.readerList().isEmpty()) {
             registerPatient();
@@ -175,13 +180,8 @@ public class TestSetDataSheet extends RomanBase {
             labInstrumentResultGenerator();
             pathCare.pre_analytical.switchtoMainiFrame();
             pathCare.interSystemloginPage.logoff();
-            workSheet();
-            pathCare.pre_analytical.switchtoMainiFrame();
-            pathCare.interSystemloginPage.logoff();
 
         }
-
-
 
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
@@ -190,9 +190,9 @@ public class TestSetDataSheet extends RomanBase {
                 pathCare.interSystemloginPage,pathCare.analytical);
     }
 
-    @Test
+   @Test
+    @Order(1)
     public void workSheet() throws Exception {
-
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.pathCareLabWorkSheetResEntry.workSheetEntry(dataPatient.getWorkSheetResultEntryArrayList(),dataPatient.getWorkSheetResultValuesArrayList(),
@@ -201,13 +201,12 @@ public class TestSetDataSheet extends RomanBase {
     }
 
     @Test
+    @Order(2)
     public void queue() throws Exception {
-
-        labResult();
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
-        pathCare.labQueues.labQueueSheet(dataPatient.getLabQueueEntities(),
-                pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList.isEmpty()? dataPatient.readSpecimenReceivList():pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList, pathCare.analytical,pathCare.interSystemloginPage);
+        pathCare.labQueues.labQueueSheet(dataPatient.getLabQueueEntities(),dataPatient.getlabQueueValuesEntity(),
+                dataPatient.readerList(), pathCare.resultEntry,pathCare.pathCareProcessingPage,pathCare.interSystemloginPage);
     }
 
 }

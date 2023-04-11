@@ -40,6 +40,11 @@ public abstract class AbstractExtension extends AbstractPage {
                 .until(element::isEnabled);
     }
 
+    public void javascriptClick(WebElement element){
+        JavascriptExecutor jExecutor = (JavascriptExecutor) this._driver;
+        jExecutor.executeScript("arguments[0].click();", element);
+    }
+
     public void awaitEitherElement(By by,By bySecond,int timeout){
         await("wait for either" + by.toString() + "or" + bySecond.toString() + "element").atMost(timeout, TimeUnit.SECONDS)
                 .ignoreExceptions()
@@ -78,6 +83,7 @@ public abstract class AbstractExtension extends AbstractPage {
     }
 
     protected void tableExtaction(By xpathTableName,String colunmHead,String tableHeader,String colunmFind,String value,int timeout){
+        awaitElement(xpathTableName,timeout);
         WebElement table = findOne(xpathTableName,timeout);
         // get table headers
         // get the text
@@ -100,23 +106,33 @@ public abstract class AbstractExtension extends AbstractPage {
             }
 
             List<WebElement> tds = tr.findElements(By.tagName("td"));
+                if (tds.get(columnNames.indexOf(colunmHead)).getText().equals(colunmFind)) {
+                    WebElement td = tds.get(columnNames.indexOf(tableHeader));
+                    if (!value.isBlank()) {
 
-            if (tds.get(columnNames.indexOf(colunmHead)).getText().equals(colunmFind)) {
-                WebElement td = tds.get(columnNames.indexOf(tableHeader));
-                if(!value.isBlank()) {
-                    WebElement input = td.findElement(By.tagName("input"));
-                    awaitElement(input, timeout);
-                    input.clear();
-                    awaitElement(input, timeout);
-                    input.sendKeys(value);
-                }else{
-                    WebElement input = td.findElement(By.tagName("a"));
-                    awaitElement(input,timeout);
-                    awaitClickableElement(input,timeout,3).click();
+                        WebElement input = td.findElement(By.tagName("input"));
+                        awaitElement(input, timeout);
+                        input.clear();
+                        awaitElement(input, timeout);
+                        input.sendKeys(value.trim());
+                        awaitElement(input, timeout);
+                        if(validateElement_Enabled_Displayed(By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='"+value+"']"),timeout)){
+                            click(By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='"+value+"']"),timeout);
+                        }else if(validateElement_Enabled_Displayed(By.xpath("//tr[contains(@id,'LookupRow')]"),timeout)){
+                            click(By.xpath("//tr[contains(@id,'LookupRow')]"),timeout);
+                        }
+                        input.sendKeys(Keys.TAB);
+
+                        stepInfo("Entered " + value + " under " + tableHeader +" "+colunmFind);
+                    } else {
+                        WebElement input = td.findElement(By.tagName("a"));
+                        awaitElement(input, timeout);
+                        awaitClickableElement(input, timeout, 3).click();
+                        stepInfo("Clicked " + value + " under " + tableHeader);
+                    }
 
                 }
 
-            }
         }
     }
 

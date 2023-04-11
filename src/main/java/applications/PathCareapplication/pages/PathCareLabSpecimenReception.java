@@ -45,6 +45,10 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
 
     public ArrayList<String> specimenNumbers = new ArrayList<>();
 
+    private String locationNew = "";
+
+    private Boolean firstTime =false;
+
     public ArrayList<WorkAreaReceiveEntity> workAreaReceiveEntityArrayList = new ArrayList<>();
 
     public ArrayList<SpecimenReceiveEntity> specimenReceiveEntityArrayList = new ArrayList<>();
@@ -54,11 +58,13 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
     public String entryMultipleLabspecimenSingleReception(String labspecnumber){
 
         switchToDefaultContext();
+        awaitElement(mainframe,timeout);
         switchToMainFrame();
         int numtestset = 1;
             for (int x = 1; x <= numtestset; x++) {
                 String value = labspecnumber.concat("-".concat(String.valueOf(x)));
-
+                click(specimenNumberText,timeout);
+                awaitElement(specimenNumberText,timeout);
                 findOne(specimenNumberText, value);
                 int numberSpeicmen = find(By.xpath("//label[contains(text(),'%s')]".replace("%s",labspecnumber+"-"))).size();
                 if(numberSpeicmen!=0 && x==1){
@@ -95,6 +101,7 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
 
             for (int x = 1; x <= numtestset; x++) {
                 String lapnumberspecimen = labepsiode.concat("-".concat(String.valueOf(x)));
+                awaitElement(specimenNumberText,timeout);
                 findOne(specimenNumberText, lapnumberspecimen);
                 stepPassedWithScreenshot("Successfully Entered Lab Specimen under Lab episode: " + lapnumberspecimen);
                 specimenNumbers.add(lapnumberspecimen);
@@ -151,24 +158,13 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
     public void entryMultipleLabspecimenSingle(Pre_Analytical pre_analytical, InterSystemLoginPage interSystemloginPage, HashMap<String ,ArrayList<String>> labespisodesSpecimen, String location , ArrayList<SpecimenReceiveEntity> specimenReceiveEntities, List<WorkAreaReceiveEntity> workAreaReceiveEntityArrayList, List<TestSetCodeEntity> testSetCodeEntities) throws InterruptedException {
 
         switchToDefaultContext();
+        awaitElement(mainframe,timeout);
         switchToFrame(mainframe);
-
+        int numtestset = 0;
         for (String patientkey : labespisodesSpecimen.keySet()) {
-            int numtestset = 1;
-            //
-            if(specimenReceiveEntities.size()>=Integer.parseInt(patientkey)) {
-                if (specimenReceiveEntities.get(Integer.parseInt(patientkey) - 1) != null) {
-                    if (!specimenReceiveEntities.get(Integer.parseInt(patientkey) - 1).getUserprofile_FK().contentEquals(location)) {
-                        location = specimenReceiveEntities.get(Integer.parseInt(patientkey) - 1).getUserprofile_FK();
-                        switchToDefaultContext();
-                        interSystemloginPage.setLocation(location);
-                        interSystemloginPage.changelocation();
-                        interSystemloginPage.userselection();
-                        pre_analytical.navigatespecimenRecived();
-                    }
-                }
-            }
 
+
+            changeLocation(specimenReceiveEntities.get(numtestset).getUserprofile_FK(),interSystemloginPage,pre_analytical);
 
             //for (String specimenvalue:labespisodesSpecimen.get(patientkey)) {
                 for(int x=0;x<= labespisodesSpecimen.get(patientkey).size()-1;x++)
@@ -187,12 +183,11 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
                 findOne(specimenNumberText, labespisode);
                 String labEpisode = getText(By.xpath("//label[@id='LabEpisodeNumber']"),timeout);
                 String specimenReceiveTestSetValue= getText(By.xpath("//parent::td[label[text()='"+labespisode+"']]//parent::tr//td//label[contains(@id,'TestSetListz')]"),timeout);
-                aliquot(patientkey, numtestset, specimenReceiveEntities);
+                aliquot(patientkey, specimenReceiveEntities);
                 //editSpecimenReceiver(specimenReceiveEntities);
                 stepPassedWithScreenshot("Successfully Entered Lab Specimen under Lab episode: " + labespisode);
                 specimenWorkRecieveUpdateData(labEpisode,patientkey,anatomicalSiteRegistration,labespisode,registertestsetValue,specimenReceiveTestSetValue, specimenReceiveEntities, workAreaReceiveEntityArrayList, testSetCodeEntities);
                         numtestset++;
-                        //x++;
                 }
                 if(!aliqout) {
                     click(specimenNumberUpdateButton);
@@ -201,6 +196,27 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
             }
 
     }
+
+    void changeLocation(String location,InterSystemLoginPage interSystemloginPage, Pre_Analytical pre_analytical){
+
+        if (!locationNew.contentEquals(location)){
+            locationNew = location;
+            switchToDefaultContext();
+            interSystemloginPage.setLocation(location);
+            if(!firstTime) {
+                switchToDefaultContext();
+                interSystemloginPage.changelocation();
+
+            }else{
+                firstTime=false;
+            }
+            interSystemloginPage.userselection();
+            pre_analytical.navigatespecimenRecived();
+
+        }
+    }
+
+
     public  void specimenWorkRecieveUpdateData(String labEpisode, String patientKey, String anatomicalSiteRegistration, String specimenvalue,String registerSpecimen, String specimenReceiveTestSetValue, ArrayList<SpecimenReceiveEntity> specimenReceiveEntities, List<WorkAreaReceiveEntity> workAreaReceiveEntityArrayList, List<TestSetCodeEntity> testSetCodeEntities){
         String antomicalSiteSpecimen = getAttribute(By.xpath("//parent::td[label[text()='"+specimenvalue+"']]//parent::tr//td//input[not(@type='hidden') and  contains(@id,'AnatomicalSite') and not(contains(@id,'AnatomicalSiteQualifier'))]"),"value",timeout);
         boolean found =false;
@@ -249,7 +265,7 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
         }
     }
 
-    public void aliquot(String patientKey,int numtestset,ArrayList<SpecimenReceiveEntity> specimenReceiveEntities) throws InterruptedException {
+    public void aliquot(String patientKey,ArrayList<SpecimenReceiveEntity> specimenReceiveEntities) throws InterruptedException {
             for(SpecimenReceiveEntity specimenReceiveEntity : specimenReceiveEntities){
                   if(specimenReceiveEntity.getPatientKey_FK().contentEquals(patientKey)) {
                       if(specimenReceiveEntity.getAliquotEditPK() !=null) {
@@ -328,7 +344,7 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
     private void aliquotecontainerSpeciemen(String container) throws InterruptedException {
 
         findOne(aliquoutSpecimenContainerTextField).sendKeys(container);
-        By lookupOnList = By.xpath("//span[contains(@id,'LBSpecimenContainer_Msg_Edit_0') and contains(text(),'%s')]".replace("%s", container));
+
         if(findOne(aliquoutSpecimenContainerTextField).getAttribute("value").contentEquals(container)){
             super._driver.findElement(aliquoutSpecimenContainerTextField).sendKeys(Keys.TAB);
             stepInfoWithScreenshot("Entered container "+container);
@@ -437,7 +453,7 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
         }
     }
 
-    public void enteringValueSpecimenDetail (HashMap<String,List<String>> specimenDetail,String num,String value) throws InterruptedException {
+    public void enteringValueSpecimenDetail (HashMap<String,List<String>> specimenDetail,String num,String value){
         int y = 0;
         String speicmenvalue1 ="";
         for (String speicmenvalue : specimenDetail.get(num)) {
@@ -445,12 +461,12 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
             By lookupGlass = By.xpath("//parent::td[label[text()='%s']]//parent::tr//img[@class='clsLookupIcon' and contains(@name,'AnatomicalSiteQualifier') or contains(@name,'Lesion') or contains(@name,'AnatomicalSite')]".replace("%s",value));
             if (y == 0) {
                 if(!speicmenvalue.isBlank()) {
-                    find(elment).get(y).sendKeys(speicmenvalue);
-                    if (find(elment).get(y).getAttribute("value").isBlank()) {
-                        find(elment).get(y).sendKeys(speicmenvalue);
+                    find(elment,timeout).get(y).sendKeys(speicmenvalue);
+                    if (find(elment,timeout).get(y).getAttribute("value").isBlank()) {
+                        find(elment,timeout).get(y).sendKeys(speicmenvalue);
                     }
-                    find(lookupGlass).get(y).click();
-                    Thread.sleep(4000);
+                    find(lookupGlass,timeout).get(y).click();
+                    awaitElement(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)),timeout);
                     if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue.strip())), timeout)) {
                         click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
                     }
@@ -464,7 +480,6 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
                         find(elment).get(y).sendKeys(speicmenvalue);
                     }
                     find(lookupGlass).get(y).click();
-                    Thread.sleep(4000);
                     if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)), timeout)) {
                         click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
                     }
@@ -472,21 +487,22 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
                 y++;
             } else if (y == 2) {
                 if(!speicmenvalue.isBlank()) {
-                    find(elment).get(y).sendKeys(speicmenvalue);
-                    if (find(elment).get(y).getAttribute("value").isBlank()) {
-                        find(elment).get(y).sendKeys(speicmenvalue);
+                    awaitElement(elment,timeout);
+                    find(elment,timeout).get(y).sendKeys(speicmenvalue);
+                    if (find(elment,timeout).get(y).getAttribute("value").isBlank()) {
+                        find(elment,timeout).get(y).sendKeys(speicmenvalue);
                     }
-                    find(lookupGlass).get(y).click();
-                    Thread.sleep(4000);
+                    find(lookupGlass,timeout).get(y).click();
+                    awaitElement(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)),timeout);
                     if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)), timeout)) {
                         click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
                     }
 
                     if(!speicmenvalue1.isBlank()) {
+                        awaitElement(lookupGlass,timeout);
                         find(lookupGlass).get(y - 1).click();
-                        Thread.sleep(4000);
                         if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue1)), timeout)) {
-                            click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue1)));
+                            click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue1)),timeout);
                         }
                     }
                 }
@@ -502,8 +518,6 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
     }
 
     public void findOne(By by,String input) {
-        super.findOne(by).click();
-        super.findOne(by).clear();
         super.findOne(by).sendKeys(input);
         super.findOne(by).sendKeys( Keys.TAB);
     }

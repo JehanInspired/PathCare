@@ -23,17 +23,14 @@ public class PathCareProcessingPage extends AbstractExtension {
     private final By iframeInfoObservationNote = By.xpath("//iframe[contains(@title,'Rich Text Editor, LBPTONote')]");
 
     private final By observationCommentsTextbox = By.xpath("//body[contains(@id,'CKEditorContentLBPTONote')]");
-
     private final By completeButton = By.xpath("//input[contains(@id,'complete1')]");
     private final By inputScantextfield = By.xpath("//input[@id='ScanField']");
     private By specimenNumber = By.xpath("//strong[contains(text(),'%s')]");
     private final By linkedTestSetItem = By.xpath("//input[@id='LBPTOTestSetItemDR']");
     private final By notficationApply = By.xpath("//div[@class='notification_message']");
     private By completequery = By.xpath("//div[contains(@data-displayvalue,'%s')]");
-
     private final By addObervation = By.xpath("//a[contains(@id,'AddObservation')]");
     private final By obervationSelection = By.xpath("//input[contains(@id,'LBPTOObservationDR')]");
-
 
     private final By pinserttestreults = By.xpath("//img[contains(@id,'Value')]");
     private final By applyTestResult = By.xpath("//input[@id='apply1']");
@@ -76,7 +73,7 @@ public class PathCareProcessingPage extends AbstractExtension {
 
     private By organimMaginitglass = By.xpath("//img[@id='lt8560iLBTSI_PathogenGrowthQualifier_DRz1']");
 
-    private By requestLink = By.xpath("//a[text()='equest']");
+    private By requestLink = By.xpath("//a[@id='registrationLink']");
 
     private By listTestSet = By.xpath("//a[contains(@id,'TabTestSet')]");
 
@@ -113,6 +110,7 @@ public class PathCareProcessingPage extends AbstractExtension {
     private By testSetOptionButtonDropDown = By.xpath("//a[text()='Test Set Options']");
     private By oneSpecimenContainer = By.xpath("//a[@id='LBProtocolz1']");
 
+    private By Specimen2ndContainer = By.xpath("//a[@id='LBProtocolz2']");
     private By MultipleSpecimenContainer = By.xpath("//a[contains(@id,'LBProtocolz')]");
     private By secondQuestion = By.xpath("//input[@id='QAz2']");
 
@@ -151,15 +149,20 @@ public class PathCareProcessingPage extends AbstractExtension {
     public void clickRequestLink() throws InterruptedException {
         switchToDefaultContext();
         switchToFrame(iframeProcessing);
-        Thread.sleep(10000);
+        awaitElement(requestLink,timeout);
         if (validateElement_Enabled_Displayed(requestLink, timeout)) {
             click(requestLink, timeout);
+            //javascriptClick(findOne(requestLink));
             stepInfoWithScreenshot("Able to click request Link");
         }
     }
 
     public void backbuttonbrowser() {
         _driver.navigate().back();
+    }
+
+    public void refreshbrowser() {
+        _driver.navigate().refresh();
     }
 
     public void clickEpisodeEventLink() throws InterruptedException {
@@ -189,21 +192,21 @@ public class PathCareProcessingPage extends AbstractExtension {
     }
 
     public void testSpeciemenQuestionaire(String value, boolean entervalue) throws InterruptedException {
-        Thread.sleep(2000);
-        if (validateElement_Enabled_Displayed(questionarieButton, 15)) {
+        awaitElement(questionarieButton,timeout);
+        if (validateElement_Enabled_Displayed(questionarieButton, timeout)) {
             click(questionarieButton);
             stepInfoWithScreenshot("Able to click Test Set Order Questions");
         }
         switchToDefaultContext();
         switchToFrame(iframeInfoObservation);
-        if (validateElement_Enabled_Displayed(secondQuestion)) {
+        if (validateElement_Enabled_Displayed(secondQuestion,timeout)) {
             if (entervalue) {
                 enterquestionvalue(value);
             } else {
                 checkquestionvalue(value);
             }
         } else {
-            click(iframeInfroCloseButton, 15);
+            click(iframeInfroCloseButton, timeout);
             switchToDefaultContext();
             switchToFrame(iframeProcessing);
             click(questionarieButton);
@@ -216,7 +219,7 @@ public class PathCareProcessingPage extends AbstractExtension {
             }
         }
 
-        click(iframeInfroCloseButton, 15);
+        click(iframeInfroCloseButton, timeout);
         switchToDefaultContext();
         switchToFrame(iframeProcessing);
 
@@ -251,23 +254,24 @@ public class PathCareProcessingPage extends AbstractExtension {
     }
 
     public void testSetProctocol() throws InterruptedException {
-        Thread.sleep(4000);
-        if (validateElement_Enabled_Displayed(testSetProtocolButton, 15)) {
+        awaitElement(testSetProtocolButton,timeout);
+        if (validateElement_Enabled_Displayed(testSetProtocolButton, timeout)) {
             click(testSetProtocolButton);
             stepInfoWithScreenshot("Able to click Test Set Protocol");
         }
         switchToDefaultContext();
         switchToFrame(iframeInfoObservation);
-        if (!getText(slideMaterialText, 15).isBlank()) {
+        if (!getText(slideMaterialText, timeout).isBlank()) {
             stepPassedWithScreenshot("Able to view Number of slide ");
         }
-        click(iframeInfroCloseButton);
+        click(iframeInfroCloseButton,timeout);
         switchToDefaultContext();
         switchToFrame(iframeProcessing);
     }
 
     public void testSetOption() throws InterruptedException {
-
+        switchToDefaultContext();
+        switchToFrame(iframeProcessing);
         click(testSetOptionButtonDropDown, 10);
         for (int x = 0; x < find(MultipleSpecimenContainer).size(); x++) {
             if (find(MultipleSpecimenContainer).get(x).isDisplayed()) {
@@ -282,12 +286,16 @@ public class PathCareProcessingPage extends AbstractExtension {
 
     }
 
-    public void testSetOptionChanger() {
+    public void testSetOptionChanger(Boolean firstSpecimen) {
         click(testSetOptionButtonDropDown, 10);
-        if (validateElement_Displayed(oneSpecimenContainer)) {
+        if (validateElement_Displayed(oneSpecimenContainer) && firstSpecimen) {
             click(oneSpecimenContainer);
             stepPassedWithScreenshot("Able to view Protocol Overview ");
+        }else if(validateElement_Displayed(Specimen2ndContainer,timeout)) {
+            click(Specimen2ndContainer, timeout);
+            stepPassedWithScreenshot("Able to view Protocol 2 Overview ");
         }
+
     }
 
     public void protocolMaterialWidgt(String nameMaterial, boolean observation, String observationValue, boolean testOptions, String value) {
@@ -296,25 +304,28 @@ public class PathCareProcessingPage extends AbstractExtension {
             switchToFrame(iframeInfoObservation);
             click(addProtocol);
             click(lookupProtocolMaterial);
-            if (!(validateElement_Displayed(By.xpath("//td[text()='%s']".replace("%s", nameMaterial))))) {
+            if (!(validateElement_Displayed(By.xpath("//td[text()='%s']".replace("%s", nameMaterial)),timeout))) {
                 click(lookupProtocolMaterial);
-                click(By.xpath("//td[text()='%s']".replace("%s", nameMaterial)));
+                click(By.xpath("//td[text()='%s']".replace("%s", nameMaterial)),timeout);
+                stepInfoWithScreenshot("Clicked "+nameMaterial);
             } else {
-                click(By.xpath("//td[text()='%s']".replace("%s", nameMaterial)));
+                click(By.xpath("//td[text()='%s']".replace("%s", nameMaterial)),timeout);
+                stepInfoWithScreenshot("Clicked "+nameMaterial);
             }
 
-        } else if (validateElement_Displayed(statuscolourProtocolOverview)) {
-            find(collectionAddProtocol).get(find(collectionAddProtocol).size() - 1).click();
-            sendKeys(protocolObservation, observationValue);
+        } else if (validateElement_Displayed(statuscolourProtocolOverview,timeout)) {
+            find(collectionAddProtocol,timeout).get(find(collectionAddProtocol,timeout).size() - 1).click();
+            sendKeys(protocolObservation, observationValue,timeout);
             stepPassedWithScreenshot("Entered " + observationValue);
         } else {
             Assert.fail("Unable to find status green on Protocol ");
         }
 
 
-        if (validateElement_Enabled_Displayed(acceptbuttonsWidgt, 10)) {
+        if (validateElement_Enabled_Displayed(acceptbuttonsWidgt, timeout)) {
             switchToDefaultContext();
             switchToFrame(iframeInfoObservation);
+            stepInfoWithScreenshot("Preparing to click accept button Widget"+acceptbuttonsWidgt);
             click(acceptbuttonsWidgt);
         }
 
@@ -323,12 +334,15 @@ public class PathCareProcessingPage extends AbstractExtension {
             if (validateElement_Enabled_Displayed(By.xpath("//a[(text()='" + value + "') and not(@disabled)]"), 10)) {
                 click(By.xpath("//a[(text()='" + value + "') and not(@disabled)]"));
             }
+            //Cancel
             if (validateElement_Enabled_Displayed(By.xpath("//input[@id='cancel1' and not(@onclick)]"), 10)) {
                 click(By.xpath("//input[@id='cancel1' and not(@onclick)]"));
+                stepInfoWithScreenshot("Clicked Cancel button");
             }
             //Update
             if (validateElement_Displayed(By.xpath("//*[@id='update1' and not(@class='clsButtonDefault clsButton')]"), 10)) {
                 click(By.xpath("//*[@id='update1' and not(@class='clsButtonDefault clsButton')]"));
+                stepInfoWithScreenshot("Clicked Update button");
             } else {
                 Assert.fail("Unable to update the Protocol Results");
             }
@@ -547,9 +561,12 @@ public class PathCareProcessingPage extends AbstractExtension {
 
     private By speciemenPendingValue(String value, int num) {
         if (num == 1) {
+            stepInfo("Choosing Complete 'Selective' Button");
             return By.xpath("//strong[contains(text(),'%s')]".replace("%s", value.concat("." + num)));
         } else {
+            stepInfo("Choosing Complete All Button");
             return By.xpath("//a[contains(text(),'Complete All')]");
+
         }
     }
 
@@ -557,6 +574,7 @@ public class PathCareProcessingPage extends AbstractExtension {
         switchToDefaultContext();
         switchToFrame(iframeProcessing);
         click(completeButton);
+        stepInfoWithScreenshot("Clicked complete button");
     }
 
 
@@ -706,8 +724,11 @@ public class PathCareProcessingPage extends AbstractExtension {
     public void SingleProcessingTestSetWithReport(String organism, String organisms, String comments, String[] testresults) throws InterruptedException {
         int x = 0;
         validateElement_Displayed(notficationApply, 10);
+        awaitElement(organismText,timeout);
         for (WebElement element : find(organismText)) {
-            element.clear();
+            if(!element.getText().isBlank()) {
+                element.clear();
+            }
         }
 
         if (testresults.length != 0) {

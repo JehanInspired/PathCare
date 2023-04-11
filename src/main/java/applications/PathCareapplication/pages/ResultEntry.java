@@ -139,7 +139,7 @@ public class ResultEntry extends AbstractExtension {
         }
     }
 
-    void changeLocation(String location,InterSystemLoginPage interSystemloginPage, Analytical analytical){
+    void changeLocation(String location,InterSystemLoginPage interSystemloginPage, Analytical analytical,String specimenRecieve){
 
         if (!locationNew.contentEquals(location)){
             locationNew = location;
@@ -149,16 +149,26 @@ public class ResultEntry extends AbstractExtension {
                 switchToDefaultContext();
                 interSystemloginPage.changelocation();
 
-            }else{
-                firstTime=false;
             }
+
             interSystemloginPage.userselection();
             analytical.navigateResultEntry();
+            if(!firstTime) {
+                awaitElement(specimenNumber,timeout);
+                sendKeys(specimenNumber,specimenRecieve,true,true,timeout);
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate todaydate = LocalDate.now().minusDays(3);
+                sendKeys(reportCollectionDate, dtf.format(todaydate));
+                awaitElement(findButton, timeout);
+                click(findButton, timeout);
+                testSetListSingle(specimenRecieve);
+            }
+            firstTime=false;
 
         }
     }
     public void structureLabResultEntry(ArrayList<ResultsEntry> resultEntries, ArrayList<SpecimenReceiveEntity> specimenReceiveEntities, ArrayList<TestSetValuesEntity> testSetValueEntities, InterSystemLoginPage interSystemloginPage, Analytical analytical) throws IllegalAccessException {
-        changeLocation(testSetValueEntities.get(0).getUserprofile_FK(),interSystemloginPage,analytical);
+        changeLocation(testSetValueEntities.get(0).getUserprofile_FK(),interSystemloginPage,analytical,"");
         String testSetValue ="";
         for(ResultsEntry resultsEntry:resultEntries){
 
@@ -194,28 +204,35 @@ public class ResultEntry extends AbstractExtension {
         sendKeys(reportCollectionDate, dtf.format(todaydate));
         awaitElement(findButton,timeout);
         click(findButton,timeout);
-        testSetListSingle(testSet);
-        enterdataResults(testSetValue_Fk, testSetValueEntities, interSystemloginPage,  analytical);
+        testSetListSingle(specimenRecieve);
+        enterdataResults(testSetValue_Fk,specimenRecieve ,testSetValueEntities, interSystemloginPage,  analytical);
 
         backtoTestSetList();
     }
 
-    private void enterdataResults(String testvalueKey, ArrayList<TestSetValuesEntity> testSetValueslistEntity, InterSystemLoginPage interSystemloginPage, Analytical analytical) throws IllegalAccessException {
+    private void enterdataResults(String testvalueKey,String specimenReciveNumber, ArrayList<TestSetValuesEntity> testSetValueslistEntity, InterSystemLoginPage interSystemloginPage, Analytical analytical) throws IllegalAccessException {
         switchToDefaultContext();
         switchToMainFrame();
         for(TestSetValuesEntity testSetValue : testSetValueslistEntity){
-            if(testSetValue.getTestValueKey().contentEquals(testvalueKey)){
-                changeLocation(testSetValue.getUserprofile_FK(),interSystemloginPage,analytical);
+            if(testSetValue.getTestValueKey().contentEquals(testvalueKey)) {
+                if (testSetValue.getUserprofile_FK() != null){
+                    changeLocation(testSetValue.getUserprofile_FK(), interSystemloginPage, analytical,specimenReciveNumber);
+                    switchToDefaultContext();
+                    switchToMainFrame();
+                }
                 reflexLabEpisode(testSetValue.getReflex());
                 for(String value :testSetValue.getTestvalues().keySet()){
                     By resultValue = By.xpath("//a[contains(text(),'"+value.trim()+"')]//parent::td//parent::tr//parent::tr//img[contains(@id, 'Value')]");
-                      awaitElement(resultValue,timeout);
+                    Boolean found =false;
+                    if(validateElement_Enabled_Displayed(resultValue,timeout)) {
                         click(resultValue);
+                        found = true;
+
+                    }
                             labresultTextfield = By.xpath("//tr[contains(@id,'LookupRow')]//td[text()='%s']".replace("%s",testSetValue.getTestvalues().get(value)));
-                            if(validateElement_Enabled_Displayed(labresultTextfield,timeout)){
+                            if(validateElement_Enabled_Displayed(labresultTextfield,timeout) && found){
                                 awaitElement(labresultTextfield,timeout);
                                 awaitClickableElement(labresultTextfield,timeout,6).click();
-
                             }else{
                                 findOne(By.xpath("//a[text()='"+value.trim()+"']//parent::td//parent::tr//parent::tr//input"),timeout).clear();
                                 awaitElement(By.xpath("//a[text()='"+value.trim()+"']//parent::td//parent::tr//parent::tr//input"),timeout);
@@ -348,10 +365,11 @@ public class ResultEntry extends AbstractExtension {
 
         switchToDefaultContext();
         switchToFrame(resultEntryiFrame);
-        if(validateElement_Enabled_Displayed(authoriseButton,10)) {
+        if(validateElement_Enabled_Displayed(authoriseButton,timeout)) {
             stepInfoWithScreenshot("Able to view Results Entry");
+            awaitElement(authoriseButton,timeout);
             click(authoriseButton);
-            if(validateElement_Displayed(notfication,10)){
+            if(validateElement_Displayed(notfication,timeout)){
                 stepPassedWithScreenshot("Successfully received  "+getText(notfication));
             }else{
                 Assert.fail("Unable to receive a notification");
@@ -528,10 +546,10 @@ public class ResultEntry extends AbstractExtension {
           }
       }
 
-        if(validateElement_Displayed(validate,10)) {
+        if(validateElement_Displayed(validate,timeout)) {
             stepInfoWithScreenshot("Able to view Results Entry");
             click(validate);
-            stepPassedWithScreenshot("Successfully received "+getText(notfication,5));
+            stepPassedWithScreenshot("Successfully received "+getText(notfication,timeout));
             stepPassedWithScreenshot("Successfully clicked validate button");
         }else{
             Assert.fail("Unable to receive notification to validate");

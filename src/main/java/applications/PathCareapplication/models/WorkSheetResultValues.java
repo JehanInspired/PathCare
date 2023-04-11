@@ -18,6 +18,9 @@ public class WorkSheetResultValues {
     @ExcelCellName("WorkSheetResult Key_FK")
     private String workSheetResultKey_FK;
 
+    @ExcelCellName("QC Validity Start Date / Time")
+    private String qcValidityStartDateTime;
+
     @ExcelCellName("QC")
     private String qc;
 
@@ -49,6 +52,15 @@ public class WorkSheetResultValues {
     public String getQc() {
         return qc;
     }
+
+    public String getQcValidityStartDateTime() {
+        return qcValidityStartDateTime;
+    }
+
+    public void setQcValidityStartDateTime(String qcValidityStartDateTime) {
+        this.qcValidityStartDateTime = qcValidityStartDateTime;
+    }
+
 
     public void setQc(String qc) {
         this.qc = qc;

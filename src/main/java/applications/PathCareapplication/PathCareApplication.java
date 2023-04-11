@@ -12,6 +12,8 @@ public class PathCareApplication
     public PathCareProcessingPage pathCareProcessingPage;
     public SingleProcess singleProcess;
 
+    public LabEnquiry labEnquiry;
+
     public PathCareLabTransferList pathCareLabTransferList;
 
     public Procedures procedures;
@@ -53,6 +55,7 @@ public class PathCareApplication
         singleProcess = new SingleProcess(roman);
         procedures = new Procedures(roman);
         pathCareLabWorkSheetResEntry = new PathCareLabWorkSheetResEntry(roman);
+        labEnquiry = new LabEnquiry(roman);
 
     }
 }

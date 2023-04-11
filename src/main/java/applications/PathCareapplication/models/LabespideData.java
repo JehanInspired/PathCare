@@ -29,6 +29,7 @@ public  class LabespideData  {
     private List<ResultsGenerator_RocheSysmexXGE> resultsGenerator_rocheSysmexXGES = new ArrayList<>();
 
     private List<ResultsGenerator_AAGeorge> resultsGeneratorAaGeorges = new ArrayList<>();
+    private List<ResultsGenerator_Abbott> resultsGenerator_Abbott = new ArrayList<>();
 
 
     private List<ResultsGenerator_Sysmexca620Geo> resultsGenerator_sysmexca620Geos = new ArrayList<>();
@@ -59,6 +60,7 @@ public  class LabespideData  {
     //LabQueue
     private  ArrayList<LabQueueEntity> labQueueEntities = new ArrayList<>();
 
+    private ArrayList<LabQueueValuesEntity> labQueueValuesEntity = new ArrayList<>();
 
     //WorkSheet
     private ArrayList<WorkSheetResultEntry> workSheetResultEntryArrayList = new ArrayList<>();
@@ -214,6 +216,9 @@ public  class LabespideData  {
     public List<ResultsGenerator_PCPBioFireFilm> getResultsGenerator_pcpBioFireFilmList() {
         return resultsGenerator_pcpBioFireFilmList;
     }
+    public List<ResultsGenerator_Abbott> getResultsGenerator_Abbott() {
+        return resultsGenerator_Abbott;
+    }
 
     public ArrayList<ResultsEntry> getResultEntry(){
         return resultsEntries;
@@ -241,7 +246,16 @@ public  class LabespideData  {
     public void setLabQueueEntities(ArrayList<LabQueueEntity> labQueueEntities) {
         this.labQueueEntities = labQueueEntities;
     }
-    //Begin Queue
+
+    public ArrayList<LabQueueValuesEntity> getlabQueueValuesEntity() {
+        return labQueueValuesEntity;
+    }
+
+    public void setlabQueueValuesEntity(ArrayList<LabQueueValuesEntity> labQueueValuesEntity) {
+        this.labQueueValuesEntity = labQueueValuesEntity;
+    }
+
+    //End Queue
 
 
     public ArrayList<TestSetDetailsEntity> getTestSetDetailsList() {
@@ -331,7 +345,7 @@ public  class LabespideData  {
                         vsalue.split(",")[0]==null ? "":vsalue.split(",")[0],
                         vsalue.split(",")[1]==null ?"": vsalue.split(",")[1],
                         vsalue.split(",")[2]==null ?"":vsalue.split(",")[2],
-                        vsalue.split(",")[3] == null ? "" : vsalue.split(",")[3]);
+                        vsalue.split(",")[3] == null ? "" : vsalue.replace("]","").replace("[","").split(",")[3]);
                 values.add(specimenReceiveEntity);
 
 
@@ -574,6 +588,19 @@ public  class LabespideData  {
             }
 
         }
+
+        for(ResultsGenerator_Abbott resultsGenerator_abbott : ExcelExtractorList.resultsGenerator_Abbott()) {
+
+            if (resultsGenerator_abbott.getUserprofile() != null) {
+                for (UserProfileEntity userProfileEntity : userProfile()) {
+                    if (resultsGenerator_abbott.getUserprofile().contentEquals(userProfileEntity.getPK())) {
+                        resultsGenerator_abbott.setUserprofile(userProfileEntity.getAccessProfile());
+                    }
+                }
+                this.resultsGenerator_Abbott.add(resultsGenerator_abbott);
+            }
+
+        }
         //End of Result Generator
 
         //Lab Queue
@@ -582,12 +609,23 @@ public  class LabespideData  {
             if (labQueueEntity.getUserProfile() != null) {
                 for (UserProfileEntity userProfileEntity : userProfile()) {
                     if (labQueueEntity.getUserProfile().contentEquals(userProfileEntity.getPK())) {
-                        labQueueEntity.setUserProfile(userProfileEntity.getAccessProfile());
+                        labQueueEntity.setUserProfile(userProfileEntity.getAccessProfile().trim());
                     }
                 }
             }
 
+                for(TestSetCodeEntity testSetCodeEntity : testSetCode()) {
+                    if (labQueueEntity.testSet.contentEquals(testSetCodeEntity.PK_testCode)) {
+                        labQueueEntity.setTestSet(testSetCodeEntity.getCode().trim());
+                    }
+                }
+
             this.labQueueEntities.add(labQueueEntity);
+        }
+
+        for(LabQueueValuesEntity labQueueValuesEntity:ExcelExtractorList.labQueueValues()) {
+
+            this.labQueueValuesEntity.add(labQueueValuesEntity);
         }
         //End of Lab Queue
 
@@ -614,8 +652,9 @@ public  class LabespideData  {
                     }
 
                 }
-                this.testSetValuesEntityList.add(testSetValue);
             }
+
+            this.testSetValuesEntityList.add(testSetValue);
         }
 
         //Work Sheet
@@ -667,10 +706,13 @@ public  class LabespideData  {
             resultGenerator.add(resultsGenerator_aquios1s);
             resultGenerator.add(resultsGenerator_rocheSysmexXGES);
             resultGenerator.add(resultsGenerator_sysmexca620Geos);
+            resultGenerator.add(resultsGenerator_Abbott);
             setResultGene(resultGenerator);
 
             setResultsEntries(resultsEntries);
+            setTestSetValuesList(testSetValuesEntityList);
             setLabQueueEntities(labQueueEntities);
+            setlabQueueValuesEntity(labQueueValuesEntity);
 
     }
 
