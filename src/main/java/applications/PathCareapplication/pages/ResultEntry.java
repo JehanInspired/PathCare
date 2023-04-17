@@ -6,10 +6,7 @@ import applications.PathCareapplication.models.SpecimenReceiveEntity;
 import applications.PathCareapplication.models.TestSetValuesEntity;
 import applications.PathCareapplication.tool.AbstractExtension;
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -545,10 +542,14 @@ public class ResultEntry extends AbstractExtension {
               }
           }
       }
-
+        awaitElement(validate,timeout);
         if(validateElement_Displayed(validate,timeout)) {
             stepInfoWithScreenshot("Able to view Results Entry");
             click(validate);
+            try {
+                acceptAlert();
+            } catch (NoAlertPresentException ignored) {
+            }
             stepPassedWithScreenshot("Successfully received "+getText(notfication,timeout));
             stepPassedWithScreenshot("Successfully clicked validate button");
         }else{

@@ -254,6 +254,8 @@ public class PathCareProcessingPage extends AbstractExtension {
     }
 
     public void testSetProctocol() throws InterruptedException {
+        switchToDefaultContext();
+        switchToFrame(iframeProcessing);
         awaitElement(testSetProtocolButton,timeout);
         if (validateElement_Enabled_Displayed(testSetProtocolButton, timeout)) {
             click(testSetProtocolButton);

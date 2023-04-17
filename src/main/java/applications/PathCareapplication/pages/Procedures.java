@@ -108,16 +108,17 @@ public class Procedures extends AbstractExtension {
     public void multipleSearch(ArrayList<String> lapespside){
         String multliLapEpisode ="";
         for(String lapEpisode:lapespside){
-             multliLapEpisode.concat(lapEpisode+" ");
-        }
         multliLapEpisode = multliLapEpisode.trim().replace(" ",",");
-        findOne(labEpisodeTextBox,multliLapEpisode);
+        findOne(labEpisodeTextBox,lapEpisode);
         click(findButton,timeout);
         stepInfoWithScreenshot("Click Find Button");
+        awaitElement(allCheckboxticked,timeout);
         click(allCheckboxticked,timeout);
         stepInfo("Ticked All checkbox");
         stepInfoWithScreenshot("Preparing to click Bulk Complete");
+        awaitElement(bulkCompleteButton,timeout);
         click(bulkCompleteButton,timeout);
+        }
 
     }
 
@@ -137,7 +138,7 @@ public class Procedures extends AbstractExtension {
           }
       }
         if(validateElement_Displayed(By.xpath("//input[@name='DateFrom']"),timeout)){
-            sendKeys(By.xpath("//input[@name='DateFrom']"),dateTimeFormatter.format(LocalDate.now()));
+            sendKeys(By.xpath("//input[@name='DateFrom']"),dateTimeFormatter.format(LocalDate.now().minusDays(10)));
         }
         click(findButton);
         stepInfoWithScreenshot("Clicked work list button");

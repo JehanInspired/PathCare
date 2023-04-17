@@ -449,6 +449,7 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
                 stepInfoWithScreenshot("Successfully Entered Specimen details: " + value);
                 x++;
             }
+            awaitElement(specimenNumberUpdateButton,timeout);
             click(specimenNumberUpdateButton, timeout);
         }
     }
@@ -468,20 +469,20 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
                     find(lookupGlass,timeout).get(y).click();
                     awaitElement(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)),timeout);
                     if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue.strip())), timeout)) {
-                        click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
+                        click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)),timeout);
                     }
                 }
                 y++;
             } else if (y == 1) {
                 speicmenvalue1 =speicmenvalue;
                 if(!speicmenvalue.isBlank()) {
-                    find(elment).get(y).sendKeys(speicmenvalue);
-                    if (find(elment).get(y).getAttribute("value").isBlank()) {
-                        find(elment).get(y).sendKeys(speicmenvalue);
+                    find(elment,timeout).get(y).sendKeys(speicmenvalue);
+                    if (find(elment,timeout).get(y).getAttribute("value").isBlank()) {
+                        find(elment,timeout).get(y).sendKeys(speicmenvalue);
                     }
-                    find(lookupGlass).get(y).click();
+                    find(lookupGlass,timeout).get(y).click();
                     if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)), timeout)) {
-                        click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
+                        click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)),timeout);
                     }
                 }
                 y++;
@@ -495,12 +496,12 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
                     find(lookupGlass,timeout).get(y).click();
                     awaitElement(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)),timeout);
                     if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)), timeout)) {
-                        click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)));
+                        click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue)),timeout);
                     }
 
                     if(!speicmenvalue1.isBlank()) {
                         awaitElement(lookupGlass,timeout);
-                        find(lookupGlass).get(y - 1).click();
+                        find(lookupGlass,timeout).get(y - 1).click();
                         if (validateElement_Enabled_Displayed(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue1)), timeout)) {
                             click(By.xpath("//a[text()='%s']".replace("%s", speicmenvalue1)),timeout);
                         }

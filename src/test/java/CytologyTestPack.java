@@ -360,20 +360,32 @@ public class CytologyTestPack extends RomanBase {
         public void TP_168() throws Exception {
             Faker faker = new Faker();
             String[] testcollection = new String[]{"ANCYTONG"};
-            CytologyNon_GynaeSpecimen specimenDetails =new CytologyNon_GynaeSpecimen();
             AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
             pathCare.interSystemloginPage.login(model.username,model.password);
-
-            //1st patient
             pathCare.interSystemloginPage.setLocation("Pathcare Lab Assistant Histo N1");
             pathCare.interSystemloginPage.userselection();
             pathCare.analytical.navigateProcedures();
-            /*pathCare.procedures.searchSelectionMultiple(new String[]{"PAP Staining","Giemsa Cyto","Rapid Diff"});*/
-            labEpisode = new ArrayList<>(List.of(new String[]{"23001958","23001959", "23001960"}));
+            pathCare.procedures.searchSelectionMultiple(new String[]{"PAP Staining","Giemsa Cyto","Rapid Diff"});
+            labEpisode = new ArrayList<>(List.of(new String[]{"23002146","23002147", "23002148"}));
             pathCare.procedures.multipleSearch(labEpisode);
             pathCare.labEnquiry.navigatelabEnquiry();
+            pathCare.labEnquiry.labResultsEntry(labEpisode.get(0)); //First lab Episode
+            pathCare.labEnquiry.testSetListSingle(labEpisode.get(0));
             pathCare.pathCareProcessingPage.testSetProctocol();
             pathCare.pathCareProcessingPage.testSetOption();
+            pathCare.interSystemloginPage.switchToDefaultContext();
+            pathCare.labEnquiry.backtoTestSetList();
+            pathCare.labEnquiry.labResultsEntry(labEpisode.get(1)); //Second lab Episode
+            pathCare.labEnquiry.testSetListSingle(labEpisode.get(1));
+            pathCare.pathCareProcessingPage.testSetProctocol();
+            pathCare.pathCareProcessingPage.testSetOption();
+            pathCare.interSystemloginPage.switchToDefaultContext();
+            pathCare.labEnquiry.backtoTestSetList();
+            pathCare.labEnquiry.labResultsEntry(labEpisode.get(2)); //3rd lab Episode
+            pathCare.labEnquiry.testSetListSingle(labEpisode.get(2));
+            pathCare.pathCareProcessingPage.testSetProctocol();
+            pathCare.pathCareProcessingPage.testSetOption();
+
 
         }
 

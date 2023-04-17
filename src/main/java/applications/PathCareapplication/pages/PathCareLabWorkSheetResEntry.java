@@ -43,7 +43,7 @@ public class PathCareLabWorkSheetResEntry extends AbstractExtension {
 
     public void workSheetEntry(List<WorkSheetResultEntry> workSheet,List<WorkSheetResultValues> sheetResultValues,
                                List<SpecimenReceiveEntity> specimenReceiveEntities,Analytical analytical,
-                               InterSystemLoginPage interSystemLoginPage) {
+                               InterSystemLoginPage interSystemLoginPage) throws InterruptedException {
 
        for(WorkSheetResultEntry workSheetSingle:workSheet) {
 
@@ -108,9 +108,9 @@ public class PathCareLabWorkSheetResEntry extends AbstractExtension {
                 changeWorksheetDeFinition(workSheetSingle);
                 switchToDefaultContext();
                 switchToMainFrame();
-                stepInfo("Preparing to tick Specimen" + workSheetSingle.getSpecimenReceive_FK());
+                stepInfo("Preparing to tick Specimen " + workSheetSingle.getSpecimenReceive_FK());
                         click(By.xpath("//parent::td[label[text()='" + workSheetSingle.getSpecimenReceive_FK() + "']]//parent::tr//td//input[contains(@id,'Selectz')]"), timeout);
-                        stepInfo("Ticked Specimen" + workSheetSingle.getSpecimenReceive_FK());
+                        stepInfo("Ticked Specimen " + workSheetSingle.getSpecimenReceive_FK());
                 awaitElement(validateButton,timeout);
                 click(validateButton,timeout);
                 click(closebutton,timeout);
@@ -122,7 +122,7 @@ public class PathCareLabWorkSheetResEntry extends AbstractExtension {
         }
 
     }
-    void changeWorksheetDeFinition(WorkSheetResultEntry workSheetSingle) {
+    void changeWorksheetDeFinition(WorkSheetResultEntry workSheetSingle) throws InterruptedException {
         switchToMainFrame();
         awaitClickableElement(inputWorkSheetDefinition, timeout,2).click();
         findOne(inputWorkSheetDefinition,workSheetSingle.getWorksheetDefinition());
@@ -134,7 +134,7 @@ public class PathCareLabWorkSheetResEntry extends AbstractExtension {
         }
         click(findButton,timeout);
         click(worksheetLookUp,timeout);
-
+        Thread.sleep(5000);
         if (!validateElement_Enabled_Displayed(workSheetLookUpSelectionOpen, timeout)) {
             click(worksheetLookUp, timeout);
         }

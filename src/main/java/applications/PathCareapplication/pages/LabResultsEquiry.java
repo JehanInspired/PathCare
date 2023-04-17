@@ -27,7 +27,7 @@ public class LabResultsEquiry extends AbstractExtension {
 
     public void LabResultsEntry(String labespide){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate todaydate = LocalDate.now();
+        LocalDate todaydate = LocalDate.now().minusDays(10);
         sendKeys(labEpisode,labespide,true,true,timeout);
         sendKeys(reportCollectionDate, dtf.format(todaydate));
         click(findButton,timeout);

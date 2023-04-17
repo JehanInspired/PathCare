@@ -169,11 +169,11 @@ public class WorkAreaReceptionPage extends AbstractExtension {
             loadingBarChecker();
             awaitElement(mainframe,timeout);
             switchToMainFrame();
-            if(dataModel.department !=null ||!dataModel.department.isBlank()) {
+            /*if(dataModel.department !=null ||!dataModel.department.isBlank()) {
                 sendKeys(departmentText, dataModel.department, timeout);
                 click(lookuprowselection,timeout);
 
-            }
+            }*/
 
 
             if (validateElement_Enabled_Displayed(workArea, timeout)) {

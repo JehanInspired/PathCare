@@ -141,7 +141,7 @@ public class PathCareLabTransferList extends AbstractExtension {
             findOne(this.labEpisode, labEpisode);
             clickFindButton();
             listTransfer = By.xpath("//label[text()='%s']".replace("%s", labEpisode));
-            if (getAllElementText(listTransfer).size() == specimennumbers.get(y).size()) {
+            if (getAllElementText(listTransfer,timeout).size() == specimennumbers.get(y).size()) {
                 stepPassedWithScreenshot("Able to view package In Transit " + labEpisode);
                 checker = true;
             }
@@ -279,7 +279,7 @@ public class PathCareLabTransferList extends AbstractExtension {
   }
 
   public void clickFindButton(){
-      click(findbutton);
+      click(findbutton,timeout);
   }
   public void statChangeWaitingLinkFind(String fromSite, String toSite){
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");

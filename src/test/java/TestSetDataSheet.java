@@ -120,7 +120,7 @@ public class TestSetDataSheet extends RomanBase {
     public void work_Receive() throws Exception{
 
         if(pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList.isEmpty()){
-            pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList =dataPatient.readWorkReceivList();
+            pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList = dataPatient.readWorkReceivList();
         }
 
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
@@ -190,8 +190,8 @@ public class TestSetDataSheet extends RomanBase {
                 pathCare.interSystemloginPage,pathCare.analytical);
     }
 
-   @Test
-    @Order(1)
+    @Test
+    @Order(6)
     public void workSheet() throws Exception {
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
@@ -201,7 +201,7 @@ public class TestSetDataSheet extends RomanBase {
     }
 
     @Test
-    @Order(2)
+    @Order(7)
     public void queue() throws Exception {
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
