@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ExcelExtractorList {
 
-    static String path = "Registration and Result entry Template 6 April 2023.xlsx";
+    static String path = "QC template 18 April 2023.xlsx";
 
     public static List<PatientModel> patientData(){
         PoijiOptions options = PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Registration").addListDelimiter(",")
@@ -77,6 +77,11 @@ public class ExcelExtractorList {
          PoijiOptions options = PoijiOptions.PoijiOptionsBuilder.settings().headerCount(2).sheetName("ResultsGenerator_PCPBioFireFilm").build();
          return Poiji.fromExcel(new File("src/main/resources/".concat(path)), ResultsGenerator_PCPBioFireFilm.class, options);
      }
+
+    static public List<ResultsGenerator_PCP> resultsGenerator_PCP() {
+        PoijiOptions options = PoijiOptions.PoijiOptionsBuilder.settings().headerCount(2).sheetName("ResultsGenerator_PCP").build();
+        return Poiji.fromExcel(new File("src/main/resources/".concat(path)), ResultsGenerator_PCP.class, options);
+    }
 
      //Change sheet name from ResultsGenerator_AAGeorge to ResultsGenerator_ George
     static public List<ResultsGenerator_AAGeorge> resultsGenerator_AAGeorge(){

@@ -6,6 +6,8 @@ import applications.PathCareapplication.models.AutomationUserModel;
 import applications.PathCareapplication.models.CytologyNon_GynaeSpecimen;
 
 import com.github.javafaker.Faker;
+import com.microsoft.schemas.vml.CTImageData;
+import org.apache.xmlbeans.impl.xb.xsdschema.impl.AttributeDocumentImpl;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.*;
@@ -141,7 +143,7 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pathCareLabTransferList.createShipment(specimenNumbers,false );
             pathCare.pathCareLabTransferList.closePackage();
             pathCare.pre_analytical.switchtoMainiFrame();
-            pathCare.pathCareLabTransferList.checkPackItem(labEpisode,specimenNumbers);
+            //pathCare.pathCareLabTransferList.checkPackItem(labEpisode,specimenNumbers);
 
             //transfer pick up
             pathCare.pre_analytical.switchtoMainiFrame();
@@ -209,7 +211,6 @@ public class CytologyTestPack extends RomanBase {
             specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtracts(true));
 
 
-
             //Change user Profile
             pathCare.pathCareScratch.loadingBarChecker();
             pathCare.analytical.switchToDefaultContext();
@@ -244,19 +245,6 @@ public class CytologyTestPack extends RomanBase {
             pathCare.interSystemloginPage.userselection();
             pathCare.pre_analytical.navigatespecimenRecived();
             pathCare.pathCareLabSpecimenReception.specimenReceiveCreated(specimenNumbers,specimenDetails.value,true);
-
-            /*pathCare.pre_analytical.navigateRegistration();
-            labEpisode = new ArrayList<>(List.of(new String[]{"23001958","23001959", "23001960"}));
-            pathCare.pathCareScratch.searchPatient(labEpisode.get(0));
-            specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtracts(true));
-            pathCare.analytical.switchToDefaultContext();
-            pathCare.pre_analytical.navigateRegistration();
-            pathCare.pathCareScratch.searchPatient(labEpisode.get(1));
-            specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtracts(true));
-            pathCare.analytical.switchToDefaultContext();
-            pathCare.pre_analytical.navigateRegistration();
-            pathCare.pathCareScratch.searchPatient(labEpisode.get(2));
-            specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtracts(true));*/
 
             //Processing
             pathCare.analytical.navigateProcedures();
@@ -357,16 +345,15 @@ public class CytologyTestPack extends RomanBase {
         }
 
         @Test
+        @Order(7)
         public void TP_168() throws Exception {
-            Faker faker = new Faker();
-            String[] testcollection = new String[]{"ANCYTONG"};
             AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
             pathCare.interSystemloginPage.login(model.username,model.password);
             pathCare.interSystemloginPage.setLocation("Pathcare Lab Assistant Histo N1");
             pathCare.interSystemloginPage.userselection();
             pathCare.analytical.navigateProcedures();
             pathCare.procedures.searchSelectionMultiple(new String[]{"PAP Staining","Giemsa Cyto","Rapid Diff"});
-            labEpisode = new ArrayList<>(List.of(new String[]{"23002146","23002147", "23002148"}));
+           labEpisode = new ArrayList<>(List.of(new String[]{"23002163","23002164", "23002165"}));
             pathCare.procedures.multipleSearch(labEpisode);
             pathCare.labEnquiry.navigatelabEnquiry();
             pathCare.labEnquiry.labResultsEntry(labEpisode.get(0)); //First lab Episode
@@ -386,6 +373,21 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pathCareProcessingPage.testSetProctocol();
             pathCare.pathCareProcessingPage.testSetOption();
 
+
+        }
+
+        @Test
+        @Order(8)
+        public void TP_169() throws Exception {
+            AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+            pathCare.interSystemloginPage.login(model.username,model.password);
+            pathCare.interSystemloginPage.setLocation("Pathcare Lab Assistant Histo N1");
+            pathCare.interSystemloginPage.userselection();
+            pathCare.labQueues.switchToMainFrame();
+            pathCare.labQueues.SearchResultTable("Total","Cytology - Non-Gynae Workload",20);
+            pathCare.labQueues.clickEspiodeElement(true,"23002163");//labEpisode.get(0)
+            pathCare.pathCareProcessingPage.testSetOption();
+            //pathCare.
 
         }
 

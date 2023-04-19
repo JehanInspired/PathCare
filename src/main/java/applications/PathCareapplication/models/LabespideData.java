@@ -25,6 +25,12 @@ public  class LabespideData  {
 
     private List<ResultsGenerator_Aquios1> resultsGenerator_aquios1s = new ArrayList<>();
 
+    public List<ResultsGenerator_PCP> getResultsGeneratorPcps() {
+        return resultsGeneratorPcps;
+    }
+
+    private List<ResultsGenerator_PCP> resultsGeneratorPcps = new ArrayList<>();
+
 
     private List<ResultsGenerator_RocheSysmexXGE> resultsGenerator_rocheSysmexXGES = new ArrayList<>();
 
@@ -146,6 +152,11 @@ public  class LabespideData  {
 
 
     //Being  Result Generator
+
+    public void setResultsGeneratorPcps(List<ResultsGenerator_PCP> resultsGeneratorPcps){
+        this.resultsGeneratorPcps = resultsGeneratorPcps;
+    }
+
 
     public void setResultGenerator_AbbottAliinityc(List<ResultsGenerator_AbbottAlinityc> resultsGenerator_abbottAlinitycList){
         this.resultsGenerator_AbbottAlinityc = resultsGenerator_abbottAlinitycList;
@@ -601,6 +612,19 @@ public  class LabespideData  {
             }
 
         }
+
+        for(ResultsGenerator_PCP resultsGenerator_pcp : ExcelExtractorList.resultsGenerator_PCP()) {
+
+            if (resultsGenerator_pcp.getUser_Profile() != null) {
+                for (UserProfileEntity userProfileEntity : userProfile()) {
+                    if (resultsGenerator_pcp.getUser_Profile().contentEquals(userProfileEntity.getPK())) {
+                        resultsGenerator_pcp.setUser_Profile(userProfileEntity.getAccessProfile());
+                    }
+                }
+                this.resultsGeneratorPcps.add(resultsGenerator_pcp);
+            }
+
+        }
         //End of Result Generator
 
         //Lab Queue
@@ -696,6 +720,7 @@ public  class LabespideData  {
             setResultsGenerator_rocheSysmexXGES(resultsGenerator_rocheSysmexXGES);
             setResultsGenerator_sysmexca620Geos(resultsGenerator_sysmexca620Geos);
             setResultsGeneratorAaGeorges(resultsGeneratorAaGeorges);
+            setResultsGeneratorPcps(resultsGeneratorPcps);
 
             List<List> resultGenerator = new ArrayList<>();
             resultGenerator.add(resultsGenerator_AbbottAlinityc);
@@ -707,6 +732,7 @@ public  class LabespideData  {
             resultGenerator.add(resultsGenerator_rocheSysmexXGES);
             resultGenerator.add(resultsGenerator_sysmexca620Geos);
             resultGenerator.add(resultsGenerator_Abbott);
+            resultGenerator.add(resultsGeneratorPcps);
             setResultGene(resultGenerator);
 
             setResultsEntries(resultsEntries);

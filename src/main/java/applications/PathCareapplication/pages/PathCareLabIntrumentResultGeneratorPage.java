@@ -15,7 +15,10 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
     private final By testGroup = By.xpath("//input[@id='LBCInstrumentTestGroup']");
     private final By speciemenNumber = By.xpath("//input[@id='SpecimenNumber']");
     private final By resultsTB = By.xpath("//input[@id='Resultz1']");
+    private final By generateQCtickBox = By.xpath("//input[@name='GenerateQC']");
 
+    private final By qcRuns = By.xpath("//input[@name='NumberOfQCSamples']");
+    private final By qcSampleID =By.xpath("//input[@name='QCSpecimenNumber']");
     private final By generateButton = By.xpath("//input[@id='generate1']");
     private final By selecttickbox = By.xpath("//input[@id='Selectz1']");
     private final By iframeMain = By.xpath("//iframe[@id='TRAK_main']");
@@ -149,33 +152,6 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
 
         Thread.sleep(3000);
 
-        /*for(int x=0; x<=testitems.size()-1;x++){
-            By testitem = By.xpath("//label[contains(text(),'"+testitems.get(x)+"')]");
-
-            if(!validateElement_Displayed(testitem)){
-                while(!validateElement_Displayed(testitem)){
-                    click(nextpage,10);
-                }
-            }
-            x=x+2;
-        }*/
-
-           /* findOne(intrumentTextBox,nameOfIntrument[0]);
-            if(!getText(intrumentTextBox).isBlank()){
-                stepPassedWithScreenshot("Entered instrument test item "+nameOfIntrument[0]);
-            }
-            Thread.sleep(3000);
-            findOne(testGroup,nameOfIntrument[1]);
-            if(!getText(testGroup).isBlank()){
-                stepPassedWithScreenshot("Entered test group test item "+nameOfIntrument[1]);
-            }
-            Thread.sleep(3000);
-            findOne(speciemenNumber,materialNumber);
-            if(!getText(speciemenNumber).isBlank()){
-                stepPassedWithScreenshot("Entered material number test item "+materialNumber);
-            }*/
-
-
         for(String value:testitems.keySet()){
             By testiteminputboxes = By.xpath("//td[preceding-sibling::td[contains(.,'" + value + "')]]//input[not(@disabled) and(not(contains(@type,'hidden')))]");
             find(testiteminputboxes).get(1).sendKeys(testitems.get(value));
@@ -247,7 +223,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                         switchToFrame(iframeMain);
 
                         if (resultsGenerator_pcpBioFireFilm.getSpecimenReceive_FK().contentEquals(specimenReceivesEntity.getPk())) {
-                            intrumenSpecimenfield(resultsGenerator_pcpBioFireFilm.getInstrument(), resultsGenerator_pcpBioFireFilm.getTestGroup(), specimenReceivesEntity.getSpecimenNumber());
+                            intrumenSpecimenfield(resultsGenerator_pcpBioFireFilm.getInstrument(), resultsGenerator_pcpBioFireFilm.getTestGroup(), specimenReceivesEntity.getSpecimenNumber(),"","");
                             testItemCodeResult(resultsGenerator_pcpBioFireFilm.getValues());
                             acceptdataResult();
                         }
@@ -261,7 +237,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                         switchToFrame(iframeMain);
 
                         if (resultsGenerator_sysmexCS2500.getSpecimenReceive_FK().contentEquals(specimenReceivesEntity.getPk())) {
-                            intrumenSpecimenfield(resultsGenerator_sysmexCS2500.getInstrument(), resultsGenerator_sysmexCS2500.getTestGroup(), specimenReceivesEntity.getSpecimenNumber());
+                            intrumenSpecimenfield(resultsGenerator_sysmexCS2500.getInstrument(), resultsGenerator_sysmexCS2500.getTestGroup(), specimenReceivesEntity.getSpecimenNumber(),"","");
                             testItemCodeResult(resultsGenerator_sysmexCS2500.getValues());
                             acceptdataResult();
                         }
@@ -277,7 +253,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                         switchToFrame(iframeMain);
 
                         if (resultsGenerator_rocheSysmexXN1.getSpecimen_receive_FK().contentEquals(specimenReceivesEntity.getPk())) {
-                            intrumenSpecimenfield(resultsGenerator_rocheSysmexXN1.getInstrument(), resultsGenerator_rocheSysmexXN1.getTest_Group(), specimenReceivesEntity.getSpecimenNumber());
+                            intrumenSpecimenfield(resultsGenerator_rocheSysmexXN1.getInstrument(), resultsGenerator_rocheSysmexXN1.getTest_Group(), specimenReceivesEntity.getSpecimenNumber(),"","");
                             testItemCodeResult(resultsGenerator_rocheSysmexXN1.getValues());
                             acceptdataResult();
 
@@ -293,7 +269,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                         switchToFrame(iframeMain);
 
                         if (resultsGenerator_abbottAlinityc.getSpecimen_receive_FK().contentEquals(specimenReceivesEntity.getPk())) {
-                            intrumenSpecimenfield(resultsGenerator_abbottAlinityc.getInstrument(), resultsGenerator_abbottAlinityc.getTest_Group(), specimenReceivesEntity.getSpecimenNumber());
+                            intrumenSpecimenfield(resultsGenerator_abbottAlinityc.getInstrument(), resultsGenerator_abbottAlinityc.getTest_Group(), specimenReceivesEntity.getSpecimenNumber(),"","");
                             testItemCodeResult(resultsGenerator_abbottAlinityc.getValues());
                             acceptdataResult();
 
@@ -308,7 +284,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                         switchToDefaultContext();
                         switchToFrame(iframeMain);
                         if (resultsGenerator_aaGeorge.getSpecimen_receive_FK().contentEquals(specimenReceivesEntity.getPk())) {
-                            intrumenSpecimenfield(resultsGenerator_aaGeorge.getInstrument(), resultsGenerator_aaGeorge.getTest_Group(), specimenReceivesEntity.getSpecimenNumber());
+                            intrumenSpecimenfield(resultsGenerator_aaGeorge.getInstrument(), resultsGenerator_aaGeorge.getTest_Group(), specimenReceivesEntity.getSpecimenNumber(),"","");
                             testItemCodeResult(resultsGenerator_aaGeorge.getValues());
                             acceptdataResult();
                         }
@@ -321,7 +297,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                         switchToDefaultContext();
                         switchToFrame(iframeMain);
                         if (resultsGenerator_aquios1.getSpecimen_receive_FK().contentEquals(specimenReceivesEntity.getPk())) {
-                            intrumenSpecimenfield(resultsGenerator_aquios1.getInstrument(), resultsGenerator_aquios1.getTest_Group(), specimenReceivesEntity.getSpecimenNumber());
+                            intrumenSpecimenfield(resultsGenerator_aquios1.getInstrument(), resultsGenerator_aquios1.getTest_Group(), specimenReceivesEntity.getSpecimenNumber(),"","");
                             testItemCodeResult(resultsGenerator_aquios1.getValues());
                             acceptdataResult();
 
@@ -336,7 +312,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                         switchToFrame(iframeMain);
 
                         if (resultsGenerator_rocheSysmexXGE.getSpecimen_receive_FK().contentEquals(specimenReceivesEntity.getPk())) {
-                            intrumenSpecimenfield(resultsGenerator_rocheSysmexXGE.getInstrument(), resultsGenerator_rocheSysmexXGE.getTest_Group(), specimenReceivesEntity.getSpecimenNumber());
+                            intrumenSpecimenfield(resultsGenerator_rocheSysmexXGE.getInstrument(), resultsGenerator_rocheSysmexXGE.getTest_Group(), specimenReceivesEntity.getSpecimenNumber(),"","");
                             testItemCodeResult(resultsGenerator_rocheSysmexXGE.getValues());
                             acceptdataResult();
 
@@ -351,7 +327,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                         switchToFrame(iframeMain);
 
                         if (resultsGenerator_sysmexca620Geo.getSpecimen_receive_FK().contentEquals(specimenReceivesEntity.getPk())) {
-                            intrumenSpecimenfield(resultsGenerator_sysmexca620Geo.getInstrument(), resultsGenerator_sysmexca620Geo.getTest_Group(), specimenReceivesEntity.getSpecimenNumber());
+                            intrumenSpecimenfield(resultsGenerator_sysmexca620Geo.getInstrument(), resultsGenerator_sysmexca620Geo.getTest_Group(), specimenReceivesEntity.getSpecimenNumber(),"","");
                             testItemCodeResult(resultsGenerator_sysmexca620Geo.getValues());
                             acceptdataResult();
 
@@ -366,7 +342,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
                        switchToFrame(iframeMain);
 
                        if (resultsGenerator_abbott.getSpecimen_receive_FK().contentEquals(specimenReceivesEntity.getPk())) {
-                           intrumenSpecimenfield(resultsGenerator_abbott.getInstrument(), resultsGenerator_abbott.getTest_Group(), specimenReceivesEntity.getSpecimenNumber());
+                           intrumenSpecimenfield(resultsGenerator_abbott.getInstrument(), resultsGenerator_abbott.getTest_Group(), specimenReceivesEntity.getSpecimenNumber(),"","");
                            testItemCodeResult(resultsGenerator_abbott.getValues());
                            acceptdataResult();
 
@@ -377,7 +353,28 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
 
         }
 
-        }
+    }
+
+    public void multipleEpisodeQC(
+
+            List<ResultsGenerator_PCP> resultsGenerator_PCP,
+            LabQueues labQueues,
+            InterSystemLoginPage interSystemLoginPage) throws InterruptedException {
+        List<Object> data = new ArrayList<>();
+        data.add(resultsGenerator_PCP);
+
+        for(int x=0;x<data.size();x++) {
+                for (ResultsGenerator_PCP resultsGenerator_pcp : ((List<ResultsGenerator_PCP>) data.get(x))) {
+                        changeLocation(resultsGenerator_pcp.getUser_Profile(), interSystemLoginPage, labQueues);
+                        switchToDefaultContext();
+                        switchToFrame(iframeMain);
+                            intrumenSpecimenfield(resultsGenerator_pcp.getInstrument(), resultsGenerator_pcp.getTestGroup(),"",resultsGenerator_pcp.getQcRuns(),resultsGenerator_pcp.getQcSampleIDCupPosition());
+                            testItemCodeResult(resultsGenerator_pcp.getStringValueMap());
+                            acceptdataResult();
+                }
+            }
+    }
+
     void changeLocation(String location,InterSystemLoginPage interSystemloginPage, LabQueues labQueues){
 
         if (!locationNew.contentEquals(location)){
@@ -408,7 +405,7 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
         _driver.navigate().refresh();
     }
 
-    void intrumenSpecimenfield(String intrument,String testGroupField,String materialNumber) throws InterruptedException {
+    void intrumenSpecimenfield(String intrument,String testGroupField,String materialNumber,String qcRunsText,String qcSampleIDText) throws InterruptedException {
         switchToDefaultContext();
         switchToFrame(iframeMain);
 
@@ -422,9 +419,24 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
             stepPassedWithScreenshot("Entered test group test item "+testGroupField);
         }
         Thread.sleep(3000);
-        findOne(speciemenNumber,materialNumber);
-        if(!getAttribute(speciemenNumber,"value").isBlank()){
-            stepPassedWithScreenshot("Entered material number test item "+materialNumber);
+        if(materialNumber !=null||!materialNumber.isBlank()) {
+            findOne(speciemenNumber, materialNumber);
+            if (!getAttribute(speciemenNumber, "value").isBlank()) {
+                stepPassedWithScreenshot("Entered material number test item " + materialNumber);
+            }
+        }
+        Thread.sleep(3000);
+        if(qcRunsText !=null || qcRunsText.isBlank()){
+            click(generateQCtickBox,timeout);
+            findOne(qcRuns,qcRunsText);
+            findOne(qcSampleID,qcSampleIDText);
+
+            if (!getAttribute(qcRuns, "value").isBlank()) {
+                stepPassedWithScreenshot("Entered QC Runs " + qcRunsText);
+            }
+            if (!getAttribute(qcSampleID, "value").isBlank()) {
+                stepPassedWithScreenshot("Entered QC Sample ID " + qcRunsText);
+            }
         }
     }
 

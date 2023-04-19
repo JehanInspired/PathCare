@@ -119,6 +119,7 @@ public class Procedures extends AbstractExtension {
         awaitElement(bulkCompleteButton,timeout);
         click(bulkCompleteButton,timeout);
         }
+        _driver.navigate().refresh();
 
     }
 

@@ -210,3 +210,40 @@ public class TestSetDataSheet extends RomanBase {
     }
 
 }
+
+class QC extends RomanBase{
+
+    public ChromeOptions options = new ChromeOptions();
+    public Roman roman = super.roman();
+    public PathCareApplication pathCare = null;
+    public String dir = " ";
+    private final LabespideData dataPatient = new LabespideData();
+    @BeforeEach
+    public void startup() {
+        dir = get_reportDir();
+        options = new ChromeOptions();
+        dataPatient.patientInform();
+        HashMap<String, Object> chromeOptionsMap = new HashMap<>();
+        chromeOptionsMap.put("plugins.plugins_disabled", new String[] { "Chrome PDF Viewer" });
+        chromeOptionsMap.put("plugins.always_open_pdf_externally", true);
+        chromeOptionsMap.put("download.open_pdf_in_system_reader",false);
+        chromeOptionsMap.put("download.prompt_for_download",false);
+        chromeOptionsMap.put("profile.default_content_settings.popups ",0);
+        chromeOptionsMap.put("download.extensions_to_open ","applications/pdf");
+        chromeOptionsMap.put("download.default_directory", dir);
+        options.setExperimentalOption("prefs", chromeOptionsMap);
+        roman._driver = roman().selenium.getChromeDriver(options);
+        pathCare = new PathCareApplication(roman);
+
+
+    }
+
+    @Test
+    public void labResultGeneratorQC() throws Exception{
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.pathCareLabIntrumentResultGeneratorpage.
+                multipleEpisodeQC(dataPatient.getResultsGeneratorPcps()
+                        ,pathCare.labQueues,pathCare.interSystemloginPage);
+    }
+}

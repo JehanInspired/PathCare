@@ -527,7 +527,6 @@ public class MultiDisciplineTestCase extends RomanBase {
 
     @Test
     public void TP_34() throws Exception{
-
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         pathCare.interSystemloginPage.setLocation("PC Help Desk Operator RL");

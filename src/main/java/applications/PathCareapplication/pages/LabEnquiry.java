@@ -28,13 +28,12 @@ public class LabEnquiry extends AbstractExtension {
     }
 
     public void navigatelabEnquiry(){
-        awaitElement(labResultEnquiry,timeout);
-        click(mainMenu);
-        if(validateElement_Enabled_Displayed(labResultEnquiry)){
+        click(mainMenu,timeout);
+        if(validateElement_Enabled_Displayed(labResultEnquiry,timeout)){
             click(labResultEnquiry,timeout);
             stepInfo("Clicked Lab Result Enquiry");
         }else{
-            click(labEnquiry);
+            click(labEnquiry, timeout);
             awaitElement(labResultEnquiry,timeout);
             click(labResultEnquiry,timeout);
             stepInfo("Clicked Lab Result Enquiry");

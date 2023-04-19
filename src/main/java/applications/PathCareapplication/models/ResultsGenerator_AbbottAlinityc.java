@@ -1,6 +1,5 @@
 package applications.PathCareapplication.models;
 
-import com.poiji.annotation.ExcelCell;
 import com.poiji.annotation.ExcelCellName;
 import com.poiji.annotation.ExcelRow;
 import com.poiji.annotation.ExcelUnknownCells;
@@ -31,11 +30,8 @@ public class ResultsGenerator_AbbottAlinityc {
     @ExcelCellName("specimen receive_FK")
     String specimen_receive_FK ;
 
-
     @ExcelUnknownCells
     private HashMap<String, String> stringValueMap = new HashMap<>();
-
-
 
     public String getLabResult_Key() {
         return LabResult_Key;
