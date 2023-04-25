@@ -113,8 +113,6 @@ public class TestSetDataSheet extends RomanBase {
 
     }
 
-
-
     @Test
     @Order(3)
     public void work_Receive() throws Exception{
@@ -211,7 +209,7 @@ public class TestSetDataSheet extends RomanBase {
 
 }
 
-class QC extends RomanBase{
+class QCTestCase extends RomanBase{
 
     public ChromeOptions options = new ChromeOptions();
     public Roman roman = super.roman();
@@ -247,3 +245,94 @@ class QC extends RomanBase{
                         ,pathCare.labQueues,pathCare.interSystemloginPage);
     }
 }
+
+class ReferenceRangesTestCase extends RomanBase{
+
+    public ChromeOptions options = new ChromeOptions();
+    public Roman roman = super.roman();
+    public PathCareApplication pathCare = null;
+    public String dir = " ";
+    private final LabespideData dataPatient = new LabespideData();
+    @BeforeEach
+    public void startup() {
+        dir = get_reportDir();
+        options = new ChromeOptions();
+        dataPatient.patientInform();
+        HashMap<String, Object> chromeOptionsMap = new HashMap<>();
+        chromeOptionsMap.put("plugins.plugins_disabled", new String[] { "Chrome PDF Viewer" });
+        chromeOptionsMap.put("plugins.always_open_pdf_externally", true);
+        chromeOptionsMap.put("download.open_pdf_in_system_reader",false);
+        chromeOptionsMap.put("download.prompt_for_download",false);
+        chromeOptionsMap.put("profile.default_content_settings.popups ",0);
+        chromeOptionsMap.put("download.extensions_to_open ","applications/pdf");
+        chromeOptionsMap.put("download.default_directory", dir);
+        options.setExperimentalOption("prefs", chromeOptionsMap);
+        roman._driver = roman().selenium.getChromeDriver(options);
+        pathCare = new PathCareApplication(roman);
+
+
+    }
+
+    @Test
+    @Order(1)
+    public void registerPatient() throws Exception {
+
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        for(PatientModel patient:dataPatient.getPatientModelList()) {
+
+            if(pathCare.interSystemloginPage.getLocation().isEmpty()) {
+                pathCare.interSystemloginPage.setLocation(patient.getUserprofile());
+                pathCare.interSystemloginPage.userselection();
+                pathCare.pre_analytical.navigateRegistration();
+            }else if(!pathCare.interSystemloginPage.getLocation().contentEquals(patient.getUserprofile())){
+                pathCare.interSystemloginPage.setLocation(patient.getUserprofile());
+                pathCare.interSystemloginPage.changelocation();
+                pathCare.interSystemloginPage.userselection();
+                pathCare.pre_analytical.navigateRegistration();
+            }
+            if(patient.getURN() != null){
+                pathCare.pathCareScratch.searchPatientURN(patient.getURN());
+                pathCare.pathCareScratch.createdSamePatient();
+            }else{
+                pathCare.pathCareScratch.patientdetails(patient.getGivenName(), patient.getSurname(), patient.getDateOfBirth(), patient.getSex());
+            }
+            pathCare.pathCareScratch.doctorSelection(patient.getReferringDoctor());
+            dataPatient.write(patient.getPk()+","+pathCare.pathCareScratch.collectiondetailnewEditSpecimen(patient.getPk(),patient.getCollectionTime(),patient.getPatientLocation(),patient.getTestSet().toArray(String[]::new),!patient.getReceivedDate().isBlank(),dataPatient.getTestSetDetailsList(),dataPatient.getSpecimensArrayList(),dataPatient.getEditTestArrayList()));
+        }
+
+    }
+
+
+    @Test
+    @Order(2)
+    public void labInstrumentResultGenerator() throws Exception{
+
+
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        String location = dataPatient.getPatientModelList().get(0).getUserprofile();
+        pathCare.interSystemloginPage.setLocation(location);
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateRegistration();
+        HashMap<String, ArrayList<String>> labespisodesSpecimen = pathCare.pathCareScratch.searchMutliplePatientKeys(dataPatient.readerList());
+        pathCare.pathCareLabIntrumentResultGeneratorpage.
+                multipleEpisode(dataPatient.getResultsGenerator_AbbottAlinityc(),labespisodesSpecimen
+                        ,pathCare.labQueues,pathCare.interSystemloginPage);
+        dataPatient.write(labespisodesSpecimen.toString().replace("{","").replace("}",""),"ReferenceRangesResources.txt");
+
+    }
+
+    @Test
+    @Order(3)
+    public void labResultVerify() throws Exception{
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        pathCare.resultEntry.mutlipleVerifyLabEpisode(dataPatient.getResultsEntryVerifies(), dataPatient.readerList(),pathCare.interSystemloginPage,pathCare.analytical);
+
+    }
+
+
+}
+
+

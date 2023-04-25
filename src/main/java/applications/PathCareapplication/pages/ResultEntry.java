@@ -2,6 +2,7 @@ package applications.PathCareapplication.pages;
 
 import Roman.Roman;
 import applications.PathCareapplication.models.ResultsEntry;
+import applications.PathCareapplication.models.ResultsEntryVerify;
 import applications.PathCareapplication.models.SpecimenReceiveEntity;
 import applications.PathCareapplication.models.TestSetValuesEntity;
 import applications.PathCareapplication.tool.AbstractExtension;
@@ -82,6 +83,12 @@ public class ResultEntry extends AbstractExtension {
 
     private final By requiredfieldblackbox = By.xpath("//span[contains(@title,'Required')]");
 
+    private final By viewQueues = By.xpath("//a[@id='ViewQueuesLink']");
+    private final By queueText = By.xpath("//label[@id='LBQ_Descz1']");
+
+    private final By resultflag = By.xpath("//label[contains(@id,'AbnormalFlag')]");
+    private final By refeRange = By.xpath("//label[contains(@id,'LBTSIRange')]");
+
     private By selectSingletest= By.xpath("");
 
     private String locationNew = "";
@@ -99,10 +106,10 @@ public class ResultEntry extends AbstractExtension {
     public int numberfiles;
 
 
-    public void testSetListSingle(String labespide) {
-        episodeNumber = By.xpath("//span[contains(text(),'%s')]".replace("%s", labespide));
+    public void testSetListSingle(String lab_episode) {
+        episodeNumber = By.xpath("//span[contains(text(),'%s')]".replace("%s", lab_episode));
         awaitElement(episodeNumber,timeout);
-        stepPassedWithScreenshot("Able to view testset " + getText(episodeNumber,timeout));
+        stepPassedWithScreenshot("Able to view Test Set " + getText(episodeNumber,timeout));
         click(episodeNumber,timeout);
 
 
@@ -113,18 +120,18 @@ public class ResultEntry extends AbstractExtension {
         episodeNumber = By.xpath("//span[contains(text(),'%s')]".replace("%s", labespide));
 
         if (validateElement_Displayed(episodeNumber) && validateElement_Enabled_Displayed(receivedTestList)) {
-            stepPassedWithScreenshot("Able to view testset " + getText(episodeNumber));
+            stepPassedWithScreenshot("Able to view Test Set " + getText(episodeNumber));
             click(receivedTestList);
 
         }
     }
-    public void mutlipleTestResult(ArrayList<String> LapespideMultiple){
-        for(String labespide:LapespideMultiple) {
-            LabResultsEntry(labespide);
-            episodeNumber = By.xpath("//span[contains(text(),'%s')]".replace("%s", labespide));
+    public void multipleTestResult(ArrayList<String> multiple_labEpisode){
+        for(String lab_Episode:multiple_labEpisode) {
+            LabResultsEntry(lab_Episode);
+            episodeNumber = By.xpath("//span[contains(text(),'%s')]".replace("%s", lab_Episode));
 
             if (validateElement_Displayed(episodeNumber)) {
-                stepPassedWithScreenshot("Able to view testset " + getText(episodeNumber));
+                stepPassedWithScreenshot("Able to view Test Set " + getText(episodeNumber));
                 click(episodeNumber);
                 switchToFrame(iframeProcessing);
                 testSetOption();
@@ -134,6 +141,11 @@ public class ResultEntry extends AbstractExtension {
                 click(By.xpath("//a[@ng-click='navBack();']"));
             }
         }
+    }
+    private void backToResultEntrySeacrh(){
+        switchToDefaultContext();
+        click(By.xpath("//a[@ng-click='navBack();']"));
+        click(By.xpath("//a[@ng-click='navBack();']"));
     }
 
     void changeLocation(String location,InterSystemLoginPage interSystemloginPage, Analytical analytical,String specimenRecieve){
@@ -191,8 +203,55 @@ public class ResultEntry extends AbstractExtension {
         }
 
     }
+    public void mutlipleVerifyLabEpisode(ArrayList<ResultsEntryVerify> data, List<String> Lab_episodes, InterSystemLoginPage interSystemloginPage, Analytical analytical){
+        for(String Lab_episode:Lab_episodes){
+            for(ResultsEntryVerify resultsEntryVerifySingle:data) {
+                if (resultsEntryVerifySingle.getRegistration_FK().contentEquals(Lab_episode.split(",")[0])) {
+                    changeLocation(resultsEntryVerifySingle.getUserprofile_FK(),interSystemloginPage,analytical,Lab_episode.split(",")[1]);
+                    resultverify(Lab_episode.split(",")[1],resultsEntryVerifySingle.getReferenceRange(),resultsEntryVerifySingle.getExpectedQueue(),resultsEntryVerifySingle.getExpectedResultFlag());
+                }
+            }
 
-    private void specimenNumberEntry(String testSetValue_Fk,String testSet ,String specimenRecieve, ArrayList<TestSetValuesEntity> testSetValueEntities, InterSystemLoginPage interSystemloginPage, Analytical analytical) throws IllegalAccessException {
+        }
+    }
+    public void resultverify(String labEpisode,String ranges,String queueValue,String resultFlagValue){
+        //Search Specimen
+        LabResultsEntry(labEpisode);
+        testSetListSingle(labEpisode);
+        //Verify results
+        if(referenceRange(ranges)){
+            stepPassedWithScreenshot("Able to view ranges "+ranges);
+        }
+        if(expectedqueue(queueValue)){
+            stepPassed("Able to view queue "+queueValue);
+        }
+        if(expectedResultflagSingle(resultFlagValue)){
+            stepPassed("Able to view result flag "+resultFlagValue);
+        }
+        switchToDefaultContext();
+        backtoTestSetList();
+    }
+
+    private Boolean referenceRange(String ranges){
+        switchToDefaultContext();
+        switchToMainFrame();
+        return getText(refeRange,timeout).contentEquals(ranges);
+    }
+    private Boolean expectedqueue(String queueValue){
+        click(testSetOptionButtonDropDown,timeout);
+        click(viewQueues,timeout);
+        switchToDefaultContext();
+        switchToFrame(testSetCommentsTextboxiFrame);
+       return getText(queueText,timeout).contentEquals(queueValue);
+    }
+
+    private Boolean expectedResultflagSingle(String resultflagValue){
+        switchToDefaultContext();
+        switchToMainFrame();
+       return getText(resultflag,timeout).contentEquals(resultflagValue!=null?resultflagValue: "  " );
+    }
+
+    private void specimenNumberEntry(String testSetValue_Fk,String testSet,String specimenRecieve, ArrayList<TestSetValuesEntity> testSetValueEntities, InterSystemLoginPage interSystemloginPage, Analytical analytical) throws IllegalAccessException {
 
         awaitElement(specimenNumber,timeout);
         sendKeys(specimenNumber,specimenRecieve,true,true,timeout);
@@ -203,7 +262,6 @@ public class ResultEntry extends AbstractExtension {
         click(findButton,timeout);
         testSetListSingle(specimenRecieve);
         enterdataResults(testSetValue_Fk,specimenRecieve ,testSetValueEntities, interSystemloginPage,  analytical);
-
         backtoTestSetList();
     }
 
@@ -288,7 +346,7 @@ public class ResultEntry extends AbstractExtension {
     }
     public void LabResultsEntry(String labespide){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate todaydate = LocalDate.now();
+        LocalDate todaydate = LocalDate.now().minusDays(5);
             sendKeys(labEpisode,labespide,true,true,timeout);
             sendKeys(reportCollectionDate, dtf.format(todaydate));
             click(findButton,timeout);
@@ -393,10 +451,7 @@ public class ResultEntry extends AbstractExtension {
        // reportPreview();
 
     }
-    public void selectTestSetResultlist(String testSet){
-        click(By.xpath("//span[text()='%s']".replace("%s", testSet)));
-        stepPassedWithScreenshot("Successfully clicked "+testSet);
-    }
+
 
     public Boolean checkvaluesTestResults(HashMap<String,String> testlistResult,String testSet){
         boolean results =false;
@@ -445,10 +500,10 @@ public class ResultEntry extends AbstractExtension {
                      find(inputTestresults).get(counter).sendKeys(testresult);
                      find(inputTestresults).get(counter).sendKeys(Keys.TAB);
                      Thread.sleep(5000);
-                     if(find(requiredfieldblackbox).size() == count){
-                         while(find(requiredfieldblackbox).size() == count){
-                             find(inputTestresults).get(counter).sendKeys(testresult);
-                             find(inputTestresults).get(counter).sendKeys(Keys.TAB);
+                     if(find(requiredfieldblackbox,timeout).size() == count){
+                         while(find(requiredfieldblackbox,timeout).size() == count){
+                             find(inputTestresults,timeout).get(counter).sendKeys(testresult);
+                             find(inputTestresults,timeout).get(counter).sendKeys(Keys.TAB);
                              Thread.sleep(5000);
                          }
                      }
@@ -459,7 +514,7 @@ public class ResultEntry extends AbstractExtension {
 
              switchToDefaultContext();
              switchToFrame(resultEntryiFrame);
-             click(applyTestResult);
+             click(applyTestResult,timeout);
              stepPassedWithScreenshot("Successfully applied "+testSet);
              Thread.sleep(4000);
              if(validateElement_Displayed(validate)){

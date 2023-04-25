@@ -35,7 +35,7 @@ public class WorkAreaReceiveEntity {
 
     }
 
-        public WorkAreaReceiveEntity(String pk, String userprofile, String specimeNumber, String department, String workArea,String testSet){
+    public WorkAreaReceiveEntity(String pk, String userprofile, String specimeNumber, String department, String workArea,String testSet){
 
             this.pk =pk;
             this.userprofile =userprofile;

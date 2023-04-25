@@ -452,11 +452,11 @@ public class PathCareScratch extends AbstractExtension {
         if(newPatient) {
             findEnterTab(gendertextbox, this.gender);
             findEnterTab(DateofBirth, this.dateOfBirth);
-            click(DateofBirth);
+            click(DateofBirth,timeout);
             stepPassedWithScreenshot("User is directed to Lab Episode screen");
         }
         if(validateElement_Enabled_Displayed(saveAndclose,timeout)) {
-            click(saveAndclose);
+            click(saveAndclose,timeout);
             loadingBarChecker();
             if(validateElement_Displayed(continuelink, timeout)){
                 click(continuelink,timeout);
@@ -958,8 +958,6 @@ public class PathCareScratch extends AbstractExtension {
         return labEspideonumber;
 
     }
-
-
 
     public void findEnterTab(By by, String input) {
         awaitElement(by,timeout);

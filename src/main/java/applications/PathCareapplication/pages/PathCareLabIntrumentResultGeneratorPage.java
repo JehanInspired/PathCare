@@ -355,6 +355,32 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
 
     }
 
+    public void multipleEpisode(
+            List<ResultsGenerator_AbbottAlinityc> resultAbbot, HashMap<String, ArrayList<String>> specimens
+            ,LabQueues labQueues,
+            InterSystemLoginPage interSystemLoginPage) throws InterruptedException {
+        List<Object> data = new ArrayList<>();
+        data.add(resultAbbot);
+
+        for(int x=0;x<data.size();x++){
+             if(x==0 && !(resultAbbot.size()==0) ){
+                            for (ResultsGenerator_AbbottAlinityc resultsGenerator_abbottAlinityc : ((List<ResultsGenerator_AbbottAlinityc>) data.get(x))) {
+                                firstTime = false;
+                                    changeLocation(resultsGenerator_abbottAlinityc.getUserprofile(), interSystemLoginPage, labQueues);
+                                    switchToDefaultContext();
+                                    switchToFrame(iframeMain);
+                                    //only find one specimen but need to be modified to store more than one.
+                                    resultsGenerator_abbottAlinityc.setSpecimen_receive_FK(specimens.get(resultsGenerator_abbottAlinityc.getPatient_Key()).get(0));
+                                        intrumenSpecimenfield(resultsGenerator_abbottAlinityc.getInstrument(), resultsGenerator_abbottAlinityc.getTest_Group(), resultsGenerator_abbottAlinityc.getSpecimen_receive_FK(),null,null);
+                                        testItemCodeResult(resultsGenerator_abbottAlinityc.getValues());
+                                        acceptdataResult();
+                            }
+                        }
+
+                    }
+
+    }
+
     public void multipleEpisodeQC(
 
             List<ResultsGenerator_PCP> resultsGenerator_PCP,
@@ -363,16 +389,16 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
         List<Object> data = new ArrayList<>();
         data.add(resultsGenerator_PCP);
 
-        for(int x=0;x<data.size();x++) {
-                for (ResultsGenerator_PCP resultsGenerator_pcp : ((List<ResultsGenerator_PCP>) data.get(x))) {
-                        changeLocation(resultsGenerator_pcp.getUser_Profile(), interSystemLoginPage, labQueues);
-                        switchToDefaultContext();
-                        switchToFrame(iframeMain);
-                            intrumenSpecimenfield(resultsGenerator_pcp.getInstrument(), resultsGenerator_pcp.getTestGroup(),"",resultsGenerator_pcp.getQcRuns(),resultsGenerator_pcp.getQcSampleIDCupPosition());
-                            testItemCodeResult(resultsGenerator_pcp.getStringValueMap());
-                            acceptdataResult();
-                }
+        for (Object datum : data) {
+            for (ResultsGenerator_PCP resultsGenerator_pcp : ((List<ResultsGenerator_PCP>) datum)) {
+                changeLocation(resultsGenerator_pcp.getUser_Profile(), interSystemLoginPage, labQueues);
+                switchToDefaultContext();
+                switchToFrame(iframeMain);
+                intrumenSpecimenfield(resultsGenerator_pcp.getInstrument(), resultsGenerator_pcp.getTestGroup(), "", resultsGenerator_pcp.getQcRuns(), resultsGenerator_pcp.getQcSampleIDCupPosition());
+                testItemCodeResult(resultsGenerator_pcp.getStringValueMap());
+                acceptdataResult();
             }
+        }
     }
 
     void changeLocation(String location,InterSystemLoginPage interSystemloginPage, LabQueues labQueues){
@@ -419,23 +445,27 @@ public class PathCareLabIntrumentResultGeneratorPage extends AbstractExtension {
             stepPassedWithScreenshot("Entered test group test item "+testGroupField);
         }
         Thread.sleep(3000);
-        if(materialNumber !=null||!materialNumber.isBlank()) {
-            findOne(speciemenNumber, materialNumber);
-            if (!getAttribute(speciemenNumber, "value").isBlank()) {
-                stepPassedWithScreenshot("Entered material number test item " + materialNumber);
+        if(materialNumber !=null) {
+            if(!materialNumber.isBlank()) {
+                findOne(speciemenNumber, materialNumber);
+                if (!getAttribute(speciemenNumber, "value").isBlank()) {
+                    stepPassedWithScreenshot("Entered material number test item " + materialNumber);
+                }
             }
         }
         Thread.sleep(3000);
-        if(qcRunsText !=null || qcRunsText.isBlank()){
-            click(generateQCtickBox,timeout);
-            findOne(qcRuns,qcRunsText);
-            findOne(qcSampleID,qcSampleIDText);
+        if(qcRunsText !=null ){
+            if(!qcRunsText.isBlank()) {
+                click(generateQCtickBox, timeout);
+                findOne(qcRuns, qcRunsText);
+                findOne(qcSampleID, qcSampleIDText);
 
-            if (!getAttribute(qcRuns, "value").isBlank()) {
-                stepPassedWithScreenshot("Entered QC Runs " + qcRunsText);
-            }
-            if (!getAttribute(qcSampleID, "value").isBlank()) {
-                stepPassedWithScreenshot("Entered QC Sample ID " + qcRunsText);
+                if (!getAttribute(qcRuns, "value").isBlank()) {
+                    stepPassedWithScreenshot("Entered QC Runs " + qcRunsText);
+                }
+                if (!getAttribute(qcSampleID, "value").isBlank()) {
+                    stepPassedWithScreenshot("Entered QC Sample ID " + qcRunsText);
+                }
             }
         }
     }

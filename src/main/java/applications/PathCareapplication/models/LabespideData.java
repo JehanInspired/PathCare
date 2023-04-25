@@ -61,6 +61,8 @@ public  class LabespideData  {
 
     private ArrayList<ResultsEntry> resultsEntries = new ArrayList<>();
 
+    private ArrayList<ResultsEntryVerify> resultsEntryVerifies = new ArrayList<>();
+
     private ArrayList<TestSetValuesEntity> testSetValuesEntityList = new ArrayList<>();
 
     //LabQueue
@@ -366,6 +368,31 @@ public  class LabespideData  {
         return values;
 
     }
+
+    public ArrayList<SpecimenReceiveEntity> readSpecimenReceivListWithOutTestSet() throws FileNotFoundException {
+
+        ArrayList<SpecimenReceiveEntity> values = new ArrayList<>();
+
+        File file = new File("src/main/resources/ReferenceRangesResources.txt");
+        Scanner scan = new Scanner(file);
+
+        while (scan.hasNextLine()) {
+            String vsalue = scan.nextLine().trim().replace("{","").replace("}","");
+            if(!vsalue.isBlank()) {
+                SpecimenReceiveEntity specimenReceiveEntity = new SpecimenReceiveEntity(
+                        vsalue.split(",")[0]==null ? "":vsalue.split(",")[0],
+                        vsalue.split(",")[1]==null ?"": vsalue.split(",")[1],
+                        vsalue.split(",")[2]==null ?"":vsalue.split(",")[2]);
+                values.add(specimenReceiveEntity);
+
+
+            }
+        }
+        scan.close();
+        return values;
+
+    }
+
 
 
     public void clear() throws IOException {
@@ -681,6 +708,21 @@ public  class LabespideData  {
             this.testSetValuesEntityList.add(testSetValue);
         }
 
+        for(ResultsEntryVerify resultsEntryVerifyEntries:ExcelExtractorList.resultsEntryVerifyEntries()) {
+
+
+            if (resultsEntryVerifyEntries.getUserprofile_FK()!= null) {
+                for (UserProfileEntity userProfileEntity : userProfile()) {
+                    if (resultsEntryVerifyEntries.getUserprofile_FK().contentEquals(userProfileEntity.getPK())) {
+                        resultsEntryVerifyEntries.setUserprofile_FK(userProfileEntity.getAccessProfile());
+                    }
+                }
+                this.resultsEntryVerifies.add(resultsEntryVerifyEntries);
+            }
+
+
+        }
+
         //Work Sheet
         for (WorkSheetResultEntry workSheetResultEntry:ExcelExtractorList.workSheetResultEntries()){
 
@@ -689,7 +731,6 @@ public  class LabespideData  {
                     if (workSheetResultEntry.getUserprofile_FK().contentEquals(userProfileEntity.getPK())) {
                         workSheetResultEntry.setUserprofile_FK(userProfileEntity.getAccessProfile());
                     }
-
                 }
                 this.workSheetResultEntryArrayList.add(workSheetResultEntry);
             }
@@ -700,9 +741,10 @@ public  class LabespideData  {
                 this.workSheetResultValuesArrayList.add(workSheetResultValues);
 
         }
+
+
         //WorkSheet End
-
-
+            setResultsEntryVerifies(resultsEntryVerifies);
             setPatientModelList(patientModelList);
             setTestCodeList(testSetCode());
             setTestSetDetailsList(testSetDetailsEntityList);
@@ -743,6 +785,12 @@ public  class LabespideData  {
     }
 
 
+    public ArrayList<ResultsEntryVerify> getResultsEntryVerifies() {
+        return resultsEntryVerifies;
+    }
 
+    public void setResultsEntryVerifies(ArrayList<ResultsEntryVerify> resultsEntryVerifies) {
+        this.resultsEntryVerifies = resultsEntryVerifies;
+    }
 }
 

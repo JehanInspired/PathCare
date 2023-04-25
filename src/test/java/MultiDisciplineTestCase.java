@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static reporting.ExtentReport.get_reportDir;
 
@@ -20,13 +19,11 @@ public class MultiDisciplineTestCase extends RomanBase {
   public Roman roman = super.roman();
   public PathCareApplication pathCare = null;
   public String dir = " ";
-  private LabespideData dataPatient = new LabespideData();
 
     @BeforeEach
-    public void startup() throws IllegalAccessException {
+    public void startup()  {
          dir = get_reportDir();
          options = new ChromeOptions();
-        dataPatient.patientInform();
         HashMap<String, Object> chromeOptionsMap = new HashMap<>();
         chromeOptionsMap.put("plugins.plugins_disabled", new String[] { "Chrome PDF Viewer" });
         chromeOptionsMap.put("plugins.always_open_pdf_externally", true);
@@ -37,10 +34,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         chromeOptionsMap.put("download.default_directory", dir);
         options.setExperimentalOption("prefs", chromeOptionsMap);
         roman._driver = roman().selenium.getChromeDriver(options);
-        roman._driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
         pathCare = new PathCareApplication(roman);
-
-
 
 
     }
@@ -69,36 +63,6 @@ public class MultiDisciplineTestCase extends RomanBase {
         Assertions.assertEquals("Specimen already received:", pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(labespide.get(0)));
 
     }
-/*
-    @Test
-    @Disabled
-    public void registerPatient() throws Exception {
-
-        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
-        pathCare.interSystemloginPage.login(model.username, model.password);
-        for(PatientModel patient:dataPatient.getPatientModelList()) {
-
-            if(pathCare.interSystemloginPage.getLocation().isEmpty()) {
-                pathCare.interSystemloginPage.setLocation(patient.getUserprofile());
-                pathCare.interSystemloginPage.userselection();
-                pathCare.pre_analytical.navigateRegistration();
-            }else if(!pathCare.interSystemloginPage.getLocation().contentEquals(patient.getUserprofile())){
-                pathCare.interSystemloginPage.setLocation(patient.getUserprofile());
-                pathCare.interSystemloginPage.userselection();
-                pathCare.pre_analytical.navigateRegistration();
-            }
-            if(patient.getURN() != null){
-                pathCare.pathCareScratch.searchPatientURN(patient.getURN());
-                pathCare.pathCareScratch.createdSamePatient();
-            }else{
-                pathCare.pathCareScratch.patientdetails(patient.getGivenName(), patient.getSurname(), patient.getDateOfBirth(), patient.getSex());
-            }
-            pathCare.pathCareScratch.doctorSelection(patient.getReferringDoctor());
-            dataPatient.write(patient.getPk()+","+pathCare.pathCareScratch.collectiondetailnewEditSpecimen(patient.getPk(),patient.getCollectionTime(),patient.getPatientLocation(),patient.getTestSet().toArray(String[]::new),!patient.getReceivedDate().isBlank(),dataPatient.getTestSetDetailsList(),dataPatient.getSpecimensArrayList(),dataPatient.getEditTestArrayList()));
-        }
-
-    }
-*/
 
     @Test
     public void TP_18() throws Exception {

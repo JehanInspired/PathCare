@@ -8,8 +8,7 @@ import java.util.HashMap;
 
 
 public class ResultsGenerator_AbbottAlinityc {
-    @ExcelRow
-    private int rowIndex;
+
 
     @ExcelCellName("LabResult Key")
     String LabResult_Key ;
@@ -22,7 +21,6 @@ public class ResultsGenerator_AbbottAlinityc {
 
     @ExcelCellName("Instrument")
     String instrument ;
-
 
     @ExcelCellName("Test Group")
     String Test_Group ;

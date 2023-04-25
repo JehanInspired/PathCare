@@ -1,7 +1,6 @@
 package applications.PathCareapplication.models;
 
 import com.poiji.annotation.ExcelCellName;
-import com.poiji.annotation.ExcelRow;
 
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +65,11 @@ public class SpecimenReceiveEntity {
         this.patientKey_FK =patientKey_FK;
         this.specimenNumber = specimenNumber;
         this.testSet = Arrays.stream(testSet.split(",")).toList();
+    }
+    public SpecimenReceiveEntity(String pk, String patientKey_FK, String specimenNumber){
+        this.pk =pk;
+        this.patientKey_FK = patientKey_FK;
+        this.specimenNumber = specimenNumber;
     }
 
     public String getPk() {
