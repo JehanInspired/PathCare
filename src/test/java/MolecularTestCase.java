@@ -187,6 +187,7 @@ public class MolecularTestCase extends RomanBase {
         pathCare.labQueues.findresultonlistsearch(labespides.get(1),true,3,true); //Patient 2.1
         pathCare.resultEntry.authorise();
 
+
         pathCare.labQueues.switchToDefaultContext();
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation("PathCare PCP Molecular Scientist C2");

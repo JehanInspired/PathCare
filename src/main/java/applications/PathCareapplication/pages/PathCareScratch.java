@@ -116,6 +116,7 @@ public class PathCareScratch extends AbstractExtension {
 
     private  By testdieditfield = By.xpath("//a[text()='%s']//following::md-input-container[@class='tcNumeric']//input[contains(@name,'QA')]");
     private  By  nextpageURN = By.xpath("//a[text()='Next >']");
+    //private  By  labEspiodeNum = By.xpath("//*[@id='tc_Toast-misc-message']");
 
     public  String testset ="";
     private boolean newPatient = true;

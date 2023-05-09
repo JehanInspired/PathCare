@@ -150,4 +150,26 @@ public class ExcelExtractorList {
     }
     //End Queue
 
+     static  public  String getParonamaAssistanceLabAccess(){
+         var user_profile = userProfile();
+         String profile = null;
+         for (var accessProfile: user_profile) {
+             if(accessProfile.getAccessProfile().equalsIgnoreCase("PC Lab Assistant PANORAMA")){
+                 profile = accessProfile.getAccessProfile();
+             }
+         }
+         return  profile;
+     }
+
+    static  public  String getAccessProfile(String access_Profile){
+        var user_profile = userProfile();
+        String profile = null;
+        for (var accessProfile: user_profile) {
+            if(accessProfile.getAccessProfile().equalsIgnoreCase(access_Profile)){
+                profile = accessProfile.getAccessProfile();
+            }
+        }
+        return  profile;
+    }
+
 }
