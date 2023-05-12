@@ -428,10 +428,10 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pre_analytical.navigateRegistration();
             pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),"Female");
             pathCare.pathCareScratch.doctorSelection();
-            labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-1",testcollection,false,false,true,"Cytology Gynae","Cytology Gynae Specimen","Slide(s)"));
+            labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-1",testcollection,false,false,true,"Cytology Gynae","Cytology Gynae Specimen","Slide(s)","2100"));
             pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),"Female");
             pathCare.pathCareScratch.doctorSelection();
-            labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-1",testcollection,false,false,true,"Cytology Gynae","Cytology Gynae Specimen","Slide(s)"));
+            labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-1",testcollection,false,false,true,"Cytology Gynae","Cytology Gynae Specimen","Slide(s)","2100"));
             value=labEpisode.size()==6;
             Assert.assertEquals(6,labEpisode.size());
 
@@ -451,11 +451,11 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pre_analytical.navigateRegistration();
             pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),"Female");
             pathCare.pathCareScratch.doctorSelection();
-            labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-1",testCollection,false,false,true,"Cytology Gynae","Cytology Gynae Specimen","Slide(s)"));
+            labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-1",testCollection,false,false,true,"Cytology Gynae","Cytology Gynae Specimen","Slide(s)","2100"));
             pathCare.pathCareScratch.setNewPatient(false);
             pathCare.pathCareScratch.patientdetails(pathCare.pathCareScratch.getName(),pathCare.pathCareScratch.getSurname(),pathCare.pathCareScratch.getDateOfBirth(),pathCare.pathCareScratch.getGender());
             pathCare.pathCareScratch.doctorSelection();
-            pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-1",testCollection,false,false,false,"Cytology Gynae","Cytology Gynae Specimen","LBC");
+            pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-1",testCollection,false,false,false,"Cytology Gynae","Cytology Gynae Specimen","LBC","2100");
             pathCare.pathCareScratch.LinkSelectSpecimen();
             labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
             value=labEpisode.size()==8;
@@ -846,15 +846,63 @@ public class CytologyTestPack extends RomanBase {
        pathCare.pre_analytical.navigateRegistration();
        pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),"Female");
        pathCare.pathCareScratch.doctorSelection();
-       labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-1",testCollection,false,false,true,"Histology","Tissue Histo","Specimen Container"));
+       labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-1",testCollection,false,false,true,"Histology","Tissue Histo","Specimen Container","4119"));
        pathCare.pathCareScratch.setNewPatient(false);
        pathCare.pathCareScratch.patientdetails(pathCare.pathCareScratch.getName(),pathCare.pathCareScratch.getSurname(),pathCare.pathCareScratch.getDateOfBirth(),pathCare.pathCareScratch.getGender());
        pathCare.pathCareScratch.doctorSelection();
-       pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-1",testCollection,false,false,false,"Histology","Tissue Histo","Specimen Container");
+       pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-1",testCollection,false,false,false,"Histology","Tissue Histo","Specimen Container","4119");
        pathCare.pathCareScratch.LinkSelectSpecimen();
        labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
        value=labEpisode.size()==2;
+
        Assert.assertEquals(2,labEpisode.size());
    }
+    @Test
+    @Order(4)
+    public void TP_1126() throws Exception {
+
+        value = false;
+        Faker faker  = new Faker();
+        String[]  testCollection = new String[]{"AHHIST"};
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        var accessProfile = getAccessProfile("PC Depot Admin and Data Capture PANORAMA");
+        pathCare.interSystemloginPage.setLocation(accessProfile);
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateRegistration();
+        pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),"Female");
+        pathCare.pathCareScratch.doctorSelection();
+        labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-5",testCollection,false,false,true,"Histology","Tissue Histo","Specimen Container","4119"));
+        pathCare.pathCareScratch.setNewPatient(false);
+        pathCare.pathCareScratch.patientdetails(pathCare.pathCareScratch.getName(),pathCare.pathCareScratch.getSurname(),pathCare.pathCareScratch.getDateOfBirth(),pathCare.pathCareScratch.getGender());
+        pathCare.pathCareScratch.doctorSelection();
+        pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-5",testCollection,false,false,false,"Histology","Tissue Histo","Specimen Container","4119");
+        pathCare.pathCareScratch.LinkSelectSpecimen();
+        labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
+
+        //Recieve Specimen
+        pathCare.pathCareScratch.searchPatient(labEpisode.get(2));
+        specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtracts(true));
+
+
+        //Change user Profile
+        pathCare.pathCareScratch.loadingBarChecker();
+        pathCare.analytical.switchToDefaultContext();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.pathCareScratch.loadingBarChecker();
+        pathCare.interSystemloginPage.setLocation( getAccessProfile("PC Lab Assistant PANORAMA"));
+        pathCare.interSystemloginPage.userselection();
+
+        //Transfer
+        pathCare.pre_analytical.navigateTransfer();
+        pathCare.pathCareLabTransferList.testSetfield("Histology");
+        pathCare.pathCareLabTransferList.statChangeWaitingLinkFind("Panorama Laboratory","PCP  - Histology Laboratory");
+        pathCare.pathCareLabTransferList.selectlistlabespido(labEpisode);
+        pathCare.pathCareLabTransferList.createShipment(specimenNumbers,false );
+        value=pathCare.pathCareLabTransferList.closePackage();
+        shipmentNumber=pathCare.pathCareLabTransferList.shipmentNumber;
+
+
+    }
 
 }
