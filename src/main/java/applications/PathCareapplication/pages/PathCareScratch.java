@@ -11,6 +11,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -37,7 +39,8 @@ public class PathCareScratch extends AbstractExtension {
     private final By iconPatientSearch = By.xpath("//md-icon[@id='LBEpisode_Edit_0-item-LBEPPatientLocationDR-lookupIcon']");
     private final By patientSearchSelect = By.xpath("//input[@name= 'LBEPPatientLocationDR' ]");
     private final By testSetLink = By.xpath("//span[text()='Test Set Link']");
-    private final By collectionTime =By.xpath("//input[@name='LBEPCollectionTime']");
+    private final By collectionTimeTextbox =By.xpath("//input[@name='LBEPCollectionTime']");
+    private final By collectionDateTextbox =By.xpath("//input[@name='LBEPCollectionDate']");
     private final By testSetCollection = By.xpath("//input[@name='TestSetSuperset']");
     private final By backtoLabEpisodeNav = By.xpath("//a[text()='Back to: Lab Episode']");
     private final By specimenContainereditSpan = By.xpath("//*[@id='LBSpecimenContainer_Msg_Edit_0-header-caption']");
@@ -130,12 +133,12 @@ public class PathCareScratch extends AbstractExtension {
     private String dateOfBirth;
     private String surname;
     private String gender;
-
+    public  ArrayList<String> labEpisodesNumber = new ArrayList<String>();
     public String collectionDetailWithMultipleTestSet(String collectiontime, String[] testsetcollection, Boolean specimenSelect,String petientLocation) {
         //click(iconPatientSearch);
         sendKeys(patientSearchSelect,petientLocation);
         super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
-        findEnterTab(collectionTime,collectiontime);
+        findEnterTab(collectionTimeTextbox,collectiontime);
            for (String set : testsetcollection) {
                testCode = By.xpath("//span[text()='%s']".replace("%s", set));
                sendKeys(testSetCollection, set);
@@ -185,7 +188,7 @@ public class PathCareScratch extends AbstractExtension {
         String labepsiode ="";
         sendKeys(patientSearchSelect,petientLocation);
         super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
-        findEnterTab(collectionTime,collectiontime);
+        findEnterTab(collectionTimeTextbox,collectiontime);
         if(receiveDate) {
             addReceivedDate(collectiontime);
         }
@@ -397,7 +400,7 @@ public class PathCareScratch extends AbstractExtension {
     public Boolean updatewithoutTestCollection(String collectiontime, String patientLocation){
         sendKeys(patientSearchSelect,patientLocation);
         super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
-        findEnterTab(collectionTime,collectiontime);
+        findEnterTab(collectionTimeTextbox,collectiontime);
         click(updatebuton);
          if(validateElement_Displayed(testsetrequimenttext,timeout)){
              validateElement_Displayed(findbutton,timeout);
@@ -518,8 +521,8 @@ public class PathCareScratch extends AbstractExtension {
 
         sendKeys(patientSearchSelect,patienLocation.isBlank() ?"2100":patienLocation);
         super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
-        findEnterTab(collectionTime,collectiontime.isBlank()? "n-1":collectiontime);
-        super._driver.findElement(collectionTime).sendKeys(Keys.TAB);
+        findEnterTab(collectionTimeTextbox,collectiontime.isBlank()? "n-1":collectiontime);
+        super._driver.findElement(collectionTimeTextbox).sendKeys(Keys.TAB);
 
         if(receiveDate) {
             addReceivedDate(collectiontime);
@@ -616,9 +619,53 @@ public class PathCareScratch extends AbstractExtension {
         sendKeys(patientSearchSelect,petientLocation,timeout);
         super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
         loadingBarChecker();
-        findEnterTab(collectionTime,collectiontime);
+        findEnterTab(collectionTimeTextbox,collectiontime);
         if(receiveDate) {
             addReceivedDate(collectiontime);
+        }
+        for (String testset:testsetcollection) {
+            setTestset(testset);
+            testCode = By.xpath("//span[text()='%s']".replace("%s",testset));
+            sendKeys(testSetCollection,testset);
+            super._driver.findElement(testSetCollection).sendKeys(Keys.TAB);
+            if(validateElement_Displayed(supersetItemSelection,timeout)){
+                stepInfoWithScreenshot("Reach to Superset Item Selection");
+                click(buttonSupersetItemSelectionAccept,timeout);
+            } else if (validateElement_Displayed(specimenContainereditSpan,timeout) && !specimenSelect){
+                testSetFilter(testSetFilter);
+                specimenEditSpecimen(specimen);
+                containerSpeciemen(container);
+
+                Assert.assertTrue("Unable to click apply button on Specimen Container",validateElement_Enabled_Displayed(applybuttonSpecimenContainer,timeout));
+                click(applybuttonSpecimenContainer,timeout);
+                loadingBarChecker();
+               /* if(validateElement_Enabled_Displayed(selectlinkSpecimen)){
+                    click(selectlinkSpecimen);
+                    switchToFrame(switchiFrame);
+                    click(acceptButton);
+                    switchToDefaultContext();
+                }*/
+            }else if(specimenSelect){
+                specimenSelect();
+            }
+            //validateElement_Enabled_Displayed(testSetLink,timeout);
+            stepPassedWithScreenshot("The correct Test Set appears under Tests : "+testset);
+        }
+
+        if(updateClient) {
+            labepsiode = updateClientDetails();
+        }
+        return labepsiode;
+    }
+    public String collectiondetailnewEditSpecimen(String collectiontime,String[] recieveDate, String[] testsetcollection,Boolean receiveDate, Boolean specimenSelect, Boolean updateClient,String testSetFilter,String specimen,String container, String petientLocation) {
+
+        String labepsiode ="";
+        sendKeys(patientSearchSelect,petientLocation,timeout);
+        super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
+        loadingBarChecker();
+        findEnterTab(collectionTimeTextbox,collectiontime);
+        if(receiveDate) {
+            addReceivedDate(recieveDate[0],recieveDate[1]);
         }
         for (String testset:testsetcollection) {
             setTestset(testset);
@@ -683,7 +730,15 @@ public class PathCareScratch extends AbstractExtension {
         findEnterTab(receivedTimeTextBox,time);
 
     }
+    public void addReceivedDate(String time,String receiveDate){
+        findEnterTab(receivedDateTextBox, receiveDate);
+        findEnterTab(receivedTimeTextBox,time);
 
+    }
+    public void addCollectionDate(String collectionDate,String time){
+        findEnterTab(collectionDateTextbox, collectionDate);
+        findEnterTab(collectionTimeTextbox,time);
+    }
     public void searchPatient(String lapespido) throws InterruptedException {
                 Thread.sleep(3000);
                 sendKeys(labEpisodeNumber, lapespido,timeout);
@@ -965,6 +1020,40 @@ public class PathCareScratch extends AbstractExtension {
         sendKeys(by,input,timeout);
         click(by,timeout);
 
+    }
+    public static void writeLabEpisodesIntoFile(ArrayList<String> labEpisodes) {
+        try {
+            FileWriter myWriter = new FileWriter(System.getProperty("user.dir")+"\\src\\main\\resources\\LabEpisodes.text");
+            for (String labEpisodeNumber : labEpisodes)
+            {
+                myWriter.write(labEpisodeNumber + "\n");
+                System.out.println(labEpisodeNumber);
+            }
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+    public  ArrayList<String> getLabEpisodesFromFile() {
+        try {
+            File file = new File(System.getProperty("user.dir")+"\\src\\main\\resources\\LabEpisodes.text");
+            FileReader fr = new FileReader(file);
+            BufferedReader BR = new BufferedReader(fr);
+            String Content = "";
+
+            //Loop to read all lines one by one from file and print It.
+            while((Content = BR.readLine())!= null) {
+                labEpisodesNumber.add(Content);
+                System.out.println(Content);
+            }
+
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        return  labEpisodesNumber;
     }
     private void setTestset(String testset) {
         this.testset = testset;

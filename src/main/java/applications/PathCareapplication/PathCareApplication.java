@@ -3,7 +3,6 @@ package applications.PathCareapplication;
 import Roman.Roman;
 import applications.PathCareapplication.pages.*;
 import applications.PathCareapplication.widget.Pre_Analytical;
-
 public class PathCareApplication
 {
 
@@ -58,4 +57,5 @@ public class PathCareApplication
         labEnquiry = new LabEnquiry(roman);
 
     }
+
 }

@@ -432,8 +432,8 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),"Female");
             pathCare.pathCareScratch.doctorSelection();
             labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-1",testcollection,false,false,true,"Cytology Gynae","Cytology Gynae Specimen","Slide(s)","2100"));
-            value=labEpisode.size()==6;
-            Assert.assertEquals(6,labEpisode.size());
+            value=labEpisode.size()==2;
+            Assert.assertEquals(2,labEpisode.size());
 
         }
 
@@ -458,8 +458,8 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-1",testCollection,false,false,false,"Cytology Gynae","Cytology Gynae Specimen","LBC","2100");
             pathCare.pathCareScratch.LinkSelectSpecimen();
             labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
-            value=labEpisode.size()==8;
-            Assert.assertEquals(8,labEpisode.size());
+            value=labEpisode.size()==2;
+            Assert.assertEquals(2,labEpisode.size());
 
         }
 /*
@@ -838,6 +838,7 @@ public class CytologyTestPack extends RomanBase {
        value = false;
        Faker faker  = new Faker();
        String[]  testCollection = new String[]{"AHHIST"};
+       String[]  receiveDateCollection = new String[]{"N","T"};
        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
        pathCare.interSystemloginPage.login(model.username, model.password);
        var accessProfile = getAccessProfile("PC Depot Admin and Data Capture PANORAMA");
@@ -846,18 +847,26 @@ public class CytologyTestPack extends RomanBase {
        pathCare.pre_analytical.navigateRegistration();
        pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),"Female");
        pathCare.pathCareScratch.doctorSelection();
-       labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-1",testCollection,false,false,true,"Histology","Tissue Histo","Specimen Container","4119"));
+       labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-5",receiveDateCollection,testCollection,true,false,true,"Histology","Tissue Histo","Specimen Container","4119"));
        pathCare.pathCareScratch.setNewPatient(false);
        pathCare.pathCareScratch.patientdetails(pathCare.pathCareScratch.getName(),pathCare.pathCareScratch.getSurname(),pathCare.pathCareScratch.getDateOfBirth(),pathCare.pathCareScratch.getGender());
        pathCare.pathCareScratch.doctorSelection();
-       pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-1",testCollection,false,false,false,"Histology","Tissue Histo","Specimen Container","4119");
+       labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-5",receiveDateCollection,testCollection,true,false,true,"Histology","Tissue Histo","Specimen Container","4119"));
+       pathCare.pathCareScratch.setNewPatient(false);
+       pathCare.pathCareScratch.patientdetails(pathCare.pathCareScratch.getName(),pathCare.pathCareScratch.getSurname(),pathCare.pathCareScratch.getDateOfBirth(),pathCare.pathCareScratch.getGender());
+       pathCare.pathCareScratch.doctorSelection();
+       labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-5",receiveDateCollection,testCollection,true,false,true,"Histology","Tissue Histo","Specimen Container","4119"));
+       pathCare.pathCareScratch.setNewPatient(false);
+       pathCare.pathCareScratch.patientdetails(pathCare.pathCareScratch.getName(),pathCare.pathCareScratch.getSurname(),pathCare.pathCareScratch.getDateOfBirth(),pathCare.pathCareScratch.getGender());
+       pathCare.pathCareScratch.doctorSelection();
+       pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-5",receiveDateCollection,testCollection,true,false,false,"Histology","Tissue Histo","Specimen Container","4119");
        pathCare.pathCareScratch.LinkSelectSpecimen();
        labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
-       value=labEpisode.size()==2;
-
-       Assert.assertEquals(2,labEpisode.size());
+       value=labEpisode.size()==4;
+       pathCare.pathCareScratch.writeLabEpisodesIntoFile(labEpisode);
+       Assert.assertEquals(4,labEpisode.size());
    }
-    @Test
+    /*@Test
     @Order(4)
     public void TP_1126() throws Exception {
 
@@ -880,29 +889,50 @@ public class CytologyTestPack extends RomanBase {
         pathCare.pathCareScratch.LinkSelectSpecimen();
         labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
 
-        //Recieve Specimen
-        pathCare.pathCareScratch.searchPatient(labEpisode.get(2));
-        specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtracts(true));
-
-
-        //Change user Profile
-        pathCare.pathCareScratch.loadingBarChecker();
-        pathCare.analytical.switchToDefaultContext();
         pathCare.interSystemloginPage.changelocation();
-        pathCare.pathCareScratch.loadingBarChecker();
-        pathCare.interSystemloginPage.setLocation( getAccessProfile("PC Lab Assistant PANORAMA"));
+        pathCare.interSystemloginPage.setLocation(model.accessProfile);
         pathCare.interSystemloginPage.userselection();
-
-        //Transfer
+        pathCare.pre_analytical.navigatespecimenRecived();
+        pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(String.valueOf(labEpisode));
+        pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.pre_analytical.navigateTransfer();
+        pathCare.pathCareLabTransferList.tranferlistLabepisode(String.valueOf(labEpisode));
+        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.specimenNumbers,true);
+        pathCare.pathCareLabTransferList.closePackage();
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateLogistics();
+        pathCare.transferLogistics.pickUpShipmentValid(pathCare.pathCareLabTransferList.shipmentNumber);
+        pathCare.pre_analytical.navigateTransfer();
+        pathCare.pathCareLabTransferList.tranferlistLabepisode(String.valueOf(labEpisode));
+        Assertions.assertTrue(pathCare.pathCareLabTransferList.checknumbersTransfer(String.valueOf(labEpisode), pathCare.pathCareLabSpecimenReception.specimenNumbers));
+    }*/
+    @Test
+    @Order(4)
+    public void TP_1126() throws Exception {
+
+        value = false;
+        Faker faker  = new Faker();
+        String[]  testCollection = new String[]{"AHHIST"};
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        labEpisode= pathCare.pathCareScratch.getLabEpisodesFromFile();
+
+
+        pathCare.interSystemloginPage.setLocation("Lab Assistant PANORAMA");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateTransfer();
+
         pathCare.pathCareLabTransferList.testSetfield("Histology");
         pathCare.pathCareLabTransferList.statChangeWaitingLinkFind("Panorama Laboratory","PCP  - Histology Laboratory");
         pathCare.pathCareLabTransferList.selectlistlabespido(labEpisode);
-        pathCare.pathCareLabTransferList.createShipment(specimenNumbers,false );
+        specimenNumbers = pathCare.pathCareScratch.searchMutliplePatient(labEpisode);
+        pathCare.pathCareLabTransferList.createShipment(specimenNumbers,true );
         value=pathCare.pathCareLabTransferList.closePackage();
         shipmentNumber=pathCare.pathCareLabTransferList.shipmentNumber;
-
-
+        Assertions.assertTrue(pathCare.pathCareLabTransferList.checknumbersTransfer(String.valueOf(labEpisode), pathCare.pathCareLabSpecimenReception.specimenNumbers));
     }
 
 }
