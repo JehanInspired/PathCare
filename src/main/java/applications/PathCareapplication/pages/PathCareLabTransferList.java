@@ -2,6 +2,7 @@ package applications.PathCareapplication.pages;
 
 import Roman.Roman;
 import applications.PathCareapplication.tool.AbstractExtension;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.openqa.selenium.*;
 import java.time.format.DateTimeFormatter;
@@ -52,12 +53,13 @@ public class PathCareLabTransferList extends AbstractExtension {
     private final By nextpageTransferlist =By.xpath("//img[@id='NextPageImage_LBTransfer_List']");
     private final By dateSentFrom = By.xpath("//input[@id='FromSentDate']");
     private final By dateSentTo = By.xpath("//input[@id='DateSentTo']");
+    private final By tLBTransferShipmentList= By.xpath("//table[@id='tLBTransfer_Shipment_List']/tbody");
+    private final By firstTransferMaterialList= By.xpath("//label[@id='TransferMaterialListz1']");
     private String description= "";
     private String url = "";
     private int timeout = 20;
 
   public String shipmentNumber = "";
-
   public void tranferlistLabepisode(String text){
       switchToFrame(switchiFrame);
       sendKeys(labEpisode,text,timeout);
@@ -66,7 +68,27 @@ public class PathCareLabTransferList extends AbstractExtension {
       stepPassedWithScreenshot("Successfully Entered lab Episode");
       }
   }
+    public void tranferSpecimenIntoShipmentContainer(){
+        click(shipmentbutton);
+        click(addshipmentcontainerbutton,timeout);
+        while(validateElement_Displayed(tLBTransferShipmentList,timeout)){
+              String specimenNumber=  getText(firstTransferMaterialList);
+              String extractedSpecimenNumber = StringUtils.substringBefore(specimenNumber, ":");
+              sendKeys(packSpecimenNumber,extractedSpecimenNumber ,timeout);
+              super._driver.findElement(packSpecimenNumber).sendKeys(Keys.TAB);
+        }
 
+        if(validateElement_Displayed(shipmentnumbertext,timeout)){
+            shipmentNumber = getText(shipmentnumbertext,timeout);
+            stepPassedWithScreenshot("Able to receive a shipment container number "+ shipmentNumber);
+        } else{
+            stepInfoWithScreenshot("Unable to receive a shipment container number");
+            Assert.fail("Unable to to receive a shipment container number");
+        }
+         click(closeShipment,timeout);
+         acceptAlert();
+         stepPassedWithScreenshot("Successfully clicked closed shipment");
+    }
     public void tranferlistLabepisodewithoutframe(String text){
         sendKeys(labEpisode,text,timeout);
         if(validateElement_Enabled_Displayed(findbutton,timeout)){
@@ -222,7 +244,27 @@ public class PathCareLabTransferList extends AbstractExtension {
       stepPassedWithScreenshot("Successfully clicked closed shipment");
 
   }
+    public void createShipmentContainer(ArrayList<String> specimennumbers,boolean selectAll) throws InterruptedException {
+        if(selectAll){click(selectallspecimen);}
+        click(shipmentbutton);
+        click(addshipmentcontainerbutton,timeout);
+        if(validateElement_Displayed(shipmentnumbertext,timeout)){
+            shipmentNumber = getText(shipmentnumbertext,timeout);
+            stepPassedWithScreenshot("Able to receive a shipment container number "+ shipmentNumber);
+        } else{
+            stepInfoWithScreenshot("Unable to to receive a shipment container number");
+            Assert.fail("Unable to to receive a shipment container number");
+        }
 
+        for(String value:specimennumbers) {
+            findOne(packSpecimenNumber,value);
+        }
+
+        awaitElement(closeShipment,timeout);
+        click(closeShipment,timeout);
+        stepPassedWithScreenshot("Successfully clicked closed shipment");
+
+    }
     public void createShipment(Collection<ArrayList<String>> specimenNumbers, boolean selectAll) throws InterruptedException {
         if(selectAll){click(selectallspecimen);}
         click(shipmentbutton);

@@ -832,7 +832,7 @@ public class CytologyTestPack extends RomanBase {
     }
     */
    @Test
-   @Order(3)
+   @Order(10)
    public void TP_1123() throws Exception {
 
        value = false;
@@ -866,60 +866,15 @@ public class CytologyTestPack extends RomanBase {
        pathCare.pathCareScratch.writeLabEpisodesIntoFile(labEpisode);
        Assert.assertEquals(4,labEpisode.size());
    }
-    /*@Test
-    @Order(4)
-    public void TP_1126() throws Exception {
 
-        value = false;
-        Faker faker  = new Faker();
-        String[]  testCollection = new String[]{"AHHIST"};
-        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
-        pathCare.interSystemloginPage.login(model.username, model.password);
-        var accessProfile = getAccessProfile("PC Depot Admin and Data Capture PANORAMA");
-        pathCare.interSystemloginPage.setLocation(accessProfile);
-        pathCare.interSystemloginPage.userselection();
-        pathCare.pre_analytical.navigateRegistration();
-        pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),"Female");
-        pathCare.pathCareScratch.doctorSelection();
-        labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-5",testCollection,false,false,true,"Histology","Tissue Histo","Specimen Container","4119"));
-        pathCare.pathCareScratch.setNewPatient(false);
-        pathCare.pathCareScratch.patientdetails(pathCare.pathCareScratch.getName(),pathCare.pathCareScratch.getSurname(),pathCare.pathCareScratch.getDateOfBirth(),pathCare.pathCareScratch.getGender());
-        pathCare.pathCareScratch.doctorSelection();
-        pathCare.pathCareScratch.collectiondetailnewEditSpecimen("n-5",testCollection,false,false,false,"Histology","Tissue Histo","Specimen Container","4119");
-        pathCare.pathCareScratch.LinkSelectSpecimen();
-        labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
-
-        pathCare.interSystemloginPage.changelocation();
-        pathCare.interSystemloginPage.setLocation(model.accessProfile);
-        pathCare.interSystemloginPage.userselection();
-        pathCare.pre_analytical.navigatespecimenRecived();
-        pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingleReception(String.valueOf(labEpisode));
-        pathCare.pre_analytical.switchtoMainiFrame();
-        pathCare.pre_analytical.navigateTransfer();
-        pathCare.pathCareLabTransferList.tranferlistLabepisode(String.valueOf(labEpisode));
-        pathCare.pathCareLabTransferList.createShipment(pathCare.pathCareLabSpecimenReception.specimenNumbers,true);
-        pathCare.pathCareLabTransferList.closePackage();
-        pathCare.pre_analytical.switchtoMainiFrame();
-        pathCare.interSystemloginPage.changelocation();
-        pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL");
-        pathCare.interSystemloginPage.userselection();
-        pathCare.pre_analytical.navigateLogistics();
-        pathCare.transferLogistics.pickUpShipmentValid(pathCare.pathCareLabTransferList.shipmentNumber);
-        pathCare.pre_analytical.navigateTransfer();
-        pathCare.pathCareLabTransferList.tranferlistLabepisode(String.valueOf(labEpisode));
-        Assertions.assertTrue(pathCare.pathCareLabTransferList.checknumbersTransfer(String.valueOf(labEpisode), pathCare.pathCareLabSpecimenReception.specimenNumbers));
-    }*/
     @Test
-    @Order(4)
+    @Order(11)
     public void TP_1126() throws Exception {
 
         value = false;
-        Faker faker  = new Faker();
-        String[]  testCollection = new String[]{"AHHIST"};
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
         labEpisode= pathCare.pathCareScratch.getLabEpisodesFromFile();
-
 
         pathCare.interSystemloginPage.setLocation("Lab Assistant PANORAMA");
         pathCare.interSystemloginPage.userselection();
@@ -928,11 +883,12 @@ public class CytologyTestPack extends RomanBase {
         pathCare.pathCareLabTransferList.testSetfield("Histology");
         pathCare.pathCareLabTransferList.statChangeWaitingLinkFind("Panorama Laboratory","PCP  - Histology Laboratory");
         pathCare.pathCareLabTransferList.selectlistlabespido(labEpisode);
-        specimenNumbers = pathCare.pathCareScratch.searchMutliplePatient(labEpisode);
-        pathCare.pathCareLabTransferList.createShipment(specimenNumbers,true );
-        value=pathCare.pathCareLabTransferList.closePackage();
+        pathCare.pathCareLabTransferList.tranferSpecimenIntoShipmentContainer();
+        pathCare.pathCareLabTransferList.closePackage();
         shipmentNumber=pathCare.pathCareLabTransferList.shipmentNumber;
-        Assertions.assertTrue(pathCare.pathCareLabTransferList.checknumbersTransfer(String.valueOf(labEpisode), pathCare.pathCareLabSpecimenReception.specimenNumbers));
+        pathCare.pre_analytical.navigateLogistics();
+        value= pathCare.transferLogistics.EnterShipmentNumberInPickUpShipment(shipmentNumber);
+        Assertions.assertTrue(value,"Update to status is not In Transit");
     }
 
 }

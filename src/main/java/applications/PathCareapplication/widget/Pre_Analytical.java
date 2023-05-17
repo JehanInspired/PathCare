@@ -22,7 +22,7 @@ public class Pre_Analytical extends AbstractExtension {
     private final By mainmenu = By.xpath("//a//md-icon[@title='Main Menu']");
     private final By homelink = By.xpath("//md-icon[@title='Home']");
 
-    private int timeout = 20;
+    private final int timeout = 30;
 
 
     public Pre_Analytical(Roman roman) {
