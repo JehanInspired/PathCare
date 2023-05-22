@@ -247,5 +247,38 @@ public class MolecularTestCase extends RomanBase {
 
 
     }
+    @Test
+    public void TP_1032() throws Exception{
+        Faker faker = new Faker();
+        String[] testcollection = new String[]{"PRPBF", "PHIV1QNT,PMEBF", "PHIV1QNT,PHIV1QL,PRPBF","PRPBF,PHIV1QL","PHIV1QNT,PRPBF"};
+        String[] departments = new String[]{"Molecular"};
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username,model.password);
+        pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateRegistration();
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatientWithDifferentTestset(faker, testcollection,false);
 
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL");
+        pathCare.interSystemloginPage.userselection();
+
+        //Specimen Received
+        pathCare.pre_analytical.navigatespecimenRecived();
+        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides);
+
+
+        //Work Receive
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL Chem");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateWorkRecived();
+        pathCare.workAreaReceptionPage.labworkareaswitch();
+        pathCare.workAreaReceptionPage.departmentWorkArea(pathCare.workAreaReceptionPage.setupdataSpecimentMultiple(departments,pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.values()),true);
+
+
+
+    }
 }
