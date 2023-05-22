@@ -3,6 +3,7 @@ package applications.PathCareapplication.pages;
 import Roman.Roman;
 import applications.PathCareapplication.tool.AbstractExtension;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import selenium.AbstractPage;
 
 public class TransferLogistics extends AbstractExtension {
@@ -12,9 +13,9 @@ public class TransferLogistics extends AbstractExtension {
     private final By findbutton = By.xpath("//input[@name='find1']");
     private final By updatebutton = By.xpath("//button[text()='Update']");
     private final By statusDevilvered = By.xpath("//span[text()='Delivered']");
-
+    private final By statusInTransit = By.xpath("//span[@id='LBShipmentContainer_Msg_List_0-row-0-item-LBSHC_Status']");
     private final By statusMessage = By.xpath("//span[@id='LBShipmentContainer_CourierLogistics_Edit_0-item-StatusMsg']");
-
+    private int timeout = 20;
 
 
 
@@ -62,7 +63,17 @@ public class TransferLogistics extends AbstractExtension {
 
         return false;
     }
+    public boolean EnterShipmentNumberInPickUpShipment(String shipContainerNumber){
+        sendKeys(pickUpShipment,shipContainerNumber ,timeout);
+        super._driver.findElement(pickUpShipment).sendKeys(Keys.TAB);
+        if(validateElement_Displayed(statusInTransit,timeout)){
+            stepPassedWithScreenshot("Successfully Pick Up "+ shipContainerNumber);
+            click(updatebutton);
+            return true;
+        }
 
+        return false;
+    }
 
     public void findOne(By by,String input) {
 

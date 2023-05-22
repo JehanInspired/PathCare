@@ -75,7 +75,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
-        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true );
+        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true ,"2100");
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation(model.accessProfile);
         pathCare.interSystemloginPage.userselection();
@@ -95,7 +95,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
-        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true );
+        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true ,"2100");
         Assertions.assertNotEquals("", labespide);
 
     }
@@ -112,7 +112,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
-        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true );
+        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true ,"2100");
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation(model.accessProfile);
         pathCare.interSystemloginPage.userselection();
@@ -147,7 +147,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
-        Assertions.assertTrue(pathCare.pathCareScratch.updatewithoutTestCollection("n-1"));
+        Assertions.assertTrue(pathCare.pathCareScratch.updatewithoutTestCollection("n-1","4119"));
 
     }
 
@@ -163,7 +163,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
-        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true );
+        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true ,"2100");
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation(model.accessProfile);
         pathCare.interSystemloginPage.userselection();
@@ -191,7 +191,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
-        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true );
+        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-2", testcollection,false,false,true ,"2100");
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation(model.accessProfile);
         pathCare.interSystemloginPage.userselection();
@@ -225,7 +225,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.patientdetails(faker.name().name(),faker.name().lastName(), new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)),faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
-        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true );
+        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-5", testcollection,false,false,true ,"2100");
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation(model.accessProfile);
         pathCare.interSystemloginPage.userselection();
@@ -273,7 +273,7 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         pathCare.pathCareScratch.patientdetails(faker.name().name(), faker.name().lastName(),  new SimpleDateFormat("dd/MM/yyyy").format(faker.date().birthday(11,55)), faker.demographic().sex());
         pathCare.pathCareScratch.doctorSelection();
-        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true );
+        String labespide = pathCare.pathCareScratch.collectiondetailnew("n-1", testcollection,false,false,true ,"2100");
         pathCare.interSystemloginPage.changelocation();
         pathCare.interSystemloginPage.setLocation(model.accessProfile);
         pathCare.interSystemloginPage.userselection();
