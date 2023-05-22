@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import static applications.PathCareapplication.tool.ExcelExtractorList.getAccessProfile;
 import static reporting.ExtentReport.get_reportDir;
 
 public class MolecularTestCase extends RomanBase {
@@ -255,7 +256,8 @@ public class MolecularTestCase extends RomanBase {
         String[] departments = new String[]{"Molecular"};
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username,model.password);
-        pathCare.interSystemloginPage.setLocation("PC Depot Admin and Data Capture PCP");
+        var accessProfile = getAccessProfile("PC Depot Admin and Data Capture PCP");
+        pathCare.interSystemloginPage.setLocation(accessProfile);
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
         List<String> labespides = pathCare.pathCareScratch.mutiplePatientWithDifferentTestset(faker, testcollection,false);
@@ -268,7 +270,7 @@ public class MolecularTestCase extends RomanBase {
         //Specimen Received
         pathCare.pre_analytical.navigatespecimenRecived();
         pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides);
-
+pathCare.analytical.navigateWorkSheetRes();
 
         //Work Receive
         pathCare.pre_analytical.switchtoMainiFrame();

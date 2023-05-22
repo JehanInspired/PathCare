@@ -11,6 +11,7 @@ public class Analytical extends AbstractExtension {
     private final By resultEntry = By.xpath("//li//span[text()='Result Entry']");
 
     private final By workSheetREsEntry = By.xpath("//li//span[text()='Worksheet Res. Entry']");
+    private final By workSheetContol = By.xpath("//li//span[text()='Worksheet Control']");
     private  final By analytical = By.xpath("//li//span[text()='Analytical']");
     private final By mainmenu = By.xpath("//a//md-icon[@title='Main Menu']");
     private final By proceduresButton = By.xpath("//span[text()='Procedures']");
