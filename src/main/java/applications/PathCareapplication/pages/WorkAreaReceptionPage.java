@@ -16,7 +16,7 @@ public class WorkAreaReceptionPage extends AbstractExtension {
 
     private final By specimenNumberText = By.xpath(" //td/input[@id='SpecimenNumber']");
 
-    private final By workArea = By.xpath("//input[@id='WorkArea']");
+    private final By workAreaText = By.xpath("//input[@id='WorkArea']");
 
     private final By lookuprowselection = By.xpath("//tr[@id='LookupRow0']");
 
@@ -107,7 +107,12 @@ public class WorkAreaReceptionPage extends AbstractExtension {
         }
         return testDataModelList;
     }
-
+   public void workAreaReceive(String department, String workArea, String specimenNumber){
+        sendKeysAndTab(departmentText,department);
+        sendKeysAndTab(workAreaText,workArea,timeout);
+        sendKeysAndTab(specimenNumberText,specimenNumber + "-1",timeout);
+        click(checkin,timeout);
+   }
     public boolean departmentWorkArea(List<TestDataModel> data, boolean checking) {
 
         boolean checkingout = false;
@@ -122,7 +127,7 @@ public class WorkAreaReceptionPage extends AbstractExtension {
             sendKeys(departmentText, dataModel.department, timeout);
 
             click(lookuprowselection,timeout);
-            if (validateElement_Enabled_Displayed(workArea, timeout)) {
+            if (validateElement_Enabled_Displayed(workAreaText, timeout)) {
                 click(workAreaSearchbutton,timeout);
             }
 
@@ -176,8 +181,8 @@ public class WorkAreaReceptionPage extends AbstractExtension {
             }*/
 
 
-            if (validateElement_Enabled_Displayed(workArea, timeout)) {
-                sendKeys(workArea,dataModel.workArea);
+            if (validateElement_Enabled_Displayed(workAreaText, timeout)) {
+                sendKeys(workAreaText,dataModel.workArea);
                 click(workAreaSearchbutton,timeout);
             }
 
@@ -212,7 +217,7 @@ public class WorkAreaReceptionPage extends AbstractExtension {
     public boolean checkout_reset(String[] departments, String[] testcollections, List<String> specimenNumbers) {
 
         boolean condition = false;
-        super.findOne(workArea).clear();
+        super.findOne(workAreaText).clear();
 
         for (int x = 0; x <= specimenNumbers.size() - 1; x++) {
             departmentWorkArea(setupdata(departments, testcollections, specimenNumbers), false);

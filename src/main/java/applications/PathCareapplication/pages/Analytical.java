@@ -72,7 +72,18 @@ public class Analytical extends AbstractExtension {
 
     }
 
+    public void navigateWorkSheetControl(){
+        awaitElement(mainMenu,timeout);
+        click(mainMenu,timeout);
+        if(!validateElement_Enabled_Displayed(workSheetContol)){
+            click(analytical);
+            click(workSheetContol,timeout);
+        }else{
+            click(workSheetContol,timeout);
+        }
+        stepPassedWithScreenshot("clicked Worksheet control");
 
+    }
 
 
 

@@ -3,6 +3,7 @@ package applications.PathCareapplication.pages;
 import Roman.Roman;
 import applications.PathCareapplication.tool.AbstractExtension;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 
 public class WorksheetControlPage extends AbstractExtension {
 
@@ -15,6 +16,9 @@ public class WorksheetControlPage extends AbstractExtension {
     private final By printLink = By.xpath("//a[@id='LBWSPrintz1']");
     private final By editLink = By.xpath("//a[@id='LBWSEditz1']");
     private final By closeLink = By.xpath("//a[@id='LBWSClosez1']");
+    private final By workSheetDescription= By.xpath("//label[@id='LBCWSDescz1']");
+    private final By workSheetEntryList= By.xpath("//form[@id='fLBWorksheetEntry_List']");
+    private final By closeWorkSheetEntryList= By.xpath("//span[@id='InfoPaneClose']");
     private int timeout = 15;
 
     public WorksheetControlPage(Roman roman) {
@@ -22,14 +26,37 @@ public class WorksheetControlPage extends AbstractExtension {
     }
 
     public void enterWorksheetType(String desc){
-        sendKeys(worksheetType,desc);
+        sendKeysAndTab(worksheetType,desc);
     }
     public void enterCreatedDate(String fromDate, String toDate){
-        sendKeys(dateCreatedFrom,fromDate);
+        sendKeysAndTab(dateCreatedFrom,fromDate);
         sendKeys(dateCreatedTo,toDate);
     }
     public  void clickFindButton(){
         click(findButton);
+    }
+    public  void findWorksheetdeatils(String desc,String fromDate, String toDate ){
+        enterWorksheetType(desc);
+        enterCreatedDate(fromDate, toDate);
+        clickFindButton();
+    }
+    public  void  editWorkSheet(){
+
+        if(_driver.findElement(workSheetDescription).isDisplayed()){
+            click(editLink);
+            if(_driver.findElement(workSheetEntryList).isDisplayed()){
+                click(closeWorkSheetEntryList);
+            }
+        }
+    }
+    public  void  printWorkSheet(){
+
+        if(_driver.findElement(workSheetDescription).isDisplayed()){
+            click(printLink);
+            if(_driver.findElement(workSheetEntryList).isDisplayed()){
+                click(closeWorkSheetEntryList);
+            }
+        }
     }
     public  void clickCreateQC_onlyWorksheetButton(){
         click(createQC_OnlyWorksheet,timeout);

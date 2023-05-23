@@ -252,7 +252,7 @@ public class MolecularTestCase extends RomanBase {
     @Test
     public void TP_1032() throws Exception{
         Faker faker = new Faker();
-        String[] testcollection = new String[]{"PRPBF", "PHIV1QNT,PMEBF", "PHIV1QNT,PHIV1QL,PRPBF","PRPBF,PHIV1QL","PHIV1QNT,PRPBF"};
+        String[] testcollection = new String[]{"PHH"};
         String[] departments = new String[]{"Molecular"};
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username,model.password);
@@ -260,28 +260,20 @@ public class MolecularTestCase extends RomanBase {
         pathCare.interSystemloginPage.setLocation(accessProfile);
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
-        List<String> labespides = pathCare.pathCareScratch.mutiplePatientWithDifferentTestset(faker, testcollection,false);
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker, testcollection,false,false,1,true);
 
-        pathCare.pre_analytical.switchtoMainiFrame();
-        pathCare.interSystemloginPage.changelocation();
-        pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL");
-        pathCare.interSystemloginPage.userselection();
-
-        //Specimen Received
-        pathCare.pre_analytical.navigatespecimenRecived();
-        pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespides);
-pathCare.analytical.navigateWorkSheetRes();
 
         //Work Receive
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.changelocation();
-        pathCare.interSystemloginPage.setLocation("PC Lab Assistant RL Chem");
+        pathCare.interSystemloginPage.setLocation("PathCare PCP Molecular Lab Assistant");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateWorkRecived();
         pathCare.workAreaReceptionPage.labworkareaswitch();
-        pathCare.workAreaReceptionPage.departmentWorkArea(pathCare.workAreaReceptionPage.setupdataSpecimentMultiple(departments,pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen.values()),true);
+        pathCare.workAreaReceptionPage.workAreaReceive(departments[0],"RL Molecular Specimen Receive",labespides.get(0));
 
-
-
+       // worksheet control
+        pathCare.analytical.navigateWorkSheetControl();
+         pathCare.worksheetControlPage.findWorksheetdeatils("Hereditary Haemochromatosis #1","T-2", "" );
     }
 }
