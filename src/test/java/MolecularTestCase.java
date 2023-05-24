@@ -6,6 +6,7 @@ import applications.PathCareapplication.models.AutomationUserModel;
 import applications.PathCareapplication.models.TP100;
 import com.github.javafaker.Faker;
 
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -253,14 +254,16 @@ public class MolecularTestCase extends RomanBase {
     public void TP_1032() throws Exception{
         Faker faker = new Faker();
         String[] testcollection = new String[]{"PHH"};
-        String[] departments = new String[]{"Molecular"};
+        String[] departments = new String[]{"Molecular (PCR)"};
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username,model.password);
+
         var accessProfile = getAccessProfile("PC Depot Admin and Data Capture PCP");
         pathCare.interSystemloginPage.setLocation(accessProfile);
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateRegistration();
         List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker, testcollection,false,false,1,true);
+
 
 
         //Work Receive
@@ -272,8 +275,13 @@ public class MolecularTestCase extends RomanBase {
         pathCare.workAreaReceptionPage.labworkareaswitch();
         pathCare.workAreaReceptionPage.workAreaReceive(departments[0],"RL Molecular Specimen Receive",labespides.get(0));
 
-       // worksheet control
-        pathCare.analytical.navigateWorkSheetControl();
+         // worksheet control
+         pathCare.pre_analytical.switchtoMainiFrame();
+         pathCare.analytical.navigateWorkSheetControl();
          pathCare.worksheetControlPage.findWorksheetdeatils("Hereditary Haemochromatosis #1","T-2", "" );
+         pathCare.worksheetControlPage.editWorkSheet();
+         pathCare.worksheetControlPage.printWorkSheet();
+         boolean printed = pathCare.worksheetControlPage.isWorksheetPrinted();
+         Assert.assertTrue("Work sheet control failed to be printed",printed);
     }
 }

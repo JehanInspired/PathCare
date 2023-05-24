@@ -5,13 +5,17 @@ import applications.PathCareapplication.tool.AbstractExtension;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
+import java.security.Key;
+
 public class WorksheetControlPage extends AbstractExtension {
 
 
     private final By worksheetType = By.xpath("//input[@id='LBWSWorksheetDefDR']");
+    //private final By worksheetType = By.xpath("//img[@id='ld5977iLBWSWorksheetDefDR']");
+    private final By worksheetTypeOption = By.xpath("//td[text()='Hereditary Haemochromatosis #1']");
     private final By dateCreatedFrom = By.xpath("//input[@id='DateFrom']");
     private final By dateCreatedTo = By.xpath("//input[@id='DateTo']");
-    private final By findButton = By.xpath("//button[@id='find1' and @value='Find']");
+    private final By findButton = By.xpath("//input[@id='find1' and @value='Find']");
     private final By createQC_OnlyWorksheet = By.xpath("//button[@id='CreateQCOnlyWorksheet']");
     private final By printLink = By.xpath("//a[@id='LBWSPrintz1']");
     private final By editLink = By.xpath("//a[@id='LBWSEditz1']");
@@ -19,14 +23,16 @@ public class WorksheetControlPage extends AbstractExtension {
     private final By workSheetDescription= By.xpath("//label[@id='LBCWSDescz1']");
     private final By workSheetEntryList= By.xpath("//form[@id='fLBWorksheetEntry_List']");
     private final By closeWorkSheetEntryList= By.xpath("//span[@id='InfoPaneClose']");
-    private int timeout = 15;
+    private int timeout = 30;
 
     public WorksheetControlPage(Roman roman) {
         super(roman);
     }
 
-    public void enterWorksheetType(String desc){
-        sendKeysAndTab(worksheetType,desc);
+    public void enterWorksheetType(String type){
+       switchToFrame(By.id("TRAK_main"));
+        sendKeys(worksheetType,type,timeout);
+        click(worksheetTypeOption);
     }
     public void enterCreatedDate(String fromDate, String toDate){
         sendKeysAndTab(dateCreatedFrom,fromDate);
@@ -37,26 +43,23 @@ public class WorksheetControlPage extends AbstractExtension {
     }
     public  void findWorksheetdeatils(String desc,String fromDate, String toDate ){
         enterWorksheetType(desc);
-        enterCreatedDate(fromDate, toDate);
+        enterCreatedDate( fromDate, toDate);
         clickFindButton();
     }
     public  void  editWorkSheet(){
 
         if(_driver.findElement(workSheetDescription).isDisplayed()){
-            click(editLink);
-            if(_driver.findElement(workSheetEntryList).isDisplayed()){
-                click(closeWorkSheetEntryList);
-            }
+            click(editLink,timeout);
+            //switchToFrame(By.name("TRAK_info"));
         }
     }
     public  void  printWorkSheet(){
-
         if(_driver.findElement(workSheetDescription).isDisplayed()){
             click(printLink);
-            if(_driver.findElement(workSheetEntryList).isDisplayed()){
-                click(closeWorkSheetEntryList);
-            }
         }
+    }
+    public Boolean isWorksheetPrinted(){
+        return (!_driver.findElement(workSheetDescription).isDisplayed());
     }
     public  void clickCreateQC_onlyWorksheetButton(){
         click(createQC_OnlyWorksheet,timeout);

@@ -47,7 +47,7 @@ public class WorkAreaReceptionPage extends AbstractExtension {
     private final By aliquotConfirmButton = By.xpath("//button[@aria-label='Confirm']");
     private final By aliquotCloseButton = By.xpath("//button[text()='Close']");
 
-    int timeout = 20;
+    int timeout = 30;
 
     public WorkAreaReceptionPage(Roman roman) {
         super(roman);
@@ -107,10 +107,13 @@ public class WorkAreaReceptionPage extends AbstractExtension {
         }
         return testDataModelList;
     }
-   public void workAreaReceive(String department, String workArea, String specimenNumber){
-        sendKeysAndTab(departmentText,department);
+   public void workAreaReceive(String department, String workArea, String specimenNumber) throws InterruptedException {
+        sendKeysAndTab(departmentText,department,timeout);
         sendKeysAndTab(workAreaText,workArea,timeout);
+        Thread.sleep(2000);
         sendKeysAndTab(specimenNumberText,specimenNumber + "-1",timeout);
+        awaitElement(checkin,timeout);
+        awaitClickableElement(checkin,timeout,30);
         click(checkin,timeout);
    }
     public boolean departmentWorkArea(List<TestDataModel> data, boolean checking) {
