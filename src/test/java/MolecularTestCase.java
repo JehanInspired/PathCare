@@ -264,8 +264,6 @@ public class MolecularTestCase extends RomanBase {
         pathCare.pre_analytical.navigateRegistration();
         List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker, testcollection,false,false,1,true);
 
-
-
         //Work Receive
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.changelocation();
@@ -283,5 +281,49 @@ public class MolecularTestCase extends RomanBase {
          pathCare.worksheetControlPage.printWorkSheet();
          boolean printed = pathCare.worksheetControlPage.isWorksheetPrinted();
          Assert.assertTrue("Work sheet control failed to be printed",printed);
+    }
+
+    @Test
+    public void TP_1035() throws Exception{
+        Faker faker = new Faker();
+        String[] testcollection = new String[]{"PHH"};
+        String[] departments = new String[]{"Molecular (PCR)"};
+        String descriptiopn = "Hereditary-Haemochromatosis-Testing";
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username,model.password);
+
+        var accessProfile = getAccessProfile("PC Depot Admin and Data Capture PCP");
+        pathCare.interSystemloginPage.setLocation(accessProfile);
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateRegistration();
+        List<String> labespides = pathCare.pathCareScratch.mutiplePatient(faker, testcollection,false,false,1,true);
+
+        //Work Receive
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PathCare PCP Molecular Lab Assistant");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateWorkRecived();
+        pathCare.workAreaReceptionPage.labworkareaswitch();
+        pathCare.workAreaReceptionPage.workAreaReceive(departments[0],"RL Molecular Specimen Receive",labespides.get(0));
+
+       //Molecular: Completing Procedures
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation("PathCare PCP Molecular Scientist C2");
+        pathCare.interSystemloginPage.userselection();
+        pathCare.analytical.navigateProcedures();
+        pathCare.procedures.searchProtocolProcedure(departments[0],"Hereditary Haemochromatosis");
+        pathCare.procedures.saveSearchAndUpdate(descriptiopn);
+        pathCare.procedures.savedSearches(descriptiopn);
+        pathCare.procedures.selectAllAndBulkComplete();
+
+        //Worksheet Result Entry (WRE): Adding an Attachment
+        pathCare.analytical.navigateWorkSheetRes();
+        pathCare.pathCareLabWorkSheetResEntry.findWorksheetDefinition("Hereditary Haemochromatosis");
+        pathCare.pathCareLabWorkSheetResEntry.uploadWorksheetDocument("Hereditary Haemochromatosis Datasheet","reditary Haemochromatosis");
+
+
+
     }
 }

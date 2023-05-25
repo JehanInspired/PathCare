@@ -13,7 +13,7 @@ public class Procedures extends AbstractExtension {
     private final By labEpisodeTextBox = By.xpath("//input[@name='LBEpisodeNo']");
     private final By findButton = By.xpath("//button[text()='Find']");
 
-    private final By worklist = By.xpath("//button[text()='Work List']");
+    private final By workList = By.xpath("//button[text()='Work List']");
 
     private final By allCheckboxticked = By.xpath("//md-checkbox[@id='LBProtocolProcedure_List_0-misc-selectAll']");
     private final By bulkCompleteButton =  By.xpath("//button[text()='Bulk Complete']");
@@ -26,6 +26,11 @@ public class Procedures extends AbstractExtension {
     private final By clearButton = By.xpath("//button[text()='Clear']");
 
     private final By saveSearches = By.xpath("//a[text()='Saved Searches']");
+    private final By testSetText = By.xpath("//input[@name='TestSet']");
+    private final By departmentText = By.xpath("//input[@name='Department']");
+    private final By savedSearchDescription = By.xpath("//input[@id='CTSearch_Msg_Edit_0-item-SRCHDesc']");
+    private final By updateSavedSearch = By.xpath("//button[@id='CTSearch_Msg_Edit_0-button-update1']");
+    private final By procedureRecord = By.xpath("//span[@id='LBProtocolProcedure_List_0-row-0-item-LBCPR_Desc']");
     private int timeout = 15;
 
     public Procedures(Roman roman) {
@@ -47,7 +52,22 @@ public class Procedures extends AbstractExtension {
         }
 
     }
-
+    public void searchProtocolProcedure(String department, String testSet) throws InterruptedException {
+        sendKeysAndTab(testSetText,testSet);
+        sendKeysAndTab(departmentText,department);
+        click(workList,timeout);
+    }
+    public void saveSearchAndUpdate(String description) throws InterruptedException {
+        click(saveSearches,timeout);
+        sendKeysAndTab(savedSearchDescription,description,timeout);
+        click(updateSavedSearch);
+    }
+    public void selectAllAndBulkComplete() {
+        while(_driver.findElement(procedureRecord).isDisplayed()){
+            click(allCheckboxticked,timeout);
+            click(bulkCompleteButton);
+        }
+    }
     public void searchProcedure(String labEpisode, ArrayList<String> specimenNumber,String procedureSavedSearch) throws InterruptedException {
         sendKeys(labEpisodeTextBox,labEpisode);
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");

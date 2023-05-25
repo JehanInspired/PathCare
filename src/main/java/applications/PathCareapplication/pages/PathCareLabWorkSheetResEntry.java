@@ -7,6 +7,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoAlertPresentException;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -35,12 +36,41 @@ public class PathCareLabWorkSheetResEntry extends AbstractExtension {
 
     private final By tableName = By.xpath("//table[@class='tblListSelect']");
     private final By closebutton = By.xpath("//input[@id='close1']");
+    private final By attachmentsLink = By.xpath("(//a[@id='Attachments'])[2]");
+    private final By chooseFile = By.xpath("//input[@id='File']");
+    private final By acceptFile = By.xpath("//input[@id='accept1']");
+    private final By uploadFileTestSet = By.xpath("//input[@id='TestSetz1']");
+    private final By episodeLink = By.xpath("//a[@id='MedVaLEditz1']");
+    private final By testSetAttachments = By.xpath("//div[@id='slideContainer']");
+    private final By worksheetResEntry = By.xpath("//span[@id='tc_Breadcrumbs-menuCaption' and text()='Worksheet Res. Entry']");
     private String locationNew = "";
 
     private Boolean firstTime = true;
     private int timeout = 20;
 
-
+    public  void  findWorksheetDefinition(String worksheetDef){
+       sendKeysAndTab(inputWorkSheetDefinition,worksheetDef,timeout);
+       clickAndTab(worksheetLookUp);
+    }
+    public  void  ClickApplyButton(){
+        click(apply);
+    }
+    public  void  ClickEpisodeLinkAndCheckAttachedDocs(){
+        click(episodeLink);
+        if(_driver.findElement(testSetAttachments).isDisplayed()){
+            _driver.navigate().back();
+        }
+    }
+    public boolean worksheetResEntryDisplayed(){
+       return  _driver.findElement(worksheetResEntry).isDisplayed();
+    }
+    public  void  uploadWorksheetDocument(String path,String testSet){
+        File file = new File(System.getProperty("user.dir")+"\\src\\main\\resources\\"+path+".xlsx");
+        switchToFrame(By.id("TRAK_info"));
+        sendKeys(chooseFile,file.toString());
+        sendKeys(uploadFileTestSet,testSet,timeout);
+        click(acceptFile,timeout);
+    }
     public void workSheetEntry(List<WorkSheetResultEntry> workSheet,List<WorkSheetResultValues> sheetResultValues,
                                List<SpecimenReceiveEntity> specimenReceiveEntities,Analytical analytical,
                                InterSystemLoginPage interSystemLoginPage) throws InterruptedException {

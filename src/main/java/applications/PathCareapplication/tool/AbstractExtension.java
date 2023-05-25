@@ -181,7 +181,10 @@ public abstract class AbstractExtension extends AbstractPage {
         sendKeys(element,text);
         super._driver.findElement(element).sendKeys(Keys.TAB);
     }
-
+    public void clickAndTab(By element){
+        click(element);
+        super._driver.findElement(element).sendKeys(Keys.TAB);
+    }
     public void switchToMainFrame() {
         super.switchToFrame(mainframe);
     }

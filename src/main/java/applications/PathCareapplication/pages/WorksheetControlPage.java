@@ -58,6 +58,7 @@ public class WorksheetControlPage extends AbstractExtension {
             click(printLink);
         }
     }
+    //The entry for the worksheet just printed is removed from the Worksheet Control list.
     public Boolean isWorksheetPrinted(){
         return (!_driver.findElement(workSheetDescription).isDisplayed());
     }
