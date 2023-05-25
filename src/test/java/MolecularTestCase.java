@@ -301,7 +301,7 @@ public class MolecularTestCase extends RomanBase {
         //Work Receive
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.changelocation();
-        pathCare.interSystemloginPage.setLocation("PathCare PCP Molecular Lab Assistant");
+        pathCare.interSystemloginPage.setLocation("PathCare PCP Molecular Scientist C2");
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateWorkRecived();
         pathCare.workAreaReceptionPage.labworkareaswitch();
@@ -322,7 +322,9 @@ public class MolecularTestCase extends RomanBase {
         pathCare.analytical.navigateWorkSheetRes();
         pathCare.pathCareLabWorkSheetResEntry.findWorksheetDefinition("Hereditary Haemochromatosis");
         pathCare.pathCareLabWorkSheetResEntry.uploadWorksheetDocument("Hereditary Haemochromatosis Datasheet","reditary Haemochromatosis");
-
+        pathCare.pathCareLabWorkSheetResEntry.ClickApplyButton();
+        pathCare.pathCareLabWorkSheetResEntry.ClickEpisodeLinkAndCheckAttachedDocs();
+        Assert.assertTrue("Worksheet result entry",pathCare.pathCareLabWorkSheetResEntry.worksheetResEntryDisplayed());
 
 
     }

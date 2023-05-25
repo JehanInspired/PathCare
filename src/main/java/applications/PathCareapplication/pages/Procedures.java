@@ -3,6 +3,7 @@ package applications.PathCareapplication.pages;
 import Roman.Roman;
 import applications.PathCareapplication.tool.AbstractExtension;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.Keys;
 
 import java.time.LocalDate;
@@ -31,6 +32,7 @@ public class Procedures extends AbstractExtension {
     private final By savedSearchDescription = By.xpath("//input[@id='CTSearch_Msg_Edit_0-item-SRCHDesc']");
     private final By updateSavedSearch = By.xpath("//button[@id='CTSearch_Msg_Edit_0-button-update1']");
     private final By procedureRecord = By.xpath("//span[@id='LBProtocolProcedure_List_0-row-0-item-LBCPR_Desc']");
+    private final By saveSearch = By.xpath("//button[@id='LBProtocolProcedure_List_0-button-SaveSearch']");
     private int timeout = 15;
 
     public Procedures(Roman roman) {
@@ -58,15 +60,17 @@ public class Procedures extends AbstractExtension {
         click(workList,timeout);
     }
     public void saveSearchAndUpdate(String description) throws InterruptedException {
-        click(saveSearches,timeout);
+        click(saveSearch,timeout);
         sendKeysAndTab(savedSearchDescription,description,timeout);
         click(updateSavedSearch);
     }
     public void selectAllAndBulkComplete() {
-        while(_driver.findElement(procedureRecord).isDisplayed()){
-            click(allCheckboxticked,timeout);
-            click(bulkCompleteButton);
-        }
+       try {
+           while (_driver.findElement(procedureRecord).isDisplayed()) {
+               click(allCheckboxticked, timeout);
+               click(bulkCompleteButton);
+           }
+       }catch (ElementNotVisibleException ex){}
     }
     public void searchProcedure(String labEpisode, ArrayList<String> specimenNumber,String procedureSavedSearch) throws InterruptedException {
         sendKeys(labEpisodeTextBox,labEpisode);

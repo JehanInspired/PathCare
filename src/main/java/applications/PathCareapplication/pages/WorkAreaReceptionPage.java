@@ -109,11 +109,12 @@ public class WorkAreaReceptionPage extends AbstractExtension {
     }
    public void workAreaReceive(String department, String workArea, String specimenNumber) throws InterruptedException {
         sendKeysAndTab(departmentText,department,timeout);
+        Thread.sleep(2000);
         sendKeysAndTab(workAreaText,workArea,timeout);
         Thread.sleep(2000);
         sendKeysAndTab(specimenNumberText,specimenNumber + "-1",timeout);
-        awaitElement(checkin,timeout);
         awaitClickableElement(checkin,timeout,30);
+        Thread.sleep(3000);
         click(checkin,timeout);
    }
     public boolean departmentWorkArea(List<TestDataModel> data, boolean checking) {
