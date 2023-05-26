@@ -34,14 +34,14 @@ public class WorksheetControlPage extends AbstractExtension {
         sendKeys(worksheetType,type,timeout);
         click(worksheetTypeOption);
     }
-    public void enterCreatedDate(String fromDate, String toDate){
+    public void enterCreatedDate(String fromDate, String toDate) throws InterruptedException {
         sendKeysAndTab(dateCreatedFrom,fromDate);
         sendKeys(dateCreatedTo,toDate);
     }
     public  void clickFindButton(){
         click(findButton);
     }
-    public  void findWorksheetdeatils(String desc,String fromDate, String toDate ){
+    public  void findWorksheetdeatils(String desc,String fromDate, String toDate ) throws InterruptedException {
         enterWorksheetType(desc);
         enterCreatedDate( fromDate, toDate);
         clickFindButton();

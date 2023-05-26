@@ -286,9 +286,10 @@ public class MolecularTestCase extends RomanBase {
     @Test
     public void TP_1035() throws Exception{
         Faker faker = new Faker();
-        String[] testcollection = new String[]{"PHH"};
+        String[] testcollection = new String[]{"Hereditary Haemochromatosis"};
         String[] departments = new String[]{"Molecular (PCR)"};
-        String descriptiopn = "Hereditary-Haemochromatosis-Testing";
+        String descriptiopn = "Hereditary-Haemochromatosis-" + pathCare.procedures.generateRandon();
+
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username,model.password);
 
@@ -309,9 +310,6 @@ public class MolecularTestCase extends RomanBase {
 
        //Molecular: Completing Procedures
         pathCare.pre_analytical.switchtoMainiFrame();
-        pathCare.interSystemloginPage.changelocation();
-        pathCare.interSystemloginPage.setLocation("PathCare PCP Molecular Scientist C2");
-        pathCare.interSystemloginPage.userselection();
         pathCare.analytical.navigateProcedures();
         pathCare.procedures.searchProtocolProcedure(departments[0],"Hereditary Haemochromatosis");
         pathCare.procedures.saveSearchAndUpdate(descriptiopn);
@@ -320,8 +318,8 @@ public class MolecularTestCase extends RomanBase {
 
         //Worksheet Result Entry (WRE): Adding an Attachment
         pathCare.analytical.navigateWorkSheetRes();
-        pathCare.pathCareLabWorkSheetResEntry.findWorksheetDefinition("Hereditary Haemochromatosis");
-        pathCare.pathCareLabWorkSheetResEntry.uploadWorksheetDocument("Hereditary Haemochromatosis Datasheet","reditary Haemochromatosis");
+        pathCare.pathCareLabWorkSheetResEntry.findWorksheetDefinition(testcollection[0]);
+        pathCare.pathCareLabWorkSheetResEntry.uploadWorksheetDocument("Hereditary Haemochromatosis Datasheet",testcollection[0]);
         pathCare.pathCareLabWorkSheetResEntry.ClickApplyButton();
         pathCare.pathCareLabWorkSheetResEntry.ClickEpisodeLinkAndCheckAttachedDocs();
         Assert.assertTrue("Worksheet result entry",pathCare.pathCareLabWorkSheetResEntry.worksheetResEntryDisplayed());

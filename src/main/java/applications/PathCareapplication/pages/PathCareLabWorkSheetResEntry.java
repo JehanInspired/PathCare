@@ -26,7 +26,7 @@ public class PathCareLabWorkSheetResEntry extends AbstractExtension {
     private final By openWorksheets = By.xpath("//input[@id='ShowOpen']");
     private final By findButton = By.xpath("//input[@id='find1']");
     private final By worksheetLookUp = By.xpath("//img[contains(@id,'LBWorksheet')]");
-
+    private final By worksheetLookUpText = By.xpath("//*[@id='LookupRow0']/td[1]");
     private final By openWorksheet = By.xpath("//tr[contains(@lookupallvalues,'^Open^^')]");
     private final By applyButton = By.xpath("//input[@value='Apply']");
     private final By validateButton = By.xpath("//input[@id='validate1']");
@@ -48,11 +48,14 @@ public class PathCareLabWorkSheetResEntry extends AbstractExtension {
     private Boolean firstTime = true;
     private int timeout = 20;
 
-    public  void  findWorksheetDefinition(String worksheetDef){
-       sendKeysAndTab(inputWorkSheetDefinition,worksheetDef,timeout);
-       clickAndTab(worksheetLookUp);
+    public  void  findWorksheetDefinition(String worksheetDef) throws InterruptedException {
+        switchToFrame(By.id("TRAK_main"));
+        sendKeysAndTab(inputWorkSheetDefinition,worksheetDef,timeout);
+        clickAndTab(worksheetLookUp,worksheetLookUpText);
     }
     public  void  ClickApplyButton(){
+        switchToDefaultContext();
+        switchToFrame(By.id("TRAK_main"));
         click(apply);
     }
     public  void  ClickEpisodeLinkAndCheckAttachedDocs(){
@@ -64,11 +67,16 @@ public class PathCareLabWorkSheetResEntry extends AbstractExtension {
     public boolean worksheetResEntryDisplayed(){
        return  _driver.findElement(worksheetResEntry).isDisplayed();
     }
-    public  void  uploadWorksheetDocument(String path,String testSet){
+    public  void  uploadWorksheetDocument(String path,String testSet) throws InterruptedException {
         File file = new File(System.getProperty("user.dir")+"\\src\\main\\resources\\"+path+".xlsx");
+
+        click(attachmentsLink,timeout);
+       // switchToMainFrame();
+        switchToDefaultContext();
+        //_driver.switchTo().frame(_driver.findElement(By.xpath("/html[1]/body[1]/div[1]/div[2]/div[1]/iframe[2]")));
         switchToFrame(By.id("TRAK_info"));
-        sendKeys(chooseFile,file.toString());
-        sendKeys(uploadFileTestSet,testSet,timeout);
+        sendKeys(chooseFile,file.toString(),timeout);
+        sendKeysAndTab(uploadFileTestSet,testSet,timeout);
         click(acceptFile,timeout);
     }
     public void workSheetEntry(List<WorkSheetResultEntry> workSheet,List<WorkSheetResultValues> sheetResultValues,
