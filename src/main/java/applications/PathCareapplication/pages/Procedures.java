@@ -74,7 +74,6 @@ public class Procedures extends AbstractExtension {
            while(validateElement_Displayed(procedureRecord,timeout)){
                click(allCheckboxticked, timeout);
                click(bulkCompleteButton);
-               //Thread.sleep(3000);
            }
     }
     public void searchProcedure(String labEpisode, ArrayList<String> specimenNumber,String procedureSavedSearch) throws InterruptedException {

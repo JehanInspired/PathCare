@@ -60,7 +60,7 @@ public class WorksheetControlPage extends AbstractExtension {
     }
     //The entry for the worksheet just printed is removed from the Worksheet Control list.
     public Boolean isWorksheetPrinted(){
-        return (!_driver.findElement(workSheetDescription).isDisplayed());
+        return (!validateElement_Displayed(workSheetDescription,timeout));
     }
     public  void clickCreateQC_onlyWorksheetButton(){
         click(createQC_OnlyWorksheet,timeout);
