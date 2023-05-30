@@ -517,7 +517,7 @@ public  class LabespideData  {
                     }
                 }
 
-                Collections.sort(workAreaReceiveEntity.getTestSet());
+               // Collections.sort(workAreaReceiveEntity.getTestSet());
                 this.workAreaReceiveEntities.add(workAreaReceiveEntity);
             }
 

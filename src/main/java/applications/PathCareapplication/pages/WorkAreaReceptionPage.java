@@ -291,7 +291,7 @@ public class WorkAreaReceptionPage extends AbstractExtension {
             if(findOne(specimenNewSourceVolume).getAttribute("value").contentEquals(container)){
                 super._driver.findElement(specimenNewSourceVolume).sendKeys(Keys.TAB);
                 stepInfoWithScreenshot("Entered container "+container);
-                Thread.sleep(5000);
+                Thread.sleep(3000);
             }else{
                 Assert.fail("Unable to find Container Specimen "+container);
             }
@@ -304,7 +304,7 @@ public class WorkAreaReceptionPage extends AbstractExtension {
             if(findOne(specimenVolumeAliquot).getAttribute("value").contentEquals(container)){
                 super._driver.findElement(specimenVolumeAliquot).sendKeys(Keys.TAB);
                 stepInfoWithScreenshot("Entered container "+container);
-                Thread.sleep(5000);
+                Thread.sleep(3000);
             }else{
                 Assert.fail("Unable to find Container Specimen "+container);
             }

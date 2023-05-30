@@ -5,6 +5,7 @@ import applications.PathCareapplication.models.*;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -33,10 +34,6 @@ public class TestSetDataSheet extends RomanBase {
         options.setExperimentalOption("prefs", chromeOptionsMap);
         roman._driver = roman().selenium.getChromeDriver(options);
         pathCare = new PathCareApplication(roman);
-
-
-
-
     }
 
     @AfterEach
@@ -99,6 +96,41 @@ public class TestSetDataSheet extends RomanBase {
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigatespecimenRecived();
         pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingle(pathCare.pre_analytical, pathCare.interSystemloginPage, labespisodesSpecimen, location, dataPatient.getSpecimenReceiveArrayList(), dataPatient.getWorkAreaReceives(), dataPatient.getTestCodeList());
+        if (!pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList.isEmpty()){
+            for (WorkAreaReceiveEntity workAreaReceiveEntity : pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList) {
+                dataPatient.write(workAreaReceiveEntity.toString().replace("[","").replace("]",""),"WorkRecieve.txt");
+            }
+        }
+        if (!pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList.isEmpty()){
+            for (SpecimenReceiveEntity specimenReceiveEntity : pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList) {
+                dataPatient.write(specimenReceiveEntity.ToString().replace("[","").replace("]",""),"SpecimenRecieve.txt");
+            }
+        }
+
+
+    }
+    @Test
+    @Order(2)
+    public void speciemenReceive2() throws Exception {
+        if (dataPatient.readerList().isEmpty()) {
+            registerPatient();
+            pathCare.pre_analytical.switchtoMainiFrame();
+            pathCare.interSystemloginPage.logoff();
+        }
+
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        String location = dataPatient.getPatientModelList().get(0).getUserprofile();
+        pathCare.interSystemloginPage.setLocation(location);
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateRegistration();
+        HashMap<String, ArrayList<String>> labespisodesSpecimen = pathCare.pathCareScratch.searchMutliplePatientKeys(dataPatient.readerList());
+        location = dataPatient.getSpecimenReceiveArrayList().get(0).getUserprofile_FK();
+        pathCare.interSystemloginPage.setLocation(location);
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigatespecimenRecived();
+       pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespisodesSpecimen);
         if (!pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList.isEmpty()){
             for (WorkAreaReceiveEntity workAreaReceiveEntity : pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList) {
                 dataPatient.write(workAreaReceiveEntity.toString().replace("[","").replace("]",""),"WorkRecieve.txt");
@@ -206,7 +238,17 @@ public class TestSetDataSheet extends RomanBase {
         pathCare.labQueues.labQueueSheet(dataPatient.getLabQueueEntities(),dataPatient.getlabQueueValuesEntity(),
                 dataPatient.readerList(), pathCare.resultEntry,pathCare.pathCareProcessingPage,pathCare.interSystemloginPage);
     }
+    @Test
+    @Order(7)
+    public void Transfer() throws Exception {
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        String location = dataPatient.getPatientModelList().get(0).getUserprofile();
+        pathCare.interSystemloginPage.setLocation(location);
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateRegistration();
 
+    }
 }
 
 class QCTestCase extends RomanBase{

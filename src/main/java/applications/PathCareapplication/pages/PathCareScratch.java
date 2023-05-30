@@ -121,11 +121,11 @@ public class PathCareScratch extends AbstractExtension {
     private  By testdieditfield = By.xpath("//a[text()='%s']//following::md-input-container[@class='tcNumeric']//input[contains(@name,'QA')]");
     private  By  nextpageURN = By.xpath("//a[text()='Next >']");
     //private  By  labEspiodeNum = By.xpath("//*[@id='tc_Toast-misc-message']");
-
+    private  By  uniqueRegistrationNum = By.xpath("//input[@name='RegistrationNo']");
     public  String testset ="";
     private boolean newPatient = true;
 
-    private int timeout = 20;
+    private int timeout = 40;
 
     private boolean clickBackboneLabEpisodeSelect = true;
 
@@ -1054,6 +1054,11 @@ public class PathCareScratch extends AbstractExtension {
             e.printStackTrace();
         }
         return  labEpisodesNumber;
+    }
+
+    public  void registerPatient(){
+
+        //nextpageURN
     }
     private void setTestset(String testset) {
         this.testset = testset;
