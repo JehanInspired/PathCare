@@ -13,8 +13,9 @@ public class TransferEntity {
     String pk ;
 
     @ExcelCellName("Patient_FK")
-    String userprofile ;
-
+    String patient_FK ;
+    @ExcelCellName("userprofile_FK")
+    String userprofile_FK;
     @ExcelCellName("Status")
     String status;
 
@@ -47,12 +48,19 @@ public class TransferEntity {
         this.pk = pk;
     }
 
-    public String getUserprofile() {
-        return userprofile;
+    public String getUserprofile_FK() {
+        return userprofile_FK;
     }
 
-    public void setUserprofile(String userprofile) {
-        this.userprofile = userprofile;
+    public void setUserprofile_FK(String userprofile) {
+        this.userprofile_FK = userprofile;
+    }
+    public String getPatient_FK() {
+        return patient_FK;
+    }
+
+    public void setPatient_FK(String patient_FK) {
+        this.patient_FK = patient_FK;
     }
 
     public String getStatus() {

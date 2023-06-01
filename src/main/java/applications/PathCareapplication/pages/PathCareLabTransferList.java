@@ -55,11 +55,13 @@ public class PathCareLabTransferList extends AbstractExtension {
     private final By dateSentTo = By.xpath("//input[@id='DateSentTo']");
     private final By tLBTransferShipmentList= By.xpath("//table[@id='tLBTransfer_Shipment_List']/tbody");
     private final By firstTransferMaterialList= By.xpath("//label[@id='TransferMaterialListz1']");
+    private final By packNumberText= By.xpath("//input[@id='PackNumber']");
+    private final By transitStatus = By.xpath("//label[@id='LBTRStatusz1']");
     private String description= "";
     private String url = "";
     private int timeout = 20;
 
-  public String shipmentNumber = "";
+    public String shipmentNumber = "";
   public void tranferlistLabepisode(String text){
       switchToFrame(switchiFrame);
       sendKeys(labEpisode,text,timeout);
@@ -68,6 +70,25 @@ public class PathCareLabTransferList extends AbstractExtension {
       stepPassedWithScreenshot("Successfully Entered lab Episode");
       }
   }
+    public void tranferStatusFilter(String status) throws InterruptedException {
+        switchToFrame(switchiFrame);
+        findOne(By.xpath("//input[@id='Status']"), status);
+        if(validateElement_Enabled_Displayed(findbutton,timeout)){
+            click(findbutton,timeout);
+            stepPassedWithScreenshot("Successfully Entered lab Episode");
+        }
+    }
+    public void enterPackNumberAndFind(String packNumber) throws InterruptedException {
+        switchToFrame(switchiFrame);
+        findOne(packNumberText, packNumber);
+        if(validateElement_Enabled_Displayed(findbutton,timeout)){
+            click(findbutton,timeout);
+            stepPassedWithScreenshot("Successfully Entered packed number");
+        }
+    }
+    public  boolean shipmentPackageIsInTransit(){
+      return validateElement_Displayed(transitStatus,timeout);
+    }
     public void tranferSpecimenIntoShipmentContainer(){
         click(shipmentbutton);
         click(addshipmentcontainerbutton,timeout);
@@ -108,7 +129,7 @@ public class PathCareLabTransferList extends AbstractExtension {
       }
         return checker;
   }
-    public void checkPackItem(ArrayList<String> mulitplelabepisode,ArrayList<ArrayList<String>> specimenRecieve) {
+    public void checkPackItem(ArrayList<String> mulitplelabepisode,ArrayList<ArrayList<String>> specimenRecieve) throws InterruptedException {
       switchToFrame(switchiFrame);
       findOne(By.xpath("//input[@id='Status']"), "PKD");
       int y=0;
@@ -123,7 +144,7 @@ public class PathCareLabTransferList extends AbstractExtension {
           y++;
       }
   }
-    public void checkWaitItem(ArrayList<String> mulitplelabepisode,ArrayList<ArrayList<String>> specimenRecieve) {
+    public void checkWaitItem(ArrayList<String> mulitplelabepisode,ArrayList<ArrayList<String>> specimenRecieve) throws InterruptedException {
         switchToFrame(switchiFrame);
         findOne(By.xpath("//input[@id='Status']"), "W");
         int y=0;
@@ -139,7 +160,7 @@ public class PathCareLabTransferList extends AbstractExtension {
         }
     }
 
-    public Boolean checknumbersTransferlapepisode(String labepisode, ArrayList<String> specimennumbers){
+    public Boolean checknumbersTransferlapepisode(String labepisode, ArrayList<String> specimennumbers) throws InterruptedException {
         boolean checker = false;
         switchToFrame(switchiFrame);
         findOne(By.xpath("//input[@id='Status']"),"T");
@@ -154,7 +175,7 @@ public class PathCareLabTransferList extends AbstractExtension {
         return checker;
     }
 
-    public Boolean checknumbersTransferMultiple(ArrayList<String> mulitplelabepisode, ArrayList<ArrayList<String>> specimennumbers){
+    public Boolean checknumbersTransferMultiple(ArrayList<String> mulitplelabepisode, ArrayList<ArrayList<String>> specimennumbers) throws InterruptedException {
         boolean checker = false;
         switchToFrame(switchiFrame);
         int y =0;
@@ -323,7 +344,7 @@ public class PathCareLabTransferList extends AbstractExtension {
   public void clickFindButton(){
       click(findbutton,timeout);
   }
-  public void statChangeWaitingLinkFind(String fromSite, String toSite){
+  public void statChangeWaitingLinkFind(String fromSite, String toSite) throws InterruptedException {
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
       switchToDefaultContext();
       switchToFrame(switchiFrame);
@@ -350,15 +371,34 @@ public class PathCareLabTransferList extends AbstractExtension {
          }
 
          for(WebElement element: find(labEpisodefield)){
-
-             element.click();
+             //element.click();
+             javascriptClick(element);
              stepInfoWithScreenshot("Ticked Lab Episode "+value+" "+y++);
          }
       }
   }
+    public void selectListLabEspisode(ArrayList<String> labEpisode){
 
+        for(String value:labEpisode){
+            int y=0;
+            By labEpisodefield = By.xpath("//parent::td[label[text()='%s']]//parent::tr//td//input[contains(@id,'Selectz')]".replace("%s",value));
+            while(!validateElement_Enabled_Displayed(labEpisodefield,10)){
+                if(validateElement_Displayed(nextpageTransferlist)){
+                    click(nextpageTransferlist);
+                }else {
+                    Assert.fail("Unable to find " + labEpisode.toArray().toString());
+                }
+            }
+
+            for(WebElement element: find(labEpisodefield)){
+                //element.click();
+                javascriptClick(element);
+                stepInfoWithScreenshot("Ticked Lab Episode "+value+" "+y++);
+            }
+        }
+    }
   //Save Searches
-    public Boolean labSearches(){
+    public Boolean labSearches() throws InterruptedException {
 
        description ="From PathCare Park Reference Lab to George Laboratory Lab Transfer "+ new Random().nextDouble();
       switchToFrame(switchiFrame);
@@ -393,7 +433,7 @@ public class PathCareLabTransferList extends AbstractExtension {
 
     return false;
     }
-    public boolean queuesSelectResult(){
+    public boolean queuesSelectResult() throws InterruptedException {
 
       if(labSearches()){
 
@@ -408,11 +448,12 @@ public class PathCareLabTransferList extends AbstractExtension {
       return false;
     }
 
-    public void findOne(By by,String input) {
+    public void findOne(By by,String input) throws InterruptedException {
         try {
          //super.findOne(by,timeout).click();
         super.findOne(by,timeout).clear();
         super.findOne(by,timeout).sendKeys(input);
+        Thread.sleep(1000);
         super.findOne(by,timeout).sendKeys(Keys.TAB);
         } catch (UnhandledAlertException ignored) {
             switchToDefaultContext();

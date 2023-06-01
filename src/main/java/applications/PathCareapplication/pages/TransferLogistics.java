@@ -11,6 +11,7 @@ public class TransferLogistics extends AbstractExtension {
     private final By dropShipmentContainerNumbertext = By.xpath("//input[@name='DropOffNumber']");
     private final By pickUpShipment = By.xpath("//input[@name='PickUpNumber']");
     private final By findbutton = By.xpath("//input[@name='find1']");
+    private final By acknowledgeByText = By.xpath("//input[@name='AcknowledgedBy']");
     private final By updatebutton = By.xpath("//button[text()='Update']");
     private final By statusDevilvered = By.xpath("//span[text()='Delivered']");
     private final By statusInTransit = By.xpath("//span[@id='LBShipmentContainer_Msg_List_0-row-0-item-LBSHC_Status']");
@@ -39,10 +40,10 @@ public class TransferLogistics extends AbstractExtension {
         return false;
     }
 
-    public boolean dropOffShipmentValid(String shipContainerNumber){
+    public boolean dropOffShipmentValid(String shipContainerNumber,String acknowledgeBy){
 
         findOne(dropShipmentContainerNumbertext,shipContainerNumber);
-
+        findOne(acknowledgeByText,acknowledgeBy);
         if(validateElement_Displayed(updatebutton,10)){
             stepPassedWithScreenshot("Successfully Delivered Drop Off "+ shipContainerNumber);
             click(updatebutton);
@@ -51,7 +52,17 @@ public class TransferLogistics extends AbstractExtension {
 
         return false;
     }
+    public boolean dropOffShipmentValid(String shipContainerNumber){
 
+        findOne(dropShipmentContainerNumbertext,shipContainerNumber);
+        if(validateElement_Displayed(updatebutton,10)){
+            stepPassedWithScreenshot("Successfully Delivered Drop Off "+ shipContainerNumber);
+            click(updatebutton);
+            return true;
+        }
+
+        return false;
+    }
     public boolean pickUpShipmentValid(String shipContainerNumber){
 
         findOne(pickUpShipment,shipContainerNumber);
@@ -73,6 +84,11 @@ public class TransferLogistics extends AbstractExtension {
         }
 
         return false;
+    }
+    public void EnterShipmentNumberInDropOffShipment(String shipContainerNumber,String ackknowledgeBy){
+        sendKeys(dropShipmentContainerNumbertext,shipContainerNumber ,timeout);
+        super._driver.findElement(dropShipmentContainerNumbertext).sendKeys(Keys.TAB);
+        click(updatebutton);
     }
 
     public void findOne(By by,String input) {

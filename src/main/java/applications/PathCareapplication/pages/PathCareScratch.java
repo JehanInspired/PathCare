@@ -134,6 +134,7 @@ public class PathCareScratch extends AbstractExtension {
     private String surname;
     private String gender;
     public  ArrayList<String> labEpisodesNumber = new ArrayList<String>();
+    static  String shipmentNumber ="";
     public String collectionDetailWithMultipleTestSet(String collectiontime, String[] testsetcollection, Boolean specimenSelect,String petientLocation) {
         //click(iconPatientSearch);
         sendKeys(patientSearchSelect,petientLocation);
@@ -1036,6 +1037,34 @@ public class PathCareScratch extends AbstractExtension {
             e.printStackTrace();
         }
     }
+    public static void writeShipmentNumberIntoFile(String shipmentNum) {
+        try {
+            FileWriter myWriter = new FileWriter(System.getProperty("user.dir")+"\\src\\main\\resources\\shipmentNumbers.text");
+
+                myWriter.write(shipmentNum );
+                System.out.println(shipmentNum);
+                myWriter.close();
+                System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+    public static void writeShipmentNumbersIntoFile(ArrayList<String> shipmentNum) {
+        try {
+            FileWriter myWriter = new FileWriter(System.getProperty("user.dir")+"\\src\\main\\resources\\shipmentNumbers.text");
+            for (String shipmentNumber : shipmentNum)
+            {
+                myWriter.write(shipmentNumber + "\n");
+                System.out.println(shipmentNumber);
+            }
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
     public  ArrayList<String> getLabEpisodesFromFile() {
         try {
             File file = new File(System.getProperty("user.dir")+"\\src\\main\\resources\\LabEpisodes.text");
@@ -1055,7 +1084,19 @@ public class PathCareScratch extends AbstractExtension {
         }
         return  labEpisodesNumber;
     }
+    public  String getShipmentNumberFromFile() {
+        try {
+            File file = new File(System.getProperty("user.dir")+"\\src\\main\\resources\\shipmentNumbers.text");
+            FileReader fr = new FileReader(file);
+            BufferedReader BR = new BufferedReader(fr);
+            shipmentNumber = BR.readLine();
 
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        return  shipmentNumber;
+    }
     public  void registerPatient(){
 
         //nextpageURN

@@ -13,7 +13,7 @@ public class LogisticsEntity {
     private String pk ;
 
     @ExcelCellName("userprofile_FK")
-    private String userprofile_fk;
+    private String userprofile_FK;
 
     @ExcelCellName("Pick_Up_Shipment_Container")
     private String pick_up_shipment_container;
@@ -21,6 +21,16 @@ public class LogisticsEntity {
     @ExcelCellName("Drop Off Shipment Container")
     private String drop_off_shipment_container;
 
+    public String getAcknowledged_By() {
+        return acknowledged_By;
+    }
+
+    public void setAcknowledged_By(String acknowledged_By) {
+        this.acknowledged_By = acknowledged_By;
+    }
+
+    @ExcelCellName("Acknowledged By")
+    private String acknowledged_By;
     public String getPk() {
         return pk;
     }
@@ -29,12 +39,12 @@ public class LogisticsEntity {
         this.pk = pk;
     }
 
-    public String getUserprofile_fk() {
-        return userprofile_fk;
+    public String getUserprofile_FK() {
+        return userprofile_FK;
     }
 
-    public void setUserprofile_fk(String userprofile_fk) {
-        this.userprofile_fk = userprofile_fk;
+    public void setUserprofile_FK(String userprofile_FK) {
+        this.userprofile_FK = userprofile_FK;
     }
 
     public String getPick_up_shipment_container() {

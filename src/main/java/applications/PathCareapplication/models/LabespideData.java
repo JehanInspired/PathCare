@@ -48,7 +48,17 @@ public  class LabespideData  {
     private ArrayList<EditTestSetEntity> editTestArrayList = new ArrayList<>();
 
     private ArrayList<SpecimenReceiveEntity> specimenReceiveEntityArrayList = new ArrayList<>();
+    private ArrayList<TransferEntity> transferEntityArrayList = new ArrayList<>();
 
+    public ArrayList<LogisticsEntity> getLogisticsEntityArrayList() {
+        return logisticsEntityArrayList;
+    }
+
+    public void setLogisticsEntityArrayList(ArrayList<LogisticsEntity> logisticsEntityArrayList) {
+        this.logisticsEntityArrayList = logisticsEntityArrayList;
+    }
+
+    private ArrayList<LogisticsEntity> logisticsEntityArrayList = new ArrayList<>();
     private List<List> ResultGene = new ArrayList<>();
 
 
@@ -294,8 +304,12 @@ public  class LabespideData  {
     public void setSpecimensArrayList(ArrayList<SpecimensEntity> specimensEntityArrayList) {
         this.specimensEntityArrayList = specimensEntityArrayList;
     }
-
-
+    public ArrayList<TransferEntity> getTransferArrayList() {
+        return transferEntityArrayList;
+    }
+    public void setTransferArrayList(ArrayList<TransferEntity> transferEntityArrayList) {
+        this.transferEntityArrayList = transferEntityArrayList;
+    }
 
     //Read
     //Structure the content/data
@@ -517,7 +531,7 @@ public  class LabespideData  {
                     }
                 }
 
-               // Collections.sort(workAreaReceiveEntity.getTestSet());
+                Collections.sort(workAreaReceiveEntity.getTestSet());
                 this.workAreaReceiveEntities.add(workAreaReceiveEntity);
             }
 
@@ -722,7 +736,30 @@ public  class LabespideData  {
 
 
         }
+       //Lab Transfer
+        for (TransferEntity transferEntity:ExcelExtractorList.labTransfer()){
 
+            if (transferEntity.getUserprofile_FK()!= null) {
+                for (UserProfileEntity userProfileEntity : userProfile()) {
+                    if (transferEntity.getUserprofile_FK().contentEquals(userProfileEntity.getPK())) {
+                        transferEntity.setUserprofile_FK(userProfileEntity.getAccessProfile());
+                    }
+                }
+                this.transferEntityArrayList.add(transferEntity);
+            }
+        }
+        //Lab Transfer Logistics
+        for (LogisticsEntity logisticsEntity:ExcelExtractorList.labTransferLogistics()){
+
+            if (logisticsEntity.getUserprofile_FK()!= null) {
+                for (UserProfileEntity userProfileEntity : userProfile()) {
+                    if (logisticsEntity.getUserprofile_FK().contentEquals(userProfileEntity.getPK())) {
+                        logisticsEntity.setUserprofile_FK(userProfileEntity.getAccessProfile());
+                    }
+                }
+                this.logisticsEntityArrayList.add(logisticsEntity);
+            }
+        }
         //Work Sheet
         for (WorkSheetResultEntry workSheetResultEntry:ExcelExtractorList.workSheetResultEntries()){
 

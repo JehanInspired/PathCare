@@ -78,8 +78,6 @@ public class Pre_Analytical extends AbstractExtension {
             click(pre_Analytical);
             click(transferbutton,timeout);
         }
-
-
         stepPassedWithScreenshot("Navigated to Transfers");
     }
 

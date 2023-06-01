@@ -17,7 +17,9 @@ public class TestSetDataSheet extends RomanBase {
     public PathCareApplication pathCare = null;
     public String dir = " ";
     private final LabespideData dataPatient = new LabespideData();
-
+    static ArrayList<String> labEpisode = new ArrayList<>();
+    static String shipmentNumber ="";
+    static boolean value = false;
     @BeforeEach
     public void startup() {
         dir = get_reportDir();
@@ -69,7 +71,10 @@ public class TestSetDataSheet extends RomanBase {
                 pathCare.pathCareScratch.patientdetails(patient.getGivenName(), patient.getSurname(), patient.getDateOfBirth(), patient.getSex());
             }
             pathCare.pathCareScratch.doctorSelection(patient.getReferringDoctor());
-            dataPatient.write(patient.getPk()+","+pathCare.pathCareScratch.collectiondetailnewEditSpecimen(patient.getPk(),patient.getCollectionTime(),patient.getPatientLocation(),patient.getTestSet().toArray(String[]::new),!patient.getReceivedDate().isBlank(),dataPatient.getTestSetDetailsList(),dataPatient.getSpecimensArrayList(),dataPatient.getEditTestArrayList()));
+             labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen(patient.getPk(),patient.getCollectionTime(),patient.getPatientLocation(),patient.getTestSet()
+                     .toArray(String[]::new),!patient.getReceivedDate().isBlank(),dataPatient.getTestSetDetailsList(),dataPatient.getSpecimensArrayList(),dataPatient.getEditTestArrayList()));
+            dataPatient.write(patient.getPk()+","+ labEpisode);
+            pathCare.pathCareScratch.writeLabEpisodesIntoFile(labEpisode);
         }
 
     }
@@ -110,41 +115,62 @@ public class TestSetDataSheet extends RomanBase {
 
     }
     @Test
-    @Order(2)
-    public void speciemenReceive2() throws Exception {
-        if (dataPatient.readerList().isEmpty()) {
-            registerPatient();
-            pathCare.pre_analytical.switchtoMainiFrame();
-            pathCare.interSystemloginPage.logoff();
-        }
-
+    @Order(7)
+    public void Transfer() throws Exception {
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        labEpisode= pathCare.pathCareScratch.getLabEpisodesFromFile();
         pathCare.interSystemloginPage.login(model.username, model.password);
-        String location = dataPatient.getPatientModelList().get(0).getUserprofile();
+        String location = dataPatient.getTransferArrayList().get(0).getUserprofile_FK();
         pathCare.interSystemloginPage.setLocation(location);
         pathCare.interSystemloginPage.userselection();
-        pathCare.pre_analytical.navigateRegistration();
-        HashMap<String, ArrayList<String>> labespisodesSpecimen = pathCare.pathCareScratch.searchMutliplePatientKeys(dataPatient.readerList());
-        location = dataPatient.getSpecimenReceiveArrayList().get(0).getUserprofile_FK();
-        pathCare.interSystemloginPage.setLocation(location);
-        pathCare.interSystemloginPage.changelocation();
-        pathCare.interSystemloginPage.userselection();
-        pathCare.pre_analytical.navigatespecimenRecived();
-       pathCare.pathCareLabSpecimenReception.mutlipleSpeicmen_Patientmultiple(labespisodesSpecimen);
-        if (!pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList.isEmpty()){
-            for (WorkAreaReceiveEntity workAreaReceiveEntity : pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList) {
-                dataPatient.write(workAreaReceiveEntity.toString().replace("[","").replace("]",""),"WorkRecieve.txt");
-            }
-        }
-        if (!pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList.isEmpty()){
-            for (SpecimenReceiveEntity specimenReceiveEntity : pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList) {
-                dataPatient.write(specimenReceiveEntity.ToString().replace("[","").replace("]",""),"SpecimenRecieve.txt");
-            }
-        }
-
-
+        pathCare.labQueues.switchToDefaultContext();
+        pathCare.pre_analytical.navigateTransfer();
+        pathCare.pathCareLabTransferList.statChangeWaitingLinkFind(dataPatient.getTransferArrayList().get(0).getFrom_lab_site(),
+                dataPatient.getTransferArrayList().get(0).getTo_lab_site());
+        pathCare.pathCareLabTransferList.selectlistlabespido(labEpisode);
+        pathCare.pathCareLabTransferList.tranferSpecimenIntoShipmentContainer();
+        pathCare.pathCareLabTransferList.closePackage();
+        shipmentNumber=pathCare.pathCareLabTransferList.shipmentNumber;
+        pathCare.pathCareScratch.writeShipmentNumberIntoFile(shipmentNumber);
     }
+    @Test
+    @Order(7)
+    public void TransferLogistics() throws Exception {
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        shipmentNumber = pathCare.pathCareScratch.getShipmentNumberFromFile();
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        String location = dataPatient.getLogisticsEntityArrayList().get(0).getUserprofile_FK();
+        pathCare.interSystemloginPage.setLocation(location);
+        pathCare.interSystemloginPage.userselection();
+        pathCare.labQueues.switchToDefaultContext();
+        pathCare.pre_analytical.navigateLogistics();
 
+        pathCare.transferLogistics.EnterShipmentNumberInPickUpShipment(shipmentNumber);
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.pre_analytical.navigateTransfer();
+        pathCare.pathCareLabTransferList.enterPackNumberAndFind(shipmentNumber);
+        value= pathCare.pathCareLabTransferList.shipmentPackageIsInTransit();
+        Assertions.assertTrue(value,"Update to status is not In Transit");
+    }
+    @Test
+    @Order(7)
+    public void TransferLogisticsDropOff() throws Exception {
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        shipmentNumber = pathCare.pathCareScratch.getShipmentNumberFromFile();
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        String location = dataPatient.getLogisticsEntityArrayList().get(0).getUserprofile_FK();
+        pathCare.interSystemloginPage.setLocation(location);
+        pathCare.interSystemloginPage.userselection();
+        pathCare.labQueues.switchToDefaultContext();
+        pathCare.pre_analytical.navigateLogistics();
+
+        pathCare.transferLogistics.dropOffShipmentValid(shipmentNumber,dataPatient.getLogisticsEntityArrayList().get(0).getAcknowledged_By());
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.pre_analytical.navigateTransfer();
+        pathCare.pathCareLabTransferList.enterPackNumberAndFind(shipmentNumber);
+        value= pathCare.pathCareLabTransferList.shipmentPackageIsInTransit();
+        Assertions.assertTrue(value,"Update to status is not In Transit");
+    }
     @Test
     @Order(3)
     public void work_Receive() throws Exception{
@@ -238,17 +264,7 @@ public class TestSetDataSheet extends RomanBase {
         pathCare.labQueues.labQueueSheet(dataPatient.getLabQueueEntities(),dataPatient.getlabQueueValuesEntity(),
                 dataPatient.readerList(), pathCare.resultEntry,pathCare.pathCareProcessingPage,pathCare.interSystemloginPage);
     }
-    @Test
-    @Order(7)
-    public void Transfer() throws Exception {
-        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
-        pathCare.interSystemloginPage.login(model.username, model.password);
-        String location = dataPatient.getPatientModelList().get(0).getUserprofile();
-        pathCare.interSystemloginPage.setLocation(location);
-        pathCare.interSystemloginPage.userselection();
-        pathCare.pre_analytical.navigateRegistration();
 
-    }
 }
 
 class QCTestCase extends RomanBase{

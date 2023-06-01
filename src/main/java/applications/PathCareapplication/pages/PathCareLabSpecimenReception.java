@@ -166,7 +166,7 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
 
             changeLocation(specimenReceiveEntities.get(numtestset).getUserprofile_FK(),interSystemloginPage,pre_analytical);
 
-                for(int x=0;x<= labespisodesSpecimen.get(patientkey).size()-1;x++)
+                for(int x=0;x<= labespisodesSpecimen.get(patientkey).size();++x)
                 {
                 switchToDefaultContext();
                 loadingBarChecker();
