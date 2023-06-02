@@ -1,10 +1,9 @@
 package applications.PathCareapplication.models;
 
-
 import com.poiji.annotation.ExcelCellName;
 import com.poiji.annotation.ExcelRow;
 
-public class LogisticsEntity {
+public class LogisticsDropOffEntity {
 
     @ExcelRow
     private int rowIndex;
@@ -20,6 +19,8 @@ public class LogisticsEntity {
 
     @ExcelCellName("Drop Off Shipment Container")
     private String drop_off_shipment_container;
+    @ExcelCellName("Acknowledged By")
+    private String acknowledged_By;
 
     public String getAcknowledged_By() {
         return acknowledged_By;
@@ -29,8 +30,7 @@ public class LogisticsEntity {
         this.acknowledged_By = acknowledged_By;
     }
 
-    @ExcelCellName("Acknowledged By")
-    private String acknowledged_By;
+
     public String getPk() {
         return pk;
     }
@@ -63,4 +63,3 @@ public class LogisticsEntity {
         this.drop_off_shipment_container = drop_off_shipment_container;
     }
 }
-

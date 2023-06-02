@@ -163,13 +163,16 @@ public class TestSetDataSheet extends RomanBase {
         pathCare.interSystemloginPage.userselection();
         pathCare.labQueues.switchToDefaultContext();
         pathCare.pre_analytical.navigateLogistics();
-
         pathCare.transferLogistics.dropOffShipmentValid(shipmentNumber,dataPatient.getLogisticsEntityArrayList().get(0).getAcknowledged_By());
+
         pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation(dataPatient.getLogisticsDropOffEntitiesList().get(0).getUserprofile_FK());
+        pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateTransfer();
         pathCare.pathCareLabTransferList.enterPackNumberAndFind(shipmentNumber);
-        value= pathCare.pathCareLabTransferList.shipmentPackageIsInTransit();
-        Assertions.assertTrue(value,"Update to status is not In Transit");
+        value= pathCare.pathCareLabTransferList.shipmentPackageIsInDelivered();
+        Assertions.assertTrue(value,"Update to status is not In Delivered");
     }
     @Test
     @Order(3)

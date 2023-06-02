@@ -57,6 +57,7 @@ public class PathCareLabTransferList extends AbstractExtension {
     private final By firstTransferMaterialList= By.xpath("//label[@id='TransferMaterialListz1']");
     private final By packNumberText= By.xpath("//input[@id='PackNumber']");
     private final By transitStatus = By.xpath("//label[@id='LBTRStatusz1']");
+    private final By deliveredStatus = By.xpath("//label[@id='LBTRStatusz1' and text()='Delivered']");
     private String description= "";
     private String url = "";
     private int timeout = 20;
@@ -88,6 +89,9 @@ public class PathCareLabTransferList extends AbstractExtension {
     }
     public  boolean shipmentPackageIsInTransit(){
       return validateElement_Displayed(transitStatus,timeout);
+    }
+    public  boolean shipmentPackageIsInDelivered(){
+        return validateElement_Displayed(deliveredStatus,timeout);
     }
     public void tranferSpecimenIntoShipmentContainer(){
         click(shipmentbutton);

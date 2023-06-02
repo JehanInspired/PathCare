@@ -60,6 +60,10 @@ public class ExcelExtractorList {
         PoijiOptions options = PoijiOptions.PoijiOptionsBuilder.settings().sheetName("LabTransferGeorge").addListDelimiter(",").build();
         return Poiji.fromExcel(new File("src/main/resources/".concat(path)), TransferEntity.class,options);
     }
+    static public List<LogisticsDropOffEntity> labTransferLogisticsDropOff(){
+        PoijiOptions options = PoijiOptions.PoijiOptionsBuilder.settings().sheetName("TransferLogisticsPathCareParkRe").addListDelimiter(",").build();
+        return Poiji.fromExcel(new File("src/main/resources/".concat(path)), LogisticsDropOffEntity.class,options);
+    }
     static public List<LogisticsEntity> labTransferLogistics(){
         PoijiOptions options = PoijiOptions.PoijiOptionsBuilder.settings().sheetName("TransferLogisticsGeorge").addListDelimiter(",").build();
         return Poiji.fromExcel(new File("src/main/resources/".concat(path)), LogisticsEntity.class,options);

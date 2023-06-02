@@ -50,6 +50,16 @@ public  class LabespideData  {
     private ArrayList<SpecimenReceiveEntity> specimenReceiveEntityArrayList = new ArrayList<>();
     private ArrayList<TransferEntity> transferEntityArrayList = new ArrayList<>();
 
+    public ArrayList<LogisticsDropOffEntity> getLogisticsDropOffEntitiesList() {
+        return logisticsDropOffEntitiesList;
+    }
+
+    public void setLogisticsDropOffEntitiesList(ArrayList<LogisticsDropOffEntity> logisticsDropOffEntitiesList) {
+        this.logisticsDropOffEntitiesList = logisticsDropOffEntitiesList;
+    }
+
+    private ArrayList<LogisticsDropOffEntity> logisticsDropOffEntitiesList = new ArrayList<>();
+
     public ArrayList<LogisticsEntity> getLogisticsEntityArrayList() {
         return logisticsEntityArrayList;
     }
@@ -746,6 +756,18 @@ public  class LabespideData  {
                     }
                 }
                 this.transferEntityArrayList.add(transferEntity);
+            }
+        }
+        //TransferLogisticsPathCareParkRe Logistics dropOff
+        for (LogisticsDropOffEntity logisticsDropOffEntity:ExcelExtractorList.labTransferLogisticsDropOff()){
+
+            if (logisticsDropOffEntity.getUserprofile_FK()!= null) {
+                for (UserProfileEntity userProfileEntity : userProfile()) {
+                    if (logisticsDropOffEntity.getUserprofile_FK().contentEquals(userProfileEntity.getPK())) {
+                        logisticsDropOffEntity.setUserprofile_FK(userProfileEntity.getAccessProfile());
+                    }
+                }
+                this.logisticsDropOffEntitiesList.add(logisticsDropOffEntity);
             }
         }
         //Lab Transfer Logistics
