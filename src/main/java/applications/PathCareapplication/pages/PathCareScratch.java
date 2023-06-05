@@ -135,6 +135,7 @@ public class PathCareScratch extends AbstractExtension {
     private String gender;
     public  ArrayList<String> labEpisodesNumber = new ArrayList<String>();
     static  String shipmentNumber ="";
+    public ArrayList<String> labEpisode = new ArrayList<>();
     public String collectionDetailWithMultipleTestSet(String collectiontime, String[] testsetcollection, Boolean specimenSelect,String petientLocation) {
         //click(iconPatientSearch);
         sendKeys(patientSearchSelect,petientLocation);
@@ -241,6 +242,7 @@ public class PathCareScratch extends AbstractExtension {
         }
             String lab_episode = getText(labEspiodeNum, timeout).replace("Lab Episode Number: ", "");
             stepPassedWithScreenshot("Label printed successfully " + lab_episode);
+            labEpisode.add(lab_episode);
         return lab_episode;
     }
 
@@ -748,7 +750,7 @@ public class PathCareScratch extends AbstractExtension {
                 if(validateElement_Displayed(continuelink,timeout)){
                         click(continuelink,timeout);
                 }
-                Thread.sleep(5000);
+                Thread.sleep(3000);
                 By editTestsetlink = By.xpath("//parent::tr/td/div/span//span[text()='%s']//parent::span//parent::span//parent::span//parent::div//parent::td//parent::tr//td//a[not(contains(@id,'CreateCopy')) ]".replace("%s",lapespido));
                 while(!validateElement_Displayed(editTestsetlink,timeout)){
                     scrollToElement(nextpageURN,timeout);

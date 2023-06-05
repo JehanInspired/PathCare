@@ -442,6 +442,23 @@ public  class LabespideData  {
         br.close();
         fr.close();
     }
+    public void write(ArrayList<String> values) throws IOException {
+
+        File file = new File(fileLocation);
+
+        FileWriter fr = new FileWriter(file ,false );
+        BufferedWriter br  = new BufferedWriter(fr);
+        br.write("");
+        br.flush();
+        for (String labEpisodeNumber : values)
+        {
+            br.write(labEpisodeNumber + "\n");
+            System.out.println(labEpisodeNumber);
+        }
+       // br.write(values+System.getProperty("line.separator"));
+        br.close();
+        fr.close();
+    }
     public void write(String values,String fileName) throws IOException {
 
         File file = new File("src/main/resources/"+fileName);

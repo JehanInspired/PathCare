@@ -20,6 +20,7 @@ public class TestSetDataSheet extends RomanBase {
     static ArrayList<String> labEpisode = new ArrayList<>();
     static String shipmentNumber ="";
     static boolean value = false;
+     ArrayList<String> labespisodesSpecimen = new ArrayList<>();
     @BeforeEach
     public void startup() {
         dir = get_reportDir();
@@ -70,11 +71,13 @@ public class TestSetDataSheet extends RomanBase {
             }else{
                 pathCare.pathCareScratch.patientdetails(patient.getGivenName(), patient.getSurname(), patient.getDateOfBirth(), patient.getSex());
             }
-            pathCare.pathCareScratch.doctorSelection(patient.getReferringDoctor());
-             labEpisode.add(pathCare.pathCareScratch.collectiondetailnewEditSpecimen(patient.getPk(),patient.getCollectionTime(),patient.getPatientLocation(),patient.getTestSet()
+               pathCare.pathCareScratch.doctorSelection(patient.getReferringDoctor());
+
+             labespisodesSpecimen.add(patient.getPk()+","+ pathCare.pathCareScratch.collectiondetailnewEditSpecimen(patient.getPk(),patient.getCollectionTime(),patient.getPatientLocation(),patient.getTestSet()
                      .toArray(String[]::new),!patient.getReceivedDate().isBlank(),dataPatient.getTestSetDetailsList(),dataPatient.getSpecimensArrayList(),dataPatient.getEditTestArrayList()));
-            dataPatient.write(patient.getPk()+","+ labEpisode);
-            pathCare.pathCareScratch.writeLabEpisodesIntoFile(labEpisode);
+            dataPatient.write(labespisodesSpecimen);
+
+            pathCare.pathCareScratch.writeLabEpisodesIntoFile(pathCare.pathCareScratch.labEpisode);
         }
 
     }
@@ -158,7 +161,7 @@ public class TestSetDataSheet extends RomanBase {
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         shipmentNumber = pathCare.pathCareScratch.getShipmentNumberFromFile();
         pathCare.interSystemloginPage.login(model.username, model.password);
-        String location = dataPatient.getLogisticsEntityArrayList().get(0).getUserprofile_FK();
+        String location = dataPatient.getLogisticsDropOffEntitiesList().get(0).getUserprofile_FK();
         pathCare.interSystemloginPage.setLocation(location);
         pathCare.interSystemloginPage.userselection();
         pathCare.labQueues.switchToDefaultContext();
@@ -167,7 +170,7 @@ public class TestSetDataSheet extends RomanBase {
 
         pathCare.pre_analytical.switchtoMainiFrame();
         pathCare.interSystemloginPage.changelocation();
-        pathCare.interSystemloginPage.setLocation(dataPatient.getLogisticsDropOffEntitiesList().get(0).getUserprofile_FK());
+        pathCare.interSystemloginPage.setLocation(dataPatient.getLogisticsEntityArrayList().get(0).getUserprofile_FK());
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateTransfer();
         pathCare.pathCareLabTransferList.enterPackNumberAndFind(shipmentNumber);

@@ -16,7 +16,7 @@ public class InterSystemLoginPage extends AbstractExtension {
     private final By logoffbutton = By.xpath("//button[@aria-label='Logout']");
     private final By footer = By.xpath("//div[@class='footer']");
 
-    private final int  timeout =20;
+    private final int  timeout =30;
     private final int polling = 3;
 
     private String location = "";

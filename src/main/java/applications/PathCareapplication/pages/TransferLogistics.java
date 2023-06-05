@@ -44,7 +44,7 @@ public class TransferLogistics extends AbstractExtension {
 
         findOne(dropShipmentContainerNumbertext,shipContainerNumber);
         findOne(acknowledgeByText,acknowledgeBy);
-        if(validateElement_Displayed(updatebutton,10)){
+            if(validateElement_Displayed(updatebutton,10)){
             stepPassedWithScreenshot("Successfully Delivered Drop Off "+ shipContainerNumber);
             click(updatebutton);
             return true;
