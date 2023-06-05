@@ -118,7 +118,7 @@ public class TestSetDataSheet extends RomanBase {
 
     }
     @Test
-    @Order(7)
+    @Order(3)
     public void Transfer() throws Exception {
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         labEpisode= pathCare.pathCareScratch.getLabEpisodesFromFile();
@@ -141,7 +141,7 @@ public class TestSetDataSheet extends RomanBase {
         Assertions.assertTrue(value,"Update to status is not In Packed");
     }
     @Test
-    @Order(7)
+    @Order(4)
     public void TransferLogistics() throws Exception {
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         shipmentNumber = pathCare.pathCareScratch.getShipmentNumberFromFile();
@@ -160,7 +160,7 @@ public class TestSetDataSheet extends RomanBase {
         Assertions.assertTrue(value,"Update to status is not In Transit");
     }
     @Test
-    @Order(7)
+    @Order(5)
     public void TransferLogisticsDropOff() throws Exception {
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         shipmentNumber = pathCare.pathCareScratch.getShipmentNumberFromFile();
@@ -182,7 +182,7 @@ public class TestSetDataSheet extends RomanBase {
         Assertions.assertTrue(value,"Update to status is not In Delivered");
     }
     @Test
-    @Order(3)
+    @Order(6)
     public void work_Receive() throws Exception{
 
         if(pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList.isEmpty()){
@@ -200,7 +200,7 @@ public class TestSetDataSheet extends RomanBase {
     }
 
     @Test
-    @Order(4)
+    @Order(7)
     public void labInstrumentResultGenerator() throws Exception{
         if (dataPatient.readerList().isEmpty()) {
             registerPatient();
@@ -231,7 +231,7 @@ public class TestSetDataSheet extends RomanBase {
     }
 
     @Test
-    @Order(5)
+    @Order(8)
     public void labResult() throws Exception{
        if (dataPatient.readerList().isEmpty()) {
             registerPatient();
@@ -257,7 +257,7 @@ public class TestSetDataSheet extends RomanBase {
     }
 
     @Test
-    @Order(6)
+    @Order(9)
     public void workSheet() throws Exception {
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
@@ -267,7 +267,7 @@ public class TestSetDataSheet extends RomanBase {
     }
 
     @Test
-    @Order(7)
+    @Order(10)
     public void queue() throws Exception {
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
