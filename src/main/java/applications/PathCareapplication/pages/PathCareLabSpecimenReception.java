@@ -166,7 +166,7 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
 
             changeLocation(specimenReceiveEntities.get(numtestset).getUserprofile_FK(),interSystemloginPage,pre_analytical);
 
-                for(int x=0;x <= labespisodesSpecimen.get(patientkey).size()-2;x++)
+                for(int x=0;x <= labespisodesSpecimen.get(patientkey).size()-3;++x)
                 {
                 switchToDefaultContext();
                 loadingBarChecker();
@@ -174,9 +174,9 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
                 switchToMainFrame();
 
                 String labespisode = labespisodesSpecimen.get(patientkey).get(x);
-                String value = labespisodesSpecimen.get(patientkey).get(x++);
+                String value = labespisodesSpecimen.get(patientkey).get(++x);
 
-                String registertestsetValue = labespisodesSpecimen.get(patientkey).get(x++);
+                String registertestsetValue = labespisodesSpecimen.get(patientkey).get(++x);
                 String anatomicalSiteRegistration = value !=null ? value: null;
 
                 findOne(specimenNumberText, labespisode);

@@ -864,7 +864,7 @@ public class PathCareScratch extends AbstractExtension {
         HashMap<String,ArrayList<String>> speciemenlist = new HashMap<>();
         for(String labnumber: lapsiode) {
             searchPatient(labnumber.split(",")[1]);
-            speciemenlist.put(labnumber.split(",")[0],specimenNumbersExtract(true));
+            speciemenlist.put(labnumber.split(",")[0],specimenNumberExtract(true));
             if (validateElement_Enabled_Displayed(backtoPatient,timeout)){
                 click(backtoPatient,timeout);
                 click(backtoPatient,timeout);
