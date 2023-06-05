@@ -135,6 +135,10 @@ public class TestSetDataSheet extends RomanBase {
         pathCare.pathCareLabTransferList.closePackage();
         shipmentNumber=pathCare.pathCareLabTransferList.shipmentNumber;
         pathCare.pathCareScratch.writeShipmentNumberIntoFile(shipmentNumber);
+
+        pathCare.pathCareLabTransferList.enterPackNumberAndFind(shipmentNumber);
+        value= pathCare.pathCareLabTransferList.shipmentPackageIsPacked();
+        Assertions.assertTrue(value,"Update to status is not In Packed");
     }
     @Test
     @Order(7)
