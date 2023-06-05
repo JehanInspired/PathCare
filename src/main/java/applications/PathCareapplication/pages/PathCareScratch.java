@@ -76,7 +76,7 @@ public class PathCareScratch extends AbstractExtension {
     private final By findButton = By.xpath("//button[text()='Find']");
 
     private final By reportTitle = By.xpath("//span[text()='Reports']");
-
+    private final By specimenNumbers = By.xpath("//input[ contains(@name,'LBSPC_SpecimenNumberz')]");
     private final By specimenAnatomicalSiteWithTestSet = By.xpath("//*[ contains(@aria-label,'Anatomical Site Lookup')  or contains(@ng-model,'LBSPC_SpecimenNumber') or contains(@ng-bind,'TestSetList') ]");
     private final By specimenNumberUnedit = By.xpath("//span[contains(@ng-bind,'LBCAS_Desc') or contains(@ng-bind,'LBSPC_SpecimenNumber')]");
     private final By specimenText = By.xpath("//input[contains(@ng-model,'LBSPC_SpecimenNumber')]");
@@ -743,14 +743,14 @@ public class PathCareScratch extends AbstractExtension {
         findEnterTab(collectionTimeTextbox,time);
     }
     public void searchPatient(String lapespido) throws InterruptedException {
-                Thread.sleep(3000);
+                Thread.sleep(5000);
                 sendKeys(labEpisodeNumber, lapespido,timeout);
                 click(findButton,timeout);
                 stepInfoWithScreenshot("Search for Patient "+ lapespido);
                 if(validateElement_Displayed(continuelink,timeout)){
                         click(continuelink,timeout);
                 }
-                Thread.sleep(3000);
+                Thread.sleep(5000);
                 By editTestsetlink = By.xpath("//parent::tr/td/div/span//span[text()='%s']//parent::span//parent::span//parent::span//parent::div//parent::td//parent::tr//td//a[not(contains(@id,'CreateCopy')) ]".replace("%s",lapespido));
                 while(!validateElement_Displayed(editTestsetlink,timeout)){
                     scrollToElement(nextpageURN,timeout);
@@ -864,7 +864,7 @@ public class PathCareScratch extends AbstractExtension {
         HashMap<String,ArrayList<String>> speciemenlist = new HashMap<>();
         for(String labnumber: lapsiode) {
             searchPatient(labnumber.split(",")[1]);
-            speciemenlist.put(labnumber.split(",")[0],specimenNumberExtract(true));
+            speciemenlist.put(labnumber.split(",")[0],specimenNumbersExtract(true));
             if (validateElement_Enabled_Displayed(backtoPatient,timeout)){
                 click(backtoPatient,timeout);
                 click(backtoPatient,timeout);
@@ -974,6 +974,35 @@ public class PathCareScratch extends AbstractExtension {
             if (validateElement_Displayed(specimenAnatomicalSiteWithTestSet,timeout)) {
                 scrollToElement(reportTitle,timeout);
                 for (WebElement element : find(specimenAnatomicalSiteWithTestSet,timeout)) {
+                    if(element.getText().isBlank()) {
+                        values.add(element.getAttribute("value").trim());
+                    }else{
+                        values.add(element.getText().trim());
+                    }
+
+                }
+                stepInfoWithScreenshot("Able to receive Specimen Number " + values);
+                return values;
+            } else if(validateElement_Displayed(specimenNumberUnedit,timeout)) {
+                scrollToElement(specimenNumberUnedit,timeout);
+                for (WebElement element : find(specimenNumberUnedit,timeout)) {
+                    values.add(element.getText());
+                }
+                stepInfoWithScreenshot("Able to receive Specimen Number " + values);
+                return values;
+            }else{
+                Assert.fail("Unable to Find specimen Number");
+            }
+        }
+        return null;
+    }
+    public ArrayList<String> specimenNumbersExtract(boolean checkspecimen){
+        ArrayList<String> values =  new ArrayList<>();
+        if(checkspecimen) {
+            if (validateElement_Displayed(specimenAnatomicalSiteWithTestSet,timeout)) {
+                scrollToElement(reportTitle,timeout);
+                var ted = find(specimenNumbers,timeout).size();
+                for (WebElement element : find(specimenNumbers,timeout)) {
                     if(element.getText().isBlank()) {
                         values.add(element.getAttribute("value").trim());
                     }else{
