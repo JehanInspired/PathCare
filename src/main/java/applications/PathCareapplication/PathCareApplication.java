@@ -35,6 +35,7 @@ public class PathCareApplication
     public ResultEntry resultEntry;
 
     public Analytical analytical;
+    public WorksheetControlPage worksheetControlPage;
 
     public PathCareApplication(Roman roman)
     {
@@ -55,6 +56,7 @@ public class PathCareApplication
         procedures = new Procedures(roman);
         pathCareLabWorkSheetResEntry = new PathCareLabWorkSheetResEntry(roman);
         labEnquiry = new LabEnquiry(roman);
+        worksheetControlPage = new WorksheetControlPage(roman);
 
     }
 

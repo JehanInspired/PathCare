@@ -7,6 +7,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoAlertPresentException;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -25,7 +26,7 @@ public class PathCareLabWorkSheetResEntry extends AbstractExtension {
     private final By openWorksheets = By.xpath("//input[@id='ShowOpen']");
     private final By findButton = By.xpath("//input[@id='find1']");
     private final By worksheetLookUp = By.xpath("//img[contains(@id,'LBWorksheet')]");
-
+    private final By worksheetLookUpText = By.xpath("//*[@id='LookupRow0']/td[1]");
     private final By openWorksheet = By.xpath("//tr[contains(@lookupallvalues,'^Open^^')]");
     private final By applyButton = By.xpath("//input[@value='Apply']");
     private final By validateButton = By.xpath("//input[@id='validate1']");
@@ -35,12 +36,49 @@ public class PathCareLabWorkSheetResEntry extends AbstractExtension {
 
     private final By tableName = By.xpath("//table[@class='tblListSelect']");
     private final By closebutton = By.xpath("//input[@id='close1']");
+    private final By attachmentsLink = By.xpath("(//a[@id='Attachments'])[2]");
+    private final By chooseFile = By.xpath("//input[@id='File']");
+    private final By acceptFile = By.xpath("//input[@id='accept1']");
+    private final By uploadFileTestSet = By.xpath("//input[@id='TestSetz1']");
+    private final By episodeLink = By.xpath("//a[@id='MedVaLEditz1']");
+    private final By testSetAttachments = By.xpath("//div[@id='slideContainer']");
+    private final By worksheetResEntry = By.xpath("//span[@id='tc_Breadcrumbs-menuCaption' and text()='Worksheet Res. Entry']");
     private String locationNew = "";
 
     private Boolean firstTime = true;
     private int timeout = 20;
 
+    public  void  findWorksheetDefinition(String worksheetDef) throws InterruptedException {
+        switchToFrame(By.id("TRAK_main"));
+        sendKeysAndTab(inputWorkSheetDefinition,worksheetDef,timeout);
+        clickAndTab(worksheetLookUp,worksheetLookUpText);
+    }
+    public  void  ClickApplyButton(){
+        switchToDefaultContext();
+        switchToFrame(By.id("TRAK_main"));
+        click(apply);
+    }
+    public  void  ClickEpisodeLinkAndCheckAttachedDocs(){
+        click(episodeLink);
+        if(_driver.findElement(testSetAttachments).isDisplayed()){
+            _driver.navigate().back();
+        }
+    }
+    public boolean worksheetResEntryDisplayed(){
+       return  _driver.findElement(worksheetResEntry).isDisplayed();
+    }
+    public  void  uploadWorksheetDocument(String path,String testSet) throws InterruptedException {
+        File file = new File(System.getProperty("user.dir")+"\\src\\main\\resources\\"+path+".xlsx");
 
+        click(attachmentsLink,timeout);
+       // switchToMainFrame();
+        switchToDefaultContext();
+        //_driver.switchTo().frame(_driver.findElement(By.xpath("/html[1]/body[1]/div[1]/div[2]/div[1]/iframe[2]")));
+        switchToFrame(By.id("TRAK_info"));
+        sendKeys(chooseFile,file.toString(),timeout);
+        sendKeysAndTab(uploadFileTestSet,testSet,timeout);
+        click(acceptFile,timeout);
+    }
     public void workSheetEntry(List<WorkSheetResultEntry> workSheet,List<WorkSheetResultValues> sheetResultValues,
                                List<SpecimenReceiveEntity> specimenReceiveEntities,Analytical analytical,
                                InterSystemLoginPage interSystemLoginPage) throws InterruptedException {
