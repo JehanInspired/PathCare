@@ -6,9 +6,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import selenium.AbstractPage;
 
+import java.math.BigInteger;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
@@ -173,9 +175,33 @@ public abstract class AbstractExtension extends AbstractPage {
         }
     }
 
-
-
-
+    public void sendKeysAndTab(By element,String text) throws InterruptedException {
+        sendKeys(element,text);
+        Thread.sleep(2000);
+        super._driver.findElement(element).sendKeys(Keys.TAB);
+    }
+    public void sendKeysAndTab(By element,String text,int timeOut) throws InterruptedException {
+        sendKeys(element,text);
+        Thread.sleep(2000);
+        super._driver.findElement(element).sendKeys(Keys.TAB);
+    }
+    public void clickAndTab(By element) throws InterruptedException {
+        click(element);
+        Thread.sleep(3000);
+        super._driver.findElement(element).sendKeys(Keys.TAB);
+    }
+    public void clickAndTab(By element,By element2) throws InterruptedException {
+        click(element);
+        Thread.sleep(1000);
+        click(element2);
+        //super._driver.findElement(element2).sendKeys(Keys.TAB);
+    }
+    public  String generateRandon()
+    {
+        String generateUUIDNo = String.format("%010d",new BigInteger(UUID.randomUUID().toString().replace("-",""),16));
+        String unique_no = generateUUIDNo.substring( generateUUIDNo.length() - 10);
+        return unique_no;
+    }
     public void switchToMainFrame() {
         super.switchToFrame(mainframe);
     }
@@ -183,6 +209,5 @@ public abstract class AbstractExtension extends AbstractPage {
     public AbstractExtension(Roman roman) {
         super(roman);
     }
-
 
 }
