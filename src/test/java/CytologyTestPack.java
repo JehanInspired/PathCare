@@ -5,6 +5,7 @@ import applications.PathCareapplication.PathCareApplication;
 import applications.PathCareapplication.models.AutomationUserModel;
 import applications.PathCareapplication.models.CytologyNon_GynaeSpecimen;
 
+import applications.PathCareapplication.models.LabespideData;
 import com.github.javafaker.Faker;
 import com.microsoft.schemas.vml.CTImageData;
 import org.apache.xmlbeans.impl.xb.xsdschema.impl.AttributeDocumentImpl;
@@ -32,7 +33,7 @@ public class CytologyTestPack extends RomanBase {
     static ArrayList<String> labEpisode = new ArrayList<>();
     static String[] testcollection = new String[]{"ANCYTONG"};
     static ArrayList<ArrayList<String>> specimenNumbers = new ArrayList<>();
-
+    private final LabespideData dataPatient = new LabespideData();
     static String shipmentNumber ="";
     static
     public PathCareApplication pathCare = null;
@@ -42,6 +43,7 @@ public class CytologyTestPack extends RomanBase {
     @BeforeEach
     public void startup(){
         dir = get_reportDir();
+        dataPatient.patientInform();
         options = new ChromeOptions();
         HashMap<String, Object> chromeOptionsMap = new HashMap<>();
         chromeOptionsMap.put("plugins.plugins_disabled", new String[] { "Chrome PDF Viewer" });
@@ -134,28 +136,39 @@ public class CytologyTestPack extends RomanBase {
 
             AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
             pathCare.interSystemloginPage.login(model.username,model.password);
-            pathCare.interSystemloginPage.setLocation("PC Lab Assistant PANORAMA");
+            pathCare.interSystemloginPage.setLocation("Lab Assistant PANORAMA");
             pathCare.interSystemloginPage.userselection();
 
             //Transfer
+            String location = dataPatient.getTransferArrayList().get(0).getUserprofile_FK();
+            pathCare.interSystemloginPage.setLocation(location);
+            pathCare.interSystemloginPage.userselection();
+            pathCare.labQueues.switchToDefaultContext();
             pathCare.pre_analytical.navigateTransfer();
-            pathCare.pathCareLabTransferList.testSetfield("Cytology Non-Gynae");
-            pathCare.pathCareLabTransferList.clickFindButton();
+            pathCare.pathCareLabTransferList.statChangeWaitingLinkFind(dataPatient.getTransferArrayList().get(0).getFrom_lab_site(),
+                    dataPatient.getTransferArrayList().get(0).getTo_lab_site());
             pathCare.pathCareLabTransferList.selectlistlabespido(labEpisode);
-            pathCare.pathCareLabTransferList.createShipment(specimenNumbers,false );
+            pathCare.pathCareLabTransferList.tranferSpecimenIntoShipmentContainer();
             pathCare.pathCareLabTransferList.closePackage();
-            pathCare.pre_analytical.switchtoMainiFrame();
-            //pathCare.pathCareLabTransferList.checkPackItem(labEpisode,specimenNumbers);
+            shipmentNumber=pathCare.pathCareLabTransferList.shipmentNumber;
+            pathCare.pathCareScratch.writeShipmentNumberIntoFile(shipmentNumber);
+
+            pathCare.pathCareLabTransferList.enterPackNumberAndFind(shipmentNumber);
+            value= pathCare.pathCareLabTransferList.shipmentPackageIsPacked();
 
             //transfer pick up
-            pathCare.pre_analytical.switchtoMainiFrame();
+            location = dataPatient.getLogisticsEntityArrayList().get(0).getUserprofile_FK();
+            pathCare.interSystemloginPage.setLocation(location);
+            pathCare.interSystemloginPage.userselection();
+            pathCare.labQueues.switchToDefaultContext();
             pathCare.pre_analytical.navigateLogistics();
-            pathCare.transferLogistics.pickUpShipmentValid(pathCare.pathCareLabTransferList.shipmentNumber);
 
-            //transfer In transit
+            pathCare.transferLogistics.EnterShipmentNumberInPickUpShipment(shipmentNumber);
             pathCare.pre_analytical.switchtoMainiFrame();
             pathCare.pre_analytical.navigateTransfer();
-            pathCare.pathCareLabTransferList.checknumbersTransferMultiple(labEpisode,specimenNumbers);
+            pathCare.pathCareLabTransferList.enterPackNumberAndFind(shipmentNumber);
+            value= pathCare.pathCareLabTransferList.shipmentPackageIsInTransit();
+            Assertions.assertTrue(value,"Update to status is not In Transit");
         }
 
         @Test
