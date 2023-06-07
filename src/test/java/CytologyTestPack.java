@@ -130,7 +130,7 @@ public class CytologyTestPack extends RomanBase {
         }
 
 
-        @Test
+   /*     @Test
         @Order(4)
         public void TP_146() throws Exception {
 
@@ -169,8 +169,36 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pathCareLabTransferList.enterPackNumberAndFind(shipmentNumber);
             value= pathCare.pathCareLabTransferList.shipmentPackageIsInTransit();
             Assertions.assertTrue(value,"Update to status is not In Transit");
-        }
+        }*/
+        @Test
+        @Order(4)
+        public void TP_146() throws Exception {
 
+            AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+            pathCare.interSystemloginPage.login(model.username,model.password);
+            pathCare.interSystemloginPage.setLocation("Lab Assistant PANORAMA");
+            pathCare.interSystemloginPage.userselection();
+
+            //Transfer
+            pathCare.pre_analytical.navigateTransfer();
+            pathCare.pathCareLabTransferList.testSetfield("Cytology Non-Gynae");
+            pathCare.pathCareLabTransferList.clickFindButton();
+            pathCare.pathCareLabTransferList.selectlistlabespido(labEpisode);
+            pathCare.pathCareLabTransferList.createShipment(specimenNumbers,false );
+            pathCare.pathCareLabTransferList.closePackage();
+            pathCare.pre_analytical.switchtoMainiFrame();
+            //pathCare.pathCareLabTransferList.checkPackItem(labEpisode,specimenNumbers);
+
+            //transfer pick up
+            pathCare.pre_analytical.switchtoMainiFrame();
+            pathCare.pre_analytical.navigateLogistics();
+            pathCare.transferLogistics.pickUpShipmentValid(pathCare.pathCareLabTransferList.shipmentNumber);
+
+            //transfer In transit
+            pathCare.pre_analytical.switchtoMainiFrame();
+            pathCare.pre_analytical.navigateTransfer();
+            pathCare.pathCareLabTransferList.checknumbersTransferMultiple(labEpisode,specimenNumbers);
+        }
         @Test
         @Order(5)
         public void TP_147() throws Exception {
