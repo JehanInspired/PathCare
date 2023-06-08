@@ -10,7 +10,7 @@ public class TestSetCodeEntity {
     @ExcelRow
     private int rowIndex;
 
-    @ExcelCell(0)
+    //@ExcelCell(0)
     @ExcelCellName("PK_TestCode")
     public String PK_testCode ;
 

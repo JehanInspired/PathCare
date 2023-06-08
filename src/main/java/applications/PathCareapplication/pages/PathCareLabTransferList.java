@@ -385,6 +385,7 @@ public class PathCareLabTransferList extends AbstractExtension {
          }
       }
   }
+
     public void selectListLabEspisode(ArrayList<String> labEpisode){
 
         for(String value:labEpisode){

@@ -13,7 +13,7 @@ public class WorkAreaReceiveEntity {
 
     @ExcelCell(1)
     @ExcelCellName("User Profile")
-    String userprofile ;
+    String userprofile_FK;
 
     @ExcelCell(2)
     @ExcelCellName("specimen number")
@@ -35,10 +35,10 @@ public class WorkAreaReceiveEntity {
 
     }
 
-    public WorkAreaReceiveEntity(String pk, String userprofile, String specimeNumber, String department, String workArea,String testSet){
+    public WorkAreaReceiveEntity(String pk, String userprofile_FK, String specimeNumber, String department, String workArea, String testSet){
 
             this.pk =pk;
-            this.userprofile =userprofile;
+            this.userprofile_FK = userprofile_FK;
             this.specimeNumber = specimeNumber;
             this.department = department;
             this.workArea = workArea;
@@ -54,12 +54,12 @@ public class WorkAreaReceiveEntity {
         this.pk = pk;
     }
 
-    public String getUserprofile() {
-        return userprofile;
+    public String getUserprofile_FK() {
+        return userprofile_FK;
     }
 
-    public void setUserprofile(String userprofile) {
-        this.userprofile = userprofile;
+    public void setUserprofile_FK(String userprofile_FK) {
+        this.userprofile_FK = userprofile_FK;
     }
 
     public String getSpecimeNumber() {
@@ -95,6 +95,6 @@ public class WorkAreaReceiveEntity {
     }
 
     public String toString(){
-        return getPk()+","+getUserprofile()+","+getSpecimeNumber()+","+getDepartment()+","+getWorkArea()+","+getTestSet();
+        return getPk()+","+ getUserprofile_FK()+","+getSpecimeNumber()+","+getDepartment()+","+getWorkArea()+","+getTestSet();
     }
 }

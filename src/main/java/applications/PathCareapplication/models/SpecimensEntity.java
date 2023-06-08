@@ -11,7 +11,11 @@ public class SpecimensEntity {
 
     @ExcelCell(0)
     private String patient_Key ;
+    @ExcelCell(1)
+    private String testCode;
 
+    @ExcelCell(2)
+    private String specimens;
     public String getPatient_Key() {
         return patient_Key;
     }
@@ -35,10 +39,4 @@ public class SpecimensEntity {
     public void setSpecimens(String specimens) {
         this.specimens = specimens;
     }
-
-    @ExcelCell(1)
-    private String testCode;
-
-    @ExcelCell(2)
-    private String specimens;
 }

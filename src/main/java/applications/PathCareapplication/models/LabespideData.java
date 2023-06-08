@@ -50,6 +50,34 @@ public  class LabespideData  {
     private ArrayList<SpecimenReceiveEntity> specimenReceiveEntityArrayList = new ArrayList<>();
     private ArrayList<TransferEntity> transferEntityArrayList = new ArrayList<>();
 
+    public ArrayList<WorksheetControlEntity> getWorksheetControlEntitArrayList() {
+        return worksheetControlEntitArrayList;
+    }
+
+    public void setWorksheetControlEntitArrayList(ArrayList<WorksheetControlEntity> worksheetControlEntitArrayList) {
+        this.worksheetControlEntitArrayList = worksheetControlEntitArrayList;
+    }
+
+    public ArrayList<ProcedureEntity> getProcedureEntityArrayList() {
+        return procedureEntityArrayList;
+    }
+
+    public void setProcedureEntityArrayList(ArrayList<ProcedureEntity> procedureEntityArrayList) {
+        this.procedureEntityArrayList = procedureEntityArrayList;
+    }
+
+    public ArrayList<WRE_AttachmentsEntity> getWre_AttachmentsEntityArrayList() {
+        return wre_AttachmentsEntityArrayList;
+    }
+
+    public void setWre_AttachmentsEntityArrayList(ArrayList<WRE_AttachmentsEntity> wre_AttachmentsEntityArrayList) {
+        this.wre_AttachmentsEntityArrayList = wre_AttachmentsEntityArrayList;
+    }
+
+    private ArrayList<WorksheetControlEntity> worksheetControlEntitArrayList = new ArrayList<>();
+    private ArrayList<ProcedureEntity> procedureEntityArrayList = new ArrayList<>();
+    private ArrayList<WRE_AttachmentsEntity> wre_AttachmentsEntityArrayList = new ArrayList<>();
+
     public ArrayList<LogisticsDropOffEntity> getLogisticsDropOffEntitiesList() {
         return logisticsDropOffEntitiesList;
     }
@@ -550,10 +578,10 @@ public  class LabespideData  {
             //Work Area Receive
             for(WorkAreaReceiveEntity workAreaReceiveEntity :workAreaReceives())
             {
-                if(workAreaReceiveEntity.getUserprofile() !=null) {
+                if(workAreaReceiveEntity.getUserprofile_FK() !=null) {
                     for (UserProfileEntity userProfileEntity : userProfile()) {
-                        if (workAreaReceiveEntity.getUserprofile().contentEquals(userProfileEntity.getPK())) {
-                            workAreaReceiveEntity.setUserprofile(userProfileEntity.getAccessProfile());
+                        if (workAreaReceiveEntity.getUserprofile_FK().contentEquals(userProfileEntity.getPK())) {
+                            workAreaReceiveEntity.setUserprofile_FK(userProfileEntity.getAccessProfile());
                         }
                     }
                 }
@@ -811,7 +839,42 @@ public  class LabespideData  {
                 this.workSheetResultEntryArrayList.add(workSheetResultEntry);
             }
         }
+        //Work Sheet Control
+        for (WorksheetControlEntity worksheetControlEntity:ExcelExtractorList.worksheetControlEntities()){
 
+            if (worksheetControlEntity.getUserprofile_FK()!= null) {
+                for (UserProfileEntity userProfileEntity : userProfile()) {
+                    if (worksheetControlEntity.getUserprofile_FK().contentEquals(userProfileEntity.getPK())) {
+                        worksheetControlEntity.setUserprofile_FK(userProfileEntity.getAccessProfile());
+                    }
+                }
+                this.worksheetControlEntitArrayList.add(worksheetControlEntity);
+            }
+        }
+        //Procedure
+        for (ProcedureEntity procedureEntity:ExcelExtractorList.procedureEntities()){
+
+            if (procedureEntity.getUserprofile_FK()!= null) {
+                for (UserProfileEntity userProfileEntity : userProfile()) {
+                    if (procedureEntity.getUserprofile_FK().contentEquals(userProfileEntity.getPK())) {
+                        procedureEntity.setUserprofile_FK(userProfileEntity.getAccessProfile());
+                    }
+                }
+                this.procedureEntityArrayList.add(procedureEntity);
+            }
+        }
+        //WRE Attachment
+        for (WRE_AttachmentsEntity wre_attachmentsEntity:ExcelExtractorList.wre_attachmentsEntities()){
+
+            if (wre_attachmentsEntity.getUserprofile_FK()!= null) {
+                for (UserProfileEntity userProfileEntity : userProfile()) {
+                    if (wre_attachmentsEntity.getUserprofile_FK().contentEquals(userProfileEntity.getPK())) {
+                        wre_attachmentsEntity.setUserprofile_FK(userProfileEntity.getAccessProfile());
+                    }
+                }
+                this.wre_AttachmentsEntityArrayList.add(wre_attachmentsEntity);
+            }
+        }
         for (WorkSheetResultValues workSheetResultValues :ExcelExtractorList.workSheetResultValues()){
 
                 this.workSheetResultValuesArrayList.add(workSheetResultValues);

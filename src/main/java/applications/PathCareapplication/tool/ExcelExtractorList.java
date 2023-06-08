@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ExcelExtractorList {
 
-    static String path = "Registration and Result entry Template  19 May 2023.xlsx";
+    static String path = "Hereditary Haemochromatosis Datasheet.xlsx";
 
     public static List<PatientModel> patientData(){
         PoijiOptions options = PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Registration").addListDelimiter(",")
@@ -158,6 +158,21 @@ public class ExcelExtractorList {
     static public List<LabQueueValuesEntity> labQueueValues(){
         PoijiOptions options  = PoijiOptions.PoijiOptionsBuilder.settings().sheetName("QueuesValues").build();
         return Poiji.fromExcel(new File("src/main/resources/".concat(path)), LabQueueValuesEntity.class,options);
+    }
+    //Worksheet control
+    static public List<WorksheetControlEntity> worksheetControlEntities(){
+        PoijiOptions options  = PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Worksheet Control").build();
+        return Poiji.fromExcel(new File("src/main/resources/".concat(path)), WorksheetControlEntity.class,options);
+    }
+    //Procedure
+    static public List<ProcedureEntity> procedureEntities(){
+        PoijiOptions options  = PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Procedures").build();
+        return Poiji.fromExcel(new File("src/main/resources/".concat(path)), ProcedureEntity.class,options);
+    }
+    //WRE Attachments
+    static public List<WRE_AttachmentsEntity> wre_attachmentsEntities(){
+        PoijiOptions options  = PoijiOptions.PoijiOptionsBuilder.settings().sheetName("WRE Attachments").build();
+        return Poiji.fromExcel(new File("src/main/resources/".concat(path)), WRE_AttachmentsEntity.class,options);
     }
     //End Queue
 

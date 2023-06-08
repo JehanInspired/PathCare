@@ -520,10 +520,12 @@ public class PathCareScratch extends AbstractExtension {
         return labEspideonumber;
     }
 
-    public String collectiondetailnewEditSpecimen(String patientKey, String collectiontime, String patienLocation , String[] testsetcollection, Boolean receiveDate, ArrayList<TestSetDetailsEntity> testSetlist, ArrayList<SpecimensEntity> specimensEntityList, ArrayList<EditTestSetEntity> editTestSetEntityArrayList) {
-
-        sendKeys(patientSearchSelect,patienLocation.isBlank() ?"2100":patienLocation);
-        super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
+    public String collectiondetailnewEditSpecimen(String patientKey, String collectiontime, String patienLocation , String[] testsetcollection, Boolean receiveDate, ArrayList<TestSetDetailsEntity> testSetlist, ArrayList<SpecimensEntity> specimensEntityList, ArrayList<EditTestSetEntity> editTestSetEntityArrayList) throws InterruptedException {
+        Thread.sleep(1000);
+        if (findOne(patientSearchSelect).getAttribute("value").isBlank()) {
+            sendKeys(patientSearchSelect, patienLocation.isBlank() ? "2100" : patienLocation);
+            super._driver.findElement(patientSearchSelect).sendKeys(Keys.TAB);
+        }
         findEnterTab(collectionTimeTextbox,collectiontime.isBlank()? "n-1":collectiontime);
         super._driver.findElement(collectionTimeTextbox).sendKeys(Keys.TAB);
 

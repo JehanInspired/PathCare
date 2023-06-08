@@ -2,9 +2,11 @@ package applications.PathCareapplication.pages;
 
 import Roman.Roman;
 import applications.PathCareapplication.tool.AbstractExtension;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -35,7 +37,8 @@ public class Procedures extends AbstractExtension {
     private final By updateSavedSearch = By.xpath("//button[@id='CTSearch_Msg_Edit_0-button-update1']");
     private final By procedureRecord = By.xpath("//span[@id='LBProtocolProcedure_List_0-row-0-item-LBCPR_Desc']");
     private final By saveSearch = By.xpath("//button[@id='LBProtocolProcedure_List_0-button-SaveSearch']");
-    private final By tLBProtocolProcedure_List = By.xpath("//*[@id='LBProtocolProcedure_List_0-misc-selectAll']/div[1]");
+    private final By tLBProtocolProcedure_List = By.xpath("(//md-checkbox[@title='Select All'])[1]");
+    private final By nextpageProcedureList =By.xpath("//img[@id='NextPageImage_LBTransfer_List']");
     private int timeout = 15;
 
     public Procedures(Roman roman) {
@@ -65,8 +68,9 @@ public class Procedures extends AbstractExtension {
     public void saveSearchAndUpdate(String description) throws InterruptedException {
         Thread.sleep(1000);
         click(saveSearch,timeout);
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         sendKeysAndTab(savedSearchDescription,description,timeout);
+        awaitClickableElement(updateSavedSearch,timeout,10);
         click(updateSavedSearch,timeout);
     }
     public void selectAllAndBulkComplete() throws InterruptedException{
@@ -75,6 +79,9 @@ public class Procedures extends AbstractExtension {
                click(allCheckboxticked, timeout);
                click(bulkCompleteButton);
            }
+    }
+    public void clickBulkComplete(){
+        click(bulkCompleteButton);
     }
     public void searchProcedure(String labEpisode, ArrayList<String> specimenNumber,String procedureSavedSearch) throws InterruptedException {
         sendKeys(labEpisodeTextBox,labEpisode);
@@ -91,8 +98,9 @@ public class Procedures extends AbstractExtension {
 
     }
 
-    public void savedSearches(String saveSearchesText){
+    public void savedSearches(String saveSearchesText) throws InterruptedException {
         _driver.navigate().refresh();
+        Thread.sleep(2000);
         awaitElement(saveSearches,timeout);
         click(saveSearches,timeout);
         click(By.xpath("//a[contains(text(),'"+saveSearchesText+"')]"),timeout);
@@ -172,7 +180,26 @@ public class Procedures extends AbstractExtension {
         click(findButton);
         stepInfoWithScreenshot("Clicked work list button");
     }
+    public void selectlistlabespidoFromProcedureList(ArrayList<String> labEpisode){
 
+        for(String value:labEpisode){
+            int y=0;
+            By labEpisodefield = By.xpath("//span[contains(@id,'LBProtocolProcedure_List')and text()='%s']".replace("%s",value +"-1"));
+            while(!validateElement_Enabled_Displayed(labEpisodefield,10)){
+                if(validateElement_Displayed(nextpageProcedureList)){
+                    click(nextpageProcedureList);
+                }else {
+                    Assert.fail("Unable to find " + labEpisode.toArray().toString());
+                }
+            }
+
+            for(WebElement element: find(labEpisodefield)){
+                //element.click();
+                javascriptClick(element);
+                stepInfoWithScreenshot("Ticked Lab Episode "+value+" "+y++);
+            }
+        }
+    }
 
     public void findOne(By by,String input) {
             super.findOne(by,timeout).clear();
