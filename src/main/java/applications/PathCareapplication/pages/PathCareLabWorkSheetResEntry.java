@@ -56,6 +56,7 @@ public class PathCareLabWorkSheetResEntry extends AbstractExtension {
     public  void  ClickApplyButton(){
         switchToDefaultContext();
         switchToFrame(By.id("TRAK_main"));
+        awaitClickableElement(apply,timeout,5);
         click(apply);
     }
     public  void  ClickEpisodeLinkAndCheckAttachedDocs(){

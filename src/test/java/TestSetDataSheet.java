@@ -208,8 +208,8 @@ public class TestSetDataSheet extends RomanBase {
     }
     @Test
     public void TP_1035_GenericProcedure() throws Exception{
-        String descriptiopn = "Hereditary-Haemochromatosis-" + pathCare.procedures.generateRandon();
-
+        Faker faker = new Faker();
+        String descriptiopn = "Hereditary-Haemochromatosis-" + pathCare.procedures.generateRandon()+"-"+ faker.name().name();
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username,model.password);
 

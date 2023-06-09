@@ -99,11 +99,11 @@ public class Procedures extends AbstractExtension {
     }
 
     public void savedSearches(String saveSearchesText) throws InterruptedException {
+        awaitElement(saveSearches,timeout);
+        javascriptClick(_driver.findElement(saveSearches));
         _driver.navigate().refresh();
         Thread.sleep(2000);
-        awaitElement(saveSearches,timeout);
-        click(saveSearches,timeout);
-        click(By.xpath("//a[contains(text(),'"+saveSearchesText+"')]"),timeout);
+        javascriptClick(_driver.findElement(By.xpath("//a[contains(text(),'"+saveSearchesText+"')]")));
         loadingBarChecker();
     }
 
@@ -141,12 +141,12 @@ public class Procedures extends AbstractExtension {
 
     }
 
-    public void multipleSearch(ArrayList<String> lapespside){
+    public void multipleSearch(ArrayList<String> lapespside) throws InterruptedException {
         String multliLapEpisode ="";
         for(String lapEpisode:lapespside){
         multliLapEpisode = multliLapEpisode.trim().replace(" ",",");
         findOne(labEpisodeTextBox,lapEpisode);
-        click(findButton,timeout);
+        javascriptClick(_driver.findElement(findButton));
         stepInfoWithScreenshot("Click Find Button");
         awaitElement(allCheckboxticked,timeout);
         click(allCheckboxticked,timeout);
@@ -155,6 +155,7 @@ public class Procedures extends AbstractExtension {
         awaitElement(bulkCompleteButton,timeout);
         click(bulkCompleteButton,timeout);
         }
+        Thread.sleep(2000);
         _driver.navigate().refresh();
 
     }
@@ -203,6 +204,7 @@ public class Procedures extends AbstractExtension {
 
     public void findOne(By by,String input) {
             super.findOne(by,timeout).clear();
+            super.findOne(by,timeout).sendKeys("");
             super.findOne(by,timeout).sendKeys(input);
             super.findOne(by,timeout).sendKeys(Keys.TAB);
     }
