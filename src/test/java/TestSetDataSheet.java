@@ -2,13 +2,16 @@ import Roman.Roman;
 import Roman.RomanBase;
 import applications.PathCareapplication.PathCareApplication;
 import applications.PathCareapplication.models.*;
+import com.github.javafaker.Faker;
+import org.junit.Assert;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import static applications.PathCareapplication.tool.ExcelExtractorList.getAccessProfile;
 import static reporting.ExtentReport.get_reportDir;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TestSetDataSheet extends RomanBase {
@@ -81,43 +84,38 @@ public class TestSetDataSheet extends RomanBase {
         }
 
     }
+    public void registerPatients() throws Exception {
 
-    @Test
-    @Order(2)
-    public void speciemenReceive() throws Exception {
-        if (dataPatient.readerList().isEmpty()) {
-            registerPatient();
-            pathCare.pre_analytical.switchtoMainiFrame();
-            pathCare.interSystemloginPage.logoff();
-        }
+       // AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+       // pathCare.interSystemloginPage.login(model.username, model.password);
+        for(PatientModel patient:dataPatient.getPatientModelList()) {
 
-        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
-        pathCare.interSystemloginPage.login(model.username, model.password);
-        String location = dataPatient.getPatientModelList().get(0).getUserprofile();
-        pathCare.interSystemloginPage.setLocation(location);
-        pathCare.interSystemloginPage.userselection();
-        pathCare.pre_analytical.navigateRegistration();
-        HashMap<String, ArrayList<String>> labespisodesSpecimen = pathCare.pathCareScratch.searchMutliplePatientKeys(dataPatient.readerList());
-        location = dataPatient.getSpecimenReceiveArrayList().get(0).getUserprofile_FK();
-        pathCare.interSystemloginPage.setLocation(location);
-        pathCare.interSystemloginPage.changelocation();
-        pathCare.interSystemloginPage.userselection();
-        pathCare.pre_analytical.navigatespecimenRecived();
-        pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingle(pathCare.pre_analytical, pathCare.interSystemloginPage, labespisodesSpecimen, location, dataPatient.getSpecimenReceiveArrayList(), dataPatient.getWorkAreaReceives(), dataPatient.getTestCodeList());
-        if (!pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList.isEmpty()){
-            for (WorkAreaReceiveEntity workAreaReceiveEntity : pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList) {
-                dataPatient.write(workAreaReceiveEntity.toString().replace("[","").replace("]",""),"WorkRecieve.txt");
+            if(pathCare.interSystemloginPage.getLocation().isEmpty()) {
+                pathCare.interSystemloginPage.setLocation(patient.getUserprofile());
+                pathCare.interSystemloginPage.userselection();
+                pathCare.pre_analytical.navigateRegistration();
+            }else if(!pathCare.interSystemloginPage.getLocation().contentEquals(patient.getUserprofile())){
+                pathCare.interSystemloginPage.setLocation(patient.getUserprofile());
+                pathCare.interSystemloginPage.changelocation();
+                pathCare.interSystemloginPage.userselection();
+                pathCare.pre_analytical.navigateRegistration();
             }
-        }
-        if (!pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList.isEmpty()){
-            for (SpecimenReceiveEntity specimenReceiveEntity : pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList) {
-                dataPatient.write(specimenReceiveEntity.ToString().replace("[","").replace("]",""),"SpecimenRecieve.txt");
+            if(patient.getURN() != null){
+                pathCare.pathCareScratch.searchPatientURN(patient.getURN());
+                pathCare.pathCareScratch.createdSamePatient();
+            }else{
+                pathCare.pathCareScratch.patientdetails(patient.getGivenName(), patient.getSurname(), patient.getDateOfBirth(), patient.getSex());
             }
+            pathCare.pathCareScratch.doctorSelection(patient.getReferringDoctor());
+
+            labespisodesSpecimen.add(patient.getPk()+","+ pathCare.pathCareScratch.collectiondetailnewEditSpecimen(patient.getPk(),patient.getCollectionTime(),patient.getPatientLocation(),patient.getTestSet()
+                    .toArray(String[]::new),!patient.getReceivedDate().isBlank(),dataPatient.getTestSetDetailsList(),dataPatient.getSpecimensArrayList(),dataPatient.getEditTestArrayList()));
+            dataPatient.write(labespisodesSpecimen);
+
+            pathCare.pathCareScratch.writeLabEpisodesIntoFile(pathCare.pathCareScratch.labEpisode);
         }
 
-
-    }
-    @Test
+    }    @Test
     @Order(3)
     public void Transfer() throws Exception {
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
@@ -182,6 +180,74 @@ public class TestSetDataSheet extends RomanBase {
         Assertions.assertTrue(value,"Update to status is not In Delivered");
     }
     @Test
+    public void TP_1032_GenericWorksheetControl() throws Exception{
+
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username,model.password);
+
+        //registration
+        registerPatients();
+        labEpisode= pathCare.pathCareScratch.getLabEpisodesFromFile();
+        //Work Receive
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation(dataPatient.getWorkAreaReceives().get(0).getUserprofile_FK());
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateWorkRecived();
+        pathCare.workAreaReceptionPage.labworkareaswitch();
+        pathCare.workAreaReceptionPage.workAreaReceive(dataPatient.getWorkAreaReceives().get(0).getDepartment(),dataPatient.getWorkAreaReceives().get(0).getWorkArea(),labEpisode);
+
+        // worksheet control
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.analytical.navigateWorkSheetControl();
+        pathCare.worksheetControlPage.findWorksheetdeatils(dataPatient.getWorksheetControlEntitArrayList().get(0).getWorksheetType(),dataPatient.getWorksheetControlEntitArrayList().get(0).getDateCreatedFrom(), "");
+        pathCare.worksheetControlPage.editWorkSheet();
+        pathCare.worksheetControlPage.printWorkSheet();
+        boolean printed = pathCare.worksheetControlPage.isWorksheetPrinted();
+        Assert.assertTrue("Work sheet control failed to be printed",printed);
+    }
+    @Test
+    public void TP_1035_GenericProcedure() throws Exception{
+        Faker faker = new Faker();
+        String descriptiopn = "Hereditary-Haemochromatosis-" + pathCare.procedures.generateRandon()+"-"+ faker.name().name();
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username,model.password);
+
+        //registration
+        registerPatients();
+        labEpisode= pathCare.pathCareScratch.getLabEpisodesFromFile();
+
+        //Work Receive
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation(dataPatient.getWorkAreaReceives().get(0).getUserprofile_FK());
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateWorkRecived();
+        pathCare.workAreaReceptionPage.labworkareaswitch();
+        pathCare.workAreaReceptionPage.workAreaReceive(dataPatient.getWorkAreaReceives().get(0).getDepartment(),dataPatient.getWorkAreaReceives().get(0).getWorkArea(),labEpisode);
+
+        //Molecular: Completing Procedures
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation(dataPatient.getProcedureEntityArrayList().get(0).getUserprofile_FK());
+        pathCare.interSystemloginPage.userselection();
+        pathCare.analytical.navigateProcedures();
+        pathCare.procedures.searchProtocolProcedure(dataPatient.getProcedureEntityArrayList().get(0).getDepartment(),dataPatient.getProcedureEntityArrayList().get(0).getTestSet());
+        pathCare.procedures.saveSearchAndUpdate(descriptiopn);
+        pathCare.procedures.savedSearches(descriptiopn);
+        pathCare.procedures.multipleSearch(labEpisode);
+
+        //Worksheet Result Entry (WRE): Adding an Attachment
+        pathCare.analytical.navigateWorkSheetRes();
+        pathCare.pathCareLabWorkSheetResEntry.findWorksheetDefinition(dataPatient.getWre_AttachmentsEntityArrayList().get(0).getWorksheetDefinition());
+        pathCare.pathCareLabWorkSheetResEntry.uploadWorksheetDocument("Hereditary Haemochromatosis Datasheet",dataPatient.getWre_AttachmentsEntityArrayList().get(0).getTestSet());
+        pathCare.pathCareLabWorkSheetResEntry.ClickApplyButton();
+        pathCare.pathCareLabWorkSheetResEntry.ClickEpisodeLinkAndCheckAttachedDocs();
+        Assert.assertTrue("Worksheet result entry",pathCare.pathCareLabWorkSheetResEntry.worksheetResEntryDisplayed());
+
+
+    }
+    @Test
     @Order(6)
     public void work_Receive() throws Exception{
 
@@ -191,7 +257,7 @@ public class TestSetDataSheet extends RomanBase {
 
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
-        String location = pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList.get(0).getUserprofile();
+        String location = pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList.get(0).getUserprofile_FK();
         pathCare.interSystemloginPage.setLocation(location);
         pathCare.interSystemloginPage.userselection();
         pathCare.pre_analytical.navigateWorkRecived();
@@ -206,7 +272,7 @@ public class TestSetDataSheet extends RomanBase {
             registerPatient();
             pathCare.pre_analytical.switchtoMainiFrame();
             pathCare.interSystemloginPage.logoff();
-            speciemenReceive();
+            //speciemenReceive();
             pathCare.pre_analytical.switchtoMainiFrame();
             pathCare.interSystemloginPage.logoff();
             work_Receive();
@@ -237,7 +303,7 @@ public class TestSetDataSheet extends RomanBase {
             registerPatient();
             pathCare.pre_analytical.switchtoMainiFrame();
             pathCare.interSystemloginPage.logoff();
-            speciemenReceive();
+            //speciemenReceive();
             pathCare.pre_analytical.switchtoMainiFrame();
             pathCare.interSystemloginPage.logoff();
             work_Receive();

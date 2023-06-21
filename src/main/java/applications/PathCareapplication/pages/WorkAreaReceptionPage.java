@@ -103,7 +103,7 @@ public class WorkAreaReceptionPage extends AbstractExtension {
         List<TestDataModel> testDataModelList = new ArrayList<>();
 
         for(WorkAreaReceiveEntity workAreaReceiveEntity : workAreaReceiveEntityList){
-            testDataModelList.add(new TestDataModel(workAreaReceiveEntity.getSpecimeNumber(), workAreaReceiveEntity.getTestSet().toString(), workAreaReceiveEntity.getWorkArea(), workAreaReceiveEntity.getDepartment(), workAreaReceiveEntity.getUserprofile()));
+            testDataModelList.add(new TestDataModel(workAreaReceiveEntity.getSpecimeNumber(), workAreaReceiveEntity.getTestSet().toString(), workAreaReceiveEntity.getWorkArea(), workAreaReceiveEntity.getDepartment(), workAreaReceiveEntity.getUserprofile_FK()));
         }
         return testDataModelList;
     }
@@ -117,6 +117,20 @@ public class WorkAreaReceptionPage extends AbstractExtension {
         Thread.sleep(3000);
         click(checkin,timeout);
    }
+    public void workAreaReceive(String department, String workArea, ArrayList<String> episodeNumbers) throws InterruptedException {
+        for (var espisodeNumber: episodeNumbers) {
+            sendKeysAndTab(departmentText,department,timeout);
+            Thread.sleep(1000);
+            sendKeysAndTab(workAreaText,workArea,timeout);
+            Thread.sleep(1000);
+            sendKeysAndTab(specimenNumberText,espisodeNumber + "-1",timeout);
+            awaitClickableElement(checkin,timeout,30);
+            Thread.sleep(2000);
+            click(checkin,timeout);
+            //break;
+        }
+
+    }
     public boolean departmentWorkArea(List<TestDataModel> data, boolean checking) {
 
         boolean checkingout = false;

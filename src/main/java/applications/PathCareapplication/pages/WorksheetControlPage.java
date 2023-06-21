@@ -50,7 +50,11 @@ public class WorksheetControlPage extends AbstractExtension {
 
         if(_driver.findElement(workSheetDescription).isDisplayed()){
             click(editLink,timeout);
-            //switchToFrame(By.name("TRAK_info"));
+            switchToDefaultContext();
+            switchToFrame(By.name("TRAK_info"));
+            click(closeWorkSheetEntryList);
+            switchToDefaultContext();
+            switchToFrame(By.name("TRAK_main"));
         }
     }
     public  void  printWorkSheet(){
