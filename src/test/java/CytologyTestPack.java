@@ -6,6 +6,7 @@ import applications.PathCareapplication.models.AutomationUserModel;
 import applications.PathCareapplication.models.CytologyNon_GynaeSpecimen;
 
 import applications.PathCareapplication.models.LabespideData;
+import applications.PathCareapplication.models.PatientModel;
 import com.github.javafaker.Faker;
 import com.microsoft.schemas.vml.CTImageData;
 import org.apache.xmlbeans.impl.xb.xsdschema.impl.AttributeDocumentImpl;
@@ -39,12 +40,13 @@ public class CytologyTestPack extends RomanBase {
     public PathCareApplication pathCare = null;
     static boolean value = false;
     public String dir = " ";
-
+    TestSetDataSheet dataSheet = new TestSetDataSheet();
+    ArrayList<String> labespisodesSpecimen = new ArrayList<>();
     @BeforeEach
     public void startup(){
         dir = get_reportDir();
-        dataPatient.patientInform();
         options = new ChromeOptions();
+        dataPatient.patientInform();
         HashMap<String, Object> chromeOptionsMap = new HashMap<>();
         chromeOptionsMap.put("plugins.plugins_disabled", new String[] { "Chrome PDF Viewer" });
         chromeOptionsMap.put("plugins.always_open_pdf_externally", true);
@@ -67,7 +69,37 @@ public class CytologyTestPack extends RomanBase {
         pathCare.interSystemloginPage.logoff();
         roman.Dispose();
     }
+    public void registerPatients() throws Exception {
 
+        // AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        // pathCare.interSystemloginPage.login(model.username, model.password);
+        for (PatientModel patient : dataPatient.getPatientModelList()) {
+
+            if (pathCare.interSystemloginPage.getLocation().isEmpty()) {
+                pathCare.interSystemloginPage.setLocation(patient.getUserprofile());
+                pathCare.interSystemloginPage.userselection();
+                pathCare.pre_analytical.navigateRegistration();
+            } else if (!pathCare.interSystemloginPage.getLocation().contentEquals(patient.getUserprofile())) {
+                pathCare.interSystemloginPage.setLocation(patient.getUserprofile());
+                pathCare.interSystemloginPage.changelocation();
+                pathCare.interSystemloginPage.userselection();
+                pathCare.pre_analytical.navigateRegistration();
+            }
+            if (patient.getURN() != null) {
+                pathCare.pathCareScratch.searchPatientURN(patient.getURN());
+                pathCare.pathCareScratch.createdSamePatient();
+            } else {
+                pathCare.pathCareScratch.patientdetails(patient.getGivenName(), patient.getSurname(), patient.getDateOfBirth(), patient.getSex());
+            }
+            pathCare.pathCareScratch.doctorSelection(patient.getReferringDoctor());
+
+            labespisodesSpecimen.add(patient.getPk() + "," + pathCare.pathCareScratch.collectiondetailnewEditSpecimen(patient.getPk(), patient.getCollectionTime(), patient.getPatientLocation(), patient.getTestSet()
+                    .toArray(String[]::new), !patient.getReceivedDate().isBlank(), dataPatient.getTestSetDetailsList(), dataPatient.getSpecimensArrayList(), dataPatient.getEditTestArrayList()));
+            dataPatient.write(labespisodesSpecimen);
+
+            pathCare.pathCareScratch.writeLabEpisodesIntoFile(pathCare.pathCareScratch.labEpisode);
+        }
+    }
 
     @Nested
     class Non_GynaeSpecimen {
@@ -178,26 +210,44 @@ public class CytologyTestPack extends RomanBase {
             pathCare.interSystemloginPage.login(model.username,model.password);
             pathCare.interSystemloginPage.setLocation("Lab Assistant PANORAMA");
             pathCare.interSystemloginPage.userselection();
-
+            //registerPatients();
+            labEpisode= pathCare.pathCareScratch.getLabEpisodesFromFile();
             //Transfer
+            pathCare.analytical.switchToDefaultContext();
+            pathCare.interSystemloginPage.changelocation();
+            String locations = dataPatient.getTransferArrayList().get(0).getUserprofile_FK();
+            pathCare.interSystemloginPage.setLocation(dataPatient.getTransferArrayList().get(0).getUserprofile_FK());
+            pathCare.interSystemloginPage.userselection();
+            pathCare.labQueues.switchToDefaultContext();
             pathCare.pre_analytical.navigateTransfer();
-            pathCare.pathCareLabTransferList.testSetfield("Cytology Non-Gynae");
-            pathCare.pathCareLabTransferList.clickFindButton();
+            pathCare.pathCareLabTransferList.statChangeWaitingLinkFind(dataPatient.getTransferArrayList().get(0).getFrom_lab_site(),
+                    dataPatient.getTransferArrayList().get(0).getTo_lab_site());
             pathCare.pathCareLabTransferList.selectlistlabespido(labEpisode);
-            pathCare.pathCareLabTransferList.createShipment(specimenNumbers,false );
+            pathCare.pathCareLabTransferList.tranferSpecimenIntoShipmentContainer();
             pathCare.pathCareLabTransferList.closePackage();
-            pathCare.pre_analytical.switchtoMainiFrame();
-            //pathCare.pathCareLabTransferList.checkPackItem(labEpisode,specimenNumbers);
+            shipmentNumber=pathCare.pathCareLabTransferList.shipmentNumber;
+            pathCare.pathCareScratch.writeShipmentNumberIntoFile(shipmentNumber);
+
+            pathCare.pathCareLabTransferList.enterPackNumberAndFind(shipmentNumber);
+            value= pathCare.pathCareLabTransferList.shipmentPackageIsPacked();
+            dataSheet.Transfer();
 
             //transfer pick up
             pathCare.pre_analytical.switchtoMainiFrame();
+            String location = dataPatient.getLogisticsEntityArrayList().get(0).getUserprofile_FK();
+            pathCare.interSystemloginPage.setLocation(location);
+            pathCare.interSystemloginPage.userselection();
+            pathCare.labQueues.switchToDefaultContext();
             pathCare.pre_analytical.navigateLogistics();
-            pathCare.transferLogistics.pickUpShipmentValid(pathCare.pathCareLabTransferList.shipmentNumber);
+            pathCare.transferLogistics.EnterShipmentNumberInPickUpShipment(shipmentNumber);
 
             //transfer In transit
             pathCare.pre_analytical.switchtoMainiFrame();
             pathCare.pre_analytical.navigateTransfer();
-            pathCare.pathCareLabTransferList.checknumbersTransferMultiple(labEpisode,specimenNumbers);
+            pathCare.pathCareLabTransferList.enterPackNumberAndFind(shipmentNumber);
+            value= pathCare.pathCareLabTransferList.shipmentPackageIsInTransit();
+
+            Assertions.assertTrue(value,"Update to status is not In Transit");
         }
         @Test
         @Order(5)

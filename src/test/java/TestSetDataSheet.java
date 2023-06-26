@@ -119,7 +119,6 @@ public class TestSetDataSheet extends RomanBase {
     @Order(3)
     public void Transfer() throws Exception {
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
-        labEpisode= pathCare.pathCareScratch.getLabEpisodesFromFile();
         pathCare.interSystemloginPage.login(model.username, model.password);
         String location = dataPatient.getTransferArrayList().get(0).getUserprofile_FK();
         pathCare.interSystemloginPage.setLocation(location);
