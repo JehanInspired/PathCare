@@ -120,6 +120,8 @@ public class TestSetDataSheet extends RomanBase {
     public void Transfer() throws Exception {
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
         pathCare.interSystemloginPage.login(model.username, model.password);
+        registerPatients();
+        labEpisode= pathCare.pathCareScratch.getLabEpisodesFromFile();
         String location = dataPatient.getTransferArrayList().get(0).getUserprofile_FK();
         pathCare.interSystemloginPage.setLocation(location);
         pathCare.interSystemloginPage.userselection();
