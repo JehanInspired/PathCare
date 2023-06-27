@@ -81,6 +81,14 @@ public class PathCareLabTransferList extends AbstractExtension {
         }
     }
     public void enterPackNumberAndFind(String packNumber) throws InterruptedException {
+        //switchToFrame(switchiFrame);
+        findOne(packNumberText, packNumber);
+        if(validateElement_Enabled_Displayed(findbutton,timeout)){
+            click(findbutton,timeout);
+            stepPassedWithScreenshot("Successfully Entered packed number");
+        }
+    }
+    public void enterPackNumbersAndFind(String packNumber) throws InterruptedException {
         switchToFrame(switchiFrame);
         findOne(packNumberText, packNumber);
         if(validateElement_Enabled_Displayed(findbutton,timeout)){
@@ -372,6 +380,7 @@ public class PathCareLabTransferList extends AbstractExtension {
          By labEpisodefield = By.xpath("//parent::td[label[text()='%s']]//parent::tr//td//input[contains(@id,'Selectz')]".replace("%s",value));
          while(!validateElement_Enabled_Displayed(labEpisodefield,10)){
              if(validateElement_Displayed(nextpageTransferlist)){
+                 scrollToElement(nextpageTransferlist);
                  click(nextpageTransferlist);
              }else {
                  Assert.fail("Unable to find " + labEpisode.toArray().toString());
@@ -459,7 +468,7 @@ public class PathCareLabTransferList extends AbstractExtension {
 
     public void findOne(By by,String input) throws InterruptedException {
         try {
-         //super.findOne(by,timeout).click();
+           // super.findOne(by,timeout).click();
         super.findOne(by,timeout).clear();
         super.findOne(by,timeout).sendKeys(input);
         Thread.sleep(1000);

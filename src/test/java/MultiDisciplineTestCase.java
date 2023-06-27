@@ -797,7 +797,6 @@ public class MultiDisciplineTestCase extends RomanBase {
         pathCare.resultEntry.LabResultsEntry(labespides.get(0));
         Assert.assertTrue(pathCare.resultEntry.checkvaluesTestResults(new SuperSetTestCSFTestItem().value,"CSF Biochemistry"));
 
-
     }
 
 }

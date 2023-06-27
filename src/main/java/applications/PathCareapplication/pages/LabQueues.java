@@ -63,7 +63,16 @@ public class LabQueues extends AbstractExtension {
 
     private final By firstrowQueueResult = By.xpath("//tr[contains(@class,'LBVerificationQueueP RowEven')]//td[not(contains(@style,'display:none'))and not(contains(@class,'clsRowColourTabLBVerificationQueueP')) and  not(contains(@style,'#'))]");
     private final By tableQueue = By.xpath("//table[@class='tblList']");
-
+    private final By firstSingleTestSet= By.xpath("//*[@id='singleEditz1']");
+    private final By testSetProtocolsCompleted_Cancelled = By.xpath("//img[@title='Test Set Protocols Completed/Cancelled']");
+    private final By infoPaneClose = By.xpath("//span[@id='InfoPaneClose']");
+    private final By viewQueuesLink = By.xpath("//a[@id='ViewQueuesLink']");
+    private final By referSelected = By.xpath("//input[@id='TransferSelected']");
+    private final By selectz1 = By.xpath("//input[@id='selectz1']");
+    private final By selectz2 = By.xpath("///input[@id='selectz2']");
+    private final By selectz3 = By.xpath("//input[@id='selectz3']");
+    private By testSetOptionButtonDropDown = By.xpath("//a[text()='Test Set Options']");
+    private final By homeButton = By.xpath("//md-icon[@id='tc_NavBar-misc-homeButtonIcon']");
     private boolean recent = false;
     private String locationNew = "";
 
@@ -73,7 +82,7 @@ public class LabQueues extends AbstractExtension {
     private Boolean firstTime = true;
     private String desc ="";
 
-    private int timeout = 15;
+    private int timeout = 30;
 
 
 
@@ -461,7 +470,29 @@ public class LabQueues extends AbstractExtension {
 
         }
     }
-
+    public void selectSingleEpisode(){
+        for(int x=1;x<=2;++x) {
+            final By firstSingleTestSet=  By.xpath("//a[@id='singleEditz"+"%s']".replace("%s",Integer.toString(x)));
+            click(firstSingleTestSet,timeout);
+            click(testSetProtocolsCompleted_Cancelled,timeout);
+            switchToDefaultContext();switchToFrame(By.name("TRAK_info"));
+            click(infoPaneClose,timeout);
+            switchToDefaultContext();switchToMainFrame();
+            click(testSetOptionButtonDropDown, timeout);
+            click(viewQueuesLink,timeout);
+            switchToDefaultContext();
+            javascriptClick(_driver.findElement(homeButton));
+            switchToMainFrame();
+            SearchResultTable("Total","Cytology - Non-Gynae Workload",20);
+        }
+    }
+    public void selectALL3SingleEpisode(){
+        for(int x=1;x<=3;++x) {
+            final By SingleTestSet=  By.xpath("//input[@id='selectz"+"%s']".replace("%s",Integer.toString(x)));
+            javascriptClick(_driver.findElement(SingleTestSet));
+        }
+        click(referSelected);
+    }
     public void labQueueSheet(List<LabQueueEntity> labQueueEntities, List<LabQueueValuesEntity> labQueueValuesEntities, ArrayList<String> labEpsiode,ResultEntry resultEntry,PathCareProcessingPage pathCareProcessingPage, InterSystemLoginPage interSystemLoginPage) throws InterruptedException {
         Boolean found = false;
         for(LabQueueEntity labQueueEntity:labQueueEntities) {

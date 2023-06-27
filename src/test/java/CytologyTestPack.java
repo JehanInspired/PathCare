@@ -2,11 +2,8 @@
 import Roman.Roman;
 import Roman.RomanBase;
 import applications.PathCareapplication.PathCareApplication;
-import applications.PathCareapplication.models.AutomationUserModel;
-import applications.PathCareapplication.models.CytologyNon_GynaeSpecimen;
+import applications.PathCareapplication.models.*;
 
-import applications.PathCareapplication.models.LabespideData;
-import applications.PathCareapplication.models.PatientModel;
 import com.github.javafaker.Faker;
 import com.microsoft.schemas.vml.CTImageData;
 import org.apache.xmlbeans.impl.xb.xsdschema.impl.AttributeDocumentImpl;
@@ -210,12 +207,36 @@ public class CytologyTestPack extends RomanBase {
             pathCare.interSystemloginPage.login(model.username,model.password);
             pathCare.interSystemloginPage.setLocation("Lab Assistant PANORAMA");
             pathCare.interSystemloginPage.userselection();
-            //registerPatients();
+            registerPatients();
             labEpisode= pathCare.pathCareScratch.getLabEpisodesFromFile();
+
+            //receive specimen
+            pathCare.analytical.switchToDefaultContext();
+            pathCare.interSystemloginPage.changelocation();
+            String location = dataPatient.getPatientModelList().get(0).getUserprofile();
+            pathCare.interSystemloginPage.setLocation(location);
+            pathCare.interSystemloginPage.userselection();
+            pathCare.pre_analytical.navigateRegistration();
+            HashMap<String, ArrayList<String>> labespisodesSpecimen = pathCare.pathCareScratch.searchMutliplePatientKeys(dataPatient.readerList());
+            location = dataPatient.getSpecimenReceiveArrayList().get(0).getUserprofile_FK();
+            pathCare.interSystemloginPage.setLocation(location);
+            pathCare.interSystemloginPage.changelocation();
+            pathCare.interSystemloginPage.userselection();
+            pathCare.pre_analytical.navigatespecimenRecived();
+            pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingle(pathCare.pre_analytical, pathCare.interSystemloginPage, labespisodesSpecimen, location, dataPatient.getSpecimenReceiveArrayList(), dataPatient.getWorkAreaReceives(), dataPatient.getTestCodeList());
+            if (!pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList.isEmpty()){
+                for (WorkAreaReceiveEntity workAreaReceiveEntity : pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList) {
+                    dataPatient.write(workAreaReceiveEntity.toString().replace("[","").replace("]",""),"WorkRecieve.txt");
+                }
+            }
+            if (!pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList.isEmpty()){
+                for (SpecimenReceiveEntity specimenReceiveEntity : pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList) {
+                    dataPatient.write(specimenReceiveEntity.ToString().replace("[","").replace("]",""),"SpecimenRecieve.txt");
+                }
+            }
             //Transfer
             pathCare.analytical.switchToDefaultContext();
             pathCare.interSystemloginPage.changelocation();
-            String locations = dataPatient.getTransferArrayList().get(0).getUserprofile_FK();
             pathCare.interSystemloginPage.setLocation(dataPatient.getTransferArrayList().get(0).getUserprofile_FK());
             pathCare.interSystemloginPage.userselection();
             pathCare.labQueues.switchToDefaultContext();
@@ -227,24 +248,24 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pathCareLabTransferList.closePackage();
             shipmentNumber=pathCare.pathCareLabTransferList.shipmentNumber;
             pathCare.pathCareScratch.writeShipmentNumberIntoFile(shipmentNumber);
-
+            shipmentNumber=  pathCare.pathCareScratch.getShipmentNumberFromFile();
             pathCare.pathCareLabTransferList.enterPackNumberAndFind(shipmentNumber);
-            value= pathCare.pathCareLabTransferList.shipmentPackageIsPacked();
-            dataSheet.Transfer();
+            pathCare.pathCareLabTransferList.shipmentPackageIsPacked();
 
+           // shipmentNumber=  pathCare.pathCareScratch.getShipmentNumberFromFile();
             //transfer pick up
             pathCare.pre_analytical.switchtoMainiFrame();
-            String location = dataPatient.getLogisticsEntityArrayList().get(0).getUserprofile_FK();
-            pathCare.interSystemloginPage.setLocation(location);
+            pathCare.interSystemloginPage.changelocation();
+            pathCare.interSystemloginPage.setLocation(dataPatient.getLogisticsEntityArrayList().get(0).getUserprofile_FK());
             pathCare.interSystemloginPage.userselection();
             pathCare.labQueues.switchToDefaultContext();
             pathCare.pre_analytical.navigateLogistics();
             pathCare.transferLogistics.EnterShipmentNumberInPickUpShipment(shipmentNumber);
 
             //transfer In transit
-            pathCare.pre_analytical.switchtoMainiFrame();
+            pathCare.labQueues.switchToDefaultContext();
             pathCare.pre_analytical.navigateTransfer();
-            pathCare.pathCareLabTransferList.enterPackNumberAndFind(shipmentNumber);
+            pathCare.pathCareLabTransferList.enterPackNumbersAndFind(shipmentNumber);
             value= pathCare.pathCareLabTransferList.shipmentPackageIsInTransit();
 
             Assertions.assertTrue(value,"Update to status is not In Transit");
@@ -478,9 +499,8 @@ public class CytologyTestPack extends RomanBase {
             pathCare.interSystemloginPage.userselection();
             pathCare.labQueues.switchToMainFrame();
             pathCare.labQueues.SearchResultTable("Total","Cytology - Non-Gynae Workload",20);
-            pathCare.labQueues.clickEspiodeElement(true,"23002163");//labEpisode.get(0)
-            pathCare.pathCareProcessingPage.testSetOption();
-            //pathCare.
+            pathCare.labQueues.selectSingleEpisode();
+            pathCare.labQueues.selectALL3SingleEpisode();
 
         }
 

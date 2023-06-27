@@ -114,8 +114,41 @@ public class TestSetDataSheet extends RomanBase {
 
             pathCare.pathCareScratch.writeLabEpisodesIntoFile(pathCare.pathCareScratch.labEpisode);
         }
+    }
+    @Test
+    @Order(2)
+    public void speciemenReceive() throws Exception {
+        if (dataPatient.readerList().isEmpty()) {
+            registerPatient();
+            pathCare.pre_analytical.switchtoMainiFrame();
+            pathCare.interSystemloginPage.logoff();
+        }
 
-    }    @Test
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        String location = dataPatient.getPatientModelList().get(0).getUserprofile();
+        pathCare.interSystemloginPage.setLocation(location);
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateRegistration();
+        HashMap<String, ArrayList<String>> labespisodesSpecimen = pathCare.pathCareScratch.searchMutliplePatientKeys(dataPatient.readerList());
+        location = dataPatient.getSpecimenReceiveArrayList().get(0).getUserprofile_FK();
+        pathCare.interSystemloginPage.setLocation(location);
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigatespecimenRecived();
+        pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingle(pathCare.pre_analytical, pathCare.interSystemloginPage, labespisodesSpecimen, location, dataPatient.getSpecimenReceiveArrayList(), dataPatient.getWorkAreaReceives(), dataPatient.getTestCodeList());
+        if (!pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList.isEmpty()){
+            for (WorkAreaReceiveEntity workAreaReceiveEntity : pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList) {
+                dataPatient.write(workAreaReceiveEntity.toString().replace("[","").replace("]",""),"WorkRecieve.txt");
+            }
+        }
+        if (!pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList.isEmpty()){
+            for (SpecimenReceiveEntity specimenReceiveEntity : pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList) {
+                dataPatient.write(specimenReceiveEntity.ToString().replace("[","").replace("]",""),"SpecimenRecieve.txt");
+            }
+        }
+    }
+    @Test
     @Order(3)
     public void Transfer() throws Exception {
         AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
@@ -139,6 +172,7 @@ public class TestSetDataSheet extends RomanBase {
         value= pathCare.pathCareLabTransferList.shipmentPackageIsPacked();
         Assertions.assertTrue(value,"Update to status is not In Packed");
     }
+
     @Test
     @Order(4)
     public void TransferLogistics() throws Exception {
@@ -273,7 +307,7 @@ public class TestSetDataSheet extends RomanBase {
             registerPatient();
             pathCare.pre_analytical.switchtoMainiFrame();
             pathCare.interSystemloginPage.logoff();
-            //speciemenReceive();
+            speciemenReceive();
             pathCare.pre_analytical.switchtoMainiFrame();
             pathCare.interSystemloginPage.logoff();
             work_Receive();
@@ -304,7 +338,7 @@ public class TestSetDataSheet extends RomanBase {
             registerPatient();
             pathCare.pre_analytical.switchtoMainiFrame();
             pathCare.interSystemloginPage.logoff();
-            //speciemenReceive();
+            speciemenReceive();
             pathCare.pre_analytical.switchtoMainiFrame();
             pathCare.interSystemloginPage.logoff();
             work_Receive();
