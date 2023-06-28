@@ -166,7 +166,7 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
 
             changeLocation(specimenReceiveEntities.get(numtestset).getUserprofile_FK(),interSystemloginPage,pre_analytical);
 
-                for(int x=0;x <= labespisodesSpecimen.get(patientkey).size()-3;++x)
+                for(int x=0;x <= labespisodesSpecimen.get(patientkey).size()-1;++x)
                 {
                 switchToDefaultContext();
                 loadingBarChecker();
@@ -189,7 +189,7 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
                         numtestset++;
                 }
                 if(!aliqout) {
-                    click(specimenNumberUpdateButton);
+                    click(specimenNumberUpdateButton,timeout);
                 }
                 aliqout = false;
             }
