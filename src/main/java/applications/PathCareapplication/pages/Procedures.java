@@ -164,7 +164,7 @@ public class Procedures extends AbstractExtension {
         click(By.xpath("//a[@ng-click='navBack();']"),timeout);
     }
 
-  public void searchSelectionMultiple(String[] procedures){
+  public void searchSelectionMultiple(String[] procedures) throws InterruptedException {
 
         awaitElement(clearButton,timeout);
         click(clearButton);
@@ -202,9 +202,12 @@ public class Procedures extends AbstractExtension {
         }
     }
 
-    public void findOne(By by,String input) {
+    public void findOne(By by,String input) throws InterruptedException {
+            Thread.sleep(2000);
             super.findOne(by,timeout).clear();
+            Thread.sleep(1000);
             super.findOne(by,timeout).sendKeys("");
+            Thread.sleep(1000);
             super.findOne(by,timeout).sendKeys(input);
             super.findOne(by,timeout).sendKeys(Keys.TAB);
     }
