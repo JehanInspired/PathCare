@@ -308,21 +308,10 @@ public class TestSetDataSheet extends RomanBase {
     public void TP_1035_GenericProcedure() throws Exception{
         Faker faker = new Faker();
         String descriptiopn = "Hereditary-Haemochromatosis-" + pathCare.procedures.generateRandon()+"-"+ faker.name().name();
-        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
-        pathCare.interSystemloginPage.login(model.username,model.password);
+       // AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        //pathCare.interSystemloginPage.login(model.username,model.password);
 
-        //registration
-        registerPatients();
-        labEpisode= pathCare.pathCareScratch.getLabEpisodesFromFile();
-
-        //Work Receive
-        pathCare.pre_analytical.switchtoMainiFrame();
-        pathCare.interSystemloginPage.changelocation();
-        pathCare.interSystemloginPage.setLocation(dataPatient.getWorkAreaReceives().get(0).getUserprofile_FK());
-        pathCare.interSystemloginPage.userselection();
-        pathCare.pre_analytical.navigateWorkRecived();
-        pathCare.workAreaReceptionPage.labworkareaswitch();
-        pathCare.workAreaReceptionPage.workAreaReceive(dataPatient.getWorkAreaReceives().get(0).getDepartment(),dataPatient.getWorkAreaReceives().get(0).getWorkArea(),labEpisode);
+        TP_1032_GenericWorksheetControl();
 
         //Molecular: Completing Procedures
         pathCare.pre_analytical.switchtoMainiFrame();
@@ -333,7 +322,8 @@ public class TestSetDataSheet extends RomanBase {
         pathCare.procedures.searchProtocolProcedure(dataPatient.getProcedureEntityArrayList().get(0).getDepartment(),dataPatient.getProcedureEntityArrayList().get(0).getTestSet());
         pathCare.procedures.saveSearchAndUpdate(descriptiopn);
         pathCare.procedures.savedSearches(descriptiopn);
-        pathCare.procedures.multipleSearch(labEpisode);
+        //pathCare.procedures.multipleSearch(labEpisode);
+        pathCare.procedures.selectAllAndBulkComplete();
 
         //Worksheet Result Entry (WRE): Adding an Attachment
         pathCare.analytical.navigateWorkSheetRes();
@@ -568,3 +558,45 @@ class ReferenceRangesTestCase extends RomanBase{
 }
 
 
+  /*  @Test
+    public void TP_1035_GenericProcedure() throws Exception{
+        Faker faker = new Faker();
+        String descriptiopn = "Hereditary-Haemochromatosis-" + pathCare.procedures.generateRandon()+"-"+ faker.name().name();
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username,model.password);
+
+        //registration
+        // registerPatients();
+        labEpisode= pathCare.pathCareScratch.getLabEpisodesFromFile();
+
+        //Work Receive
+        pathCare.pre_analytical.switchtoMainiFrame();
+        // pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation(dataPatient.getWorkAreaReceives().get(0).getUserprofile_FK());
+        pathCare.interSystemloginPage.userselection();
+        pathCare.pre_analytical.navigateWorkRecived();
+        // pathCare.workAreaReceptionPage.labworkareaswitch();
+        //pathCare.workAreaReceptionPage.workAreaReceive(dataPatient.getWorkAreaReceives().get(0).getDepartment(),dataPatient.getWorkAreaReceives().get(0).getWorkArea(),labEpisode);
+
+        //Molecular: Completing Procedures
+        pathCare.pre_analytical.switchtoMainiFrame();
+        pathCare.interSystemloginPage.changelocation();
+        pathCare.interSystemloginPage.setLocation(dataPatient.getProcedureEntityArrayList().get(0).getUserprofile_FK());
+        pathCare.interSystemloginPage.userselection();
+        pathCare.analytical.navigateProcedures();
+        pathCare.procedures.searchProtocolProcedure(dataPatient.getProcedureEntityArrayList().get(0).getDepartment(),dataPatient.getProcedureEntityArrayList().get(0).getTestSet());
+        pathCare.procedures.saveSearchAndUpdate(descriptiopn);
+        pathCare.procedures.savedSearches(descriptiopn);
+        //pathCare.procedures.multipleSearch(labEpisode);
+        pathCare.procedures.selectAllAndBulkComplete();
+
+        //Worksheet Result Entry (WRE): Adding an Attachment
+        pathCare.analytical.navigateWorkSheetRes();
+        pathCare.pathCareLabWorkSheetResEntry.findWorksheetDefinition(dataPatient.getWre_AttachmentsEntityArrayList().get(0).getWorksheetDefinition());
+        pathCare.pathCareLabWorkSheetResEntry.uploadWorksheetDocument("Hereditary Haemochromatosis Datasheet",dataPatient.getWre_AttachmentsEntityArrayList().get(0).getTestSet());
+        pathCare.pathCareLabWorkSheetResEntry.ClickApplyButton();
+        pathCare.pathCareLabWorkSheetResEntry.ClickEpisodeLinkAndCheckAttachedDocs();
+        Assert.assertTrue("Worksheet result entry",pathCare.pathCareLabWorkSheetResEntry.worksheetResEntryDisplayed());
+
+
+    }*/

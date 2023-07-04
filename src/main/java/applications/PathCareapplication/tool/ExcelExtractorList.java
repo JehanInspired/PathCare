@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ExcelExtractorList {
 
-    static String path = "Registration and Result entry FBC Inland and Vet.xlsx";
+    static String path = "Hereditary Haemochromatosis Datasheet.xlsx";
 
     public static List<PatientModel> patientData(){
         PoijiOptions options = PoijiOptions.PoijiOptionsBuilder.settings().sheetName("Registration").addListDelimiter(",")

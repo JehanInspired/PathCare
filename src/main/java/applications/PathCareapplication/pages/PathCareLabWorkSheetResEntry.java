@@ -51,6 +51,8 @@ public class PathCareLabWorkSheetResEntry extends AbstractExtension {
     public  void  findWorksheetDefinition(String worksheetDef) throws InterruptedException {
         switchToFrame(By.id("TRAK_main"));
         sendKeysAndTab(inputWorkSheetDefinition,worksheetDef,timeout);
+        click(showfinal);
+        click(openWorksheets);
         clickAndTab(worksheetLookUp,worksheetLookUpText);
     }
     public  void  ClickApplyButton(){
