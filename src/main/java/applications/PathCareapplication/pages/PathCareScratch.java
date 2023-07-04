@@ -24,17 +24,23 @@ public class PathCareScratch extends AbstractExtension {
 
     private final By switchiFrame = By.xpath("//iframe[@name='TRAK_main']");
     private final By surnametextbox = By.xpath("//input[@name='PAPERName']");
+    private final By vetSurnametextbox = By.xpath("//input[@name='PAPERName']");
     private final By givennametextbox = By.xpath("//input[@name='PAPERName2']");
+    private final By vetGivennametextbox = By.xpath("//input[@name='LBEPContactFirstName']");
+    private final By vetNametextbox = By.xpath("//input[@name='LBSUBName']");
+    private final By speciesTextbox = By.xpath("//input[@name='LBSUBSpecies']");
+    private final By speciesText = By.xpath("//input[@name='LBEPSpeciesDR' ]");
     private final By findbutton = By.xpath("//button[text()='Find']");
     private final By newbutton = By.xpath("//a[text()='New']");
     private final By newbutton2 = By.xpath("//button[text()='New']");
     private final By gendertextbox = By.xpath("//input[@name='CTSEXDesc']");
+    private final By vetGendertextbox = By.xpath("//input[@name='LBEPSexDR']");
     //dd/mm/yyyy
     private final By DateofBirth = By.xpath("//input[@name='PAPERDob']");
     private final By saveAndclose = By.xpath("//button[@type='submit']");
     private final By iconDoctorSearch = By.xpath("//md-icon[@id='LBEpisode_Edit_0-item-LBEPReferringDoctorDR-lookupIcon']");
     private final By nameofDoctor = By.xpath("//input[@name='LBEPReferringDoctorDR']");
-
+    private final By requestingLocation = By.xpath("//input[@name='LBEPRequestingLocationDR']");
     private final By firstrowdoctorsearch  = By.xpath("//a[@id='PACRefDoctor_CustomFind_0-row-0-item-FullDoctorName-link']");
     private final By iconPatientSearch = By.xpath("//md-icon[@id='LBEpisode_Edit_0-item-LBEPPatientLocationDR-lookupIcon']");
     private final By patientSearchSelect = By.xpath("//input[@name= 'LBEPPatientLocationDR' ]");
@@ -47,6 +53,7 @@ public class PathCareScratch extends AbstractExtension {
     private final By backtoPatient = By.xpath("//a[contains(@ng-bind,'getBackToCaption()')]");
     private final By supersetItemSelection = By.xpath("//span[contains(text(),'Superset Item Selection')]");
     private final By labEspiodeNum = By.xpath("//div[contains(text(),'Lab Episode Number')]");
+    private final By labEspiodeNumber = By.xpath("(//span[contains (@id, 'LBEpisodeNo')])[last()]");
     private final By specimensearch = By.xpath("//md-icon[@id='LBSpecimenContainer_Msg_Edit_0-item-LBSPCSpecimenDR-lookupIcon']");
 
     private final By applybuttonSpecimenContainer = By.xpath("//button[text()='Accept']");
@@ -133,6 +140,7 @@ public class PathCareScratch extends AbstractExtension {
     private String dateOfBirth;
     private String surname;
     private String gender;
+    private String species;
     public  ArrayList<String> labEpisodesNumber = new ArrayList<String>();
     static  String shipmentNumber ="";
     public ArrayList<String> labEpisode = new ArrayList<>();
@@ -245,7 +253,23 @@ public class PathCareScratch extends AbstractExtension {
             labEpisode.add(lab_episode);
         return lab_episode;
     }
+    public String updateVetClientDetails(String name,String species) throws InterruptedException {
+        if(validateElement_Enabled_Displayed(updatebuton,timeout)) {
+            awaitElement(updatebuton,timeout);
+            click(updatebuton, timeout);
+            stepInfo("Successfully clicked Update button "+updatebuton);
 
+        } else {
+            Assert.fail("Unable to receive Lap Episode Number");
+        }
+        Thread.sleep(2000);
+        searchVetPatientName(name,species);
+        String lab_episode = getText(labEspiodeNumber, timeout);
+        stepPassedWithScreenshot("Label printed successfully " + lab_episode);
+        labEpisode.add(lab_episode);
+        click(By.xpath("//a[@id='tc_Breadcrumbs-back' and @aria-label='Back to: Veterinary Episode Search']"));
+        return lab_episode;
+    }
     public void specimenSelect(){
         if(clickBackboneLabEpisodeSelect){click(backtoLabEpisodeNav);}
 
@@ -435,7 +459,10 @@ public class PathCareScratch extends AbstractExtension {
         loadingBarChecker();
         stepInfoWithScreenshot("Able to create new Patient");
     }
-
+    public void clickNew() {
+        loadingBarChecker();
+        click(newbutton2,timeout);
+    }
     public void patientdetails(String name, String surname, String dateOfBirth, String gender) {
         setClientdetails(name,surname,dateOfBirth,gender);
         sendKeys(surnametextbox,this.surname,timeout);
@@ -478,6 +505,30 @@ public class PathCareScratch extends AbstractExtension {
         stepPassedWithScreenshot("Successfully User is directed to Patient Registration screen" );
 
     }
+    public void vetPatientdetails(String name, String species) {
+        //setClientdetails(name,surname,dateOfBirth,gender);
+        sendKeys(vetNametextbox,name,timeout);
+        sendKeys(speciesTextbox,species,timeout);
+        click(findbutton);
+        loadingBarChecker();
+        if(!newPatient){
+            awaitElement(newbutton2,timeout);
+            click(newbutton2,timeout);
+            loadingBarChecker();
+        }else if(validateElement_Enabled_Displayed(newbutton2,timeout)) {
+            stepPassedWithScreenshot("The Patient list screen appears with no list");
+            click(newbutton2,timeout);
+        }
+
+        if(newPatient) {
+            findEnterTab(vetNametextbox, name);
+            findEnterTab(speciesTextbox, species);
+            click(DateofBirth,timeout);
+            stepPassedWithScreenshot("User is directed to Lab Episode screen");
+        }
+        stepPassedWithScreenshot("Successfully User is directed to Patient Registration screen" );
+
+    }
 
     public void doctorSelection()  {
 
@@ -497,7 +548,21 @@ public class PathCareScratch extends AbstractExtension {
             super._driver.findElement(nameofDoctor).sendKeys(Keys.TAB);
         }
     }
-
+    public void doctorSelection(String doctor,String requestLocation,String species) throws InterruptedException {
+        if(doctor.isBlank()) {
+            doctorSelection();
+        }else{
+            awaitElement(nameofDoctor, timeout);
+            sendKeys(speciesText, species,timeout);
+            Thread.sleep(2000);
+            super._driver.findElement(speciesText).sendKeys(Keys.TAB);
+            sendKeys(nameofDoctor, doctor);
+            Thread.sleep(2000);
+            super._driver.findElement(nameofDoctor).sendKeys(Keys.TAB);
+            sendKeys(requestingLocation, requestLocation);
+            super._driver.findElement(requestingLocation).sendKeys(Keys.TAB);
+        }
+    }
 
     public List<String> mutiplePatient(Faker faker, String[] testcollection, boolean receiveDate,boolean specimenSelect, int numberPatient, Boolean updateClient) throws InterruptedException {
         List<String> labEspideonumber = new ArrayList<>();
@@ -554,7 +619,35 @@ public class PathCareScratch extends AbstractExtension {
 
         return updateClientDetails();
     }
+    public String vetCollectiondetailnewEditSpecimen(String patientKey, String collectiontime, String patienLocation , String[] testsetcollection, Boolean receiveDate, ArrayList<TestSetDetailsEntity> testSetlist, ArrayList<SpecimensEntity> specimensEntityList, ArrayList<EditTestSetEntity> editTestSetEntityArrayList,String vetPatientName,String species) throws InterruptedException {
+        ///Thread.sleep(1000);
+        if (findOne(requestingLocation).getAttribute("value").isBlank()) {
+            sendKeys(requestingLocation, patienLocation.isBlank() ? "2100" : patienLocation);
+            super._driver.findElement(requestingLocation).sendKeys(Keys.TAB);
+        }
 
+        for (String testset:testsetcollection) {
+            setTestset(testset);
+            testCode = By.xpath("//span[text()='%s']".replace("%s",testset));
+            sendKeys(testSetCollection,testset);
+            super._driver.findElement(testSetCollection).sendKeys(Keys.TAB);
+            stepPassedWithScreenshot("Entered test set "+testset);
+            if (validateElement_Displayed(supersetItemSelection)) {
+                stepInfoWithScreenshot("Reach to Superset Item Selection");
+                click(buttonSupersetItemSelectionAccept,timeout);
+                loadingBarChecker();
+            }
+            testSetDetails(testSetlist,testset,patientKey);
+            specimens(specimensEntityList,testset,patientKey);
+            editTestList(testset,patientKey, editTestSetEntityArrayList);
+            stepPassedWithScreenshot("The correct Test Set appears under Tests : "+testset);
+        }
+        return updateVetClientDetails(vetPatientName,species);
+
+    }
+    public void  goBack(){
+        click(By.xpath("//a[@id='tc_Breadcrumbs-back' and @aria-label='Back to: Veterinary Episode Search']"));
+    }
     private void testSetDetails(ArrayList<TestSetDetailsEntity> testSetlist, String testset, String patientkey){
         boolean checker= true;
         for(TestSetDetailsEntity testSetDetail:testSetlist){
@@ -776,7 +869,17 @@ public class PathCareScratch extends AbstractExtension {
         click(findButton);
 
     }
+    public void searchVetPatientName(String name, String species) throws InterruptedException {
+        findOne(vetNametextbox).clear();
+        findOne(speciesTextbox).clear();
+        sendKeys(vetNametextbox, name);
+        Thread.sleep(1000);
+        sendKeys(speciesTextbox, species);
+        stepInfoWithScreenshot("Entered subject name "+ name);
 
+        click(findButton);
+
+    }
     public void specimenContainerList(String anatomical,String lesion,String anatomicalSite) throws InterruptedException {
         int y = 0;
         for(String element:specimenNumberExtract(true)){

@@ -14,7 +14,7 @@ public class Pre_Analytical extends AbstractExtension {
     private final By findbutton = By.xpath("//input[@name='find1']");
     private final By subregistation = By.xpath("//span[text()='Registration']");
 
-
+    private final By subVetRegistation = By.xpath("//span[text()='Veterinary Registration']");
 
     private final By logisticsMenubutton = By.xpath("//li//span[text()='Transfer Logistics']");
 
@@ -95,7 +95,17 @@ public class Pre_Analytical extends AbstractExtension {
         stepPassedWithScreenshot("Patient Episode Search Menu appears");
 
     }
-
+    public void navigateVetRegistration(){
+        awaitElement(mainmenu,timeout);
+        click(mainmenu,timeout);
+        if(validateElement_Enabled_Displayed(subVetRegistation)){
+            click(subVetRegistation,timeout);
+        }else{
+            click(pre_Analytical);
+            click(subVetRegistation,timeout);
+        }
+        stepPassedWithScreenshot("Vet Patient Episode Search Menu appears");
+    }
 
     public void navigateLogistics(){
         awaitElement(mainmenu,timeout);

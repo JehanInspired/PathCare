@@ -84,6 +84,40 @@ public class TestSetDataSheet extends RomanBase {
         }
 
     }
+    @Test
+    @Order(1)
+    public void registerVetPatient() throws Exception {
+
+        AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+        pathCare.interSystemloginPage.login(model.username, model.password);
+        for(VetPatientEntity patient:dataPatient.getVetPatientEntityArrayList()) {
+
+            if(pathCare.interSystemloginPage.getLocation().isEmpty()) {
+                pathCare.interSystemloginPage.setLocation(patient.getUserprofile());
+                pathCare.interSystemloginPage.userselection();
+                pathCare.pre_analytical.navigateVetRegistration();
+            }else if(!pathCare.interSystemloginPage.getLocation().contentEquals(patient.getUserprofile())){
+                pathCare.interSystemloginPage.setLocation(patient.getUserprofile());
+                pathCare.interSystemloginPage.changelocation();
+                pathCare.interSystemloginPage.userselection();
+                pathCare.pre_analytical.navigateVetRegistration();
+            }
+            if(patient.getSubject_name() != null){
+                pathCare.pathCareScratch.searchVetPatientName(patient.getSubject_name(),patient.getSpecies());
+                pathCare.pathCareScratch.clickNew();
+            }else{
+                pathCare.pathCareScratch.vetPatientdetails(patient.getSubject_name(),patient.getSpecies());
+            }
+            pathCare.pathCareScratch.doctorSelection(patient.getReferringVeterinarian(),patient.getRequestedLocation(),patient.getSpecies());
+
+            labespisodesSpecimen.add(patient.getPk()+","+ pathCare.pathCareScratch.vetCollectiondetailnewEditSpecimen(patient.getPk(),patient.getCollectionTime(),patient.getRequestedLocation(),patient.getTestSet()
+                    .toArray(String[]::new),false,dataPatient.getTestSetDetailsList(),dataPatient.getSpecimensArrayList(),dataPatient.getEditTestArrayList(),patient.getSubject_name(),patient.getSpecies()));
+            dataPatient.write(labespisodesSpecimen);
+
+            pathCare.pathCareScratch.writeLabEpisodesIntoFile(pathCare.pathCareScratch.labEpisode);
+        }
+
+    }
     public void registerPatients() throws Exception {
 
        // AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");

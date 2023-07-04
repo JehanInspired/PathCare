@@ -18,25 +18,16 @@ public  class LabespideData  {
     private List<ResultsGenerator_AbbottAlinityc> resultsGenerator_AbbottAlinityc = new ArrayList<>();
 
     private List<ResultsGenerator_RocheSysmexXN1> resultsGenerator_rocheSysmexXN1List = new ArrayList<>();
-
     private List <ResultsGenerator_SysmexCS2500> resultsGenerator_sysmexCS2500s = new ArrayList<>();
-
     private List<ResultsGenerator_PCPBioFireFilm> resultsGenerator_pcpBioFireFilmList = new ArrayList<>();
-
     private List<ResultsGenerator_Aquios1> resultsGenerator_aquios1s = new ArrayList<>();
-
     public List<ResultsGenerator_PCP> getResultsGeneratorPcps() {
         return resultsGeneratorPcps;
     }
-
     private List<ResultsGenerator_PCP> resultsGeneratorPcps = new ArrayList<>();
-
-
     private List<ResultsGenerator_RocheSysmexXGE> resultsGenerator_rocheSysmexXGES = new ArrayList<>();
-
     private List<ResultsGenerator_AAGeorge> resultsGeneratorAaGeorges = new ArrayList<>();
     private List<ResultsGenerator_Abbott> resultsGenerator_Abbott = new ArrayList<>();
-
 
     private List<ResultsGenerator_Sysmexca620Geo> resultsGenerator_sysmexca620Geos = new ArrayList<>();
 
@@ -44,34 +35,28 @@ public  class LabespideData  {
 
     private ArrayList<SpecimensEntity> specimensEntityArrayList = new ArrayList<>();
 
-
     private ArrayList<EditTestSetEntity> editTestArrayList = new ArrayList<>();
 
     private ArrayList<SpecimenReceiveEntity> specimenReceiveEntityArrayList = new ArrayList<>();
     private ArrayList<TransferEntity> transferEntityArrayList = new ArrayList<>();
 
-    public ArrayList<WorksheetControlEntity> getWorksheetControlEntitArrayList() {
-        return worksheetControlEntitArrayList;
+    private ArrayList<VetPatientEntity> vetPatientEntityArrayList = new ArrayList<>();
+
+    public ArrayList<VetPatientEntity> getVetPatientEntityArrayList() {
+        return vetPatientEntityArrayList;
     }
 
-    public void setWorksheetControlEntitArrayList(ArrayList<WorksheetControlEntity> worksheetControlEntitArrayList) {
-        this.worksheetControlEntitArrayList = worksheetControlEntitArrayList;
+    public ArrayList<WorksheetControlEntity> getWorksheetControlEntitArrayList() {
+        return worksheetControlEntitArrayList;
     }
 
     public ArrayList<ProcedureEntity> getProcedureEntityArrayList() {
         return procedureEntityArrayList;
     }
 
-    public void setProcedureEntityArrayList(ArrayList<ProcedureEntity> procedureEntityArrayList) {
-        this.procedureEntityArrayList = procedureEntityArrayList;
-    }
 
     public ArrayList<WRE_AttachmentsEntity> getWre_AttachmentsEntityArrayList() {
         return wre_AttachmentsEntityArrayList;
-    }
-
-    public void setWre_AttachmentsEntityArrayList(ArrayList<WRE_AttachmentsEntity> wre_AttachmentsEntityArrayList) {
-        this.wre_AttachmentsEntityArrayList = wre_AttachmentsEntityArrayList;
     }
 
     private ArrayList<WorksheetControlEntity> worksheetControlEntitArrayList = new ArrayList<>();
@@ -82,18 +67,11 @@ public  class LabespideData  {
         return logisticsDropOffEntitiesList;
     }
 
-    public void setLogisticsDropOffEntitiesList(ArrayList<LogisticsDropOffEntity> logisticsDropOffEntitiesList) {
-        this.logisticsDropOffEntitiesList = logisticsDropOffEntitiesList;
-    }
 
     private ArrayList<LogisticsDropOffEntity> logisticsDropOffEntitiesList = new ArrayList<>();
 
     public ArrayList<LogisticsEntity> getLogisticsEntityArrayList() {
         return logisticsEntityArrayList;
-    }
-
-    public void setLogisticsEntityArrayList(ArrayList<LogisticsEntity> logisticsEntityArrayList) {
-        this.logisticsEntityArrayList = logisticsEntityArrayList;
     }
 
     private ArrayList<LogisticsEntity> logisticsEntityArrayList = new ArrayList<>();
@@ -552,7 +530,24 @@ public  class LabespideData  {
 
             patientModelList.add(patientModel);
             }
+        for (VetPatientEntity vetPatientEntity: vetPatientData()) {
+            for (UserProfileEntity userProfileEntity : userProfile()) {
+                if (userProfileEntity.getPK().contentEquals(vetPatientEntity.userprofile)) {
+                    vetPatientEntity.setUserprofile(userProfileEntity.getAccessProfile());
+                }
+            }
+            List<String> tests = new ArrayList<>();
+            for(String test :vetPatientEntity.testSet ){
+                for(TestSetCodeEntity testSetCodeEntity : testSetCode()) {
+                    if (test.contentEquals(testSetCodeEntity.PK_testCode)) {
+                        tests.add(testSetCodeEntity.getCode());
+                    }
+                }
+            }
+            vetPatientEntity.testSet =tests;
 
+            vetPatientEntityArrayList.add(vetPatientEntity);
+        }
         for(TestSetDetailsEntity testSetDetailsEntity :testSetDetails()){
             for(TestSetCodeEntity testSetCodeEntity : testSetCode()){
                 if(testSetDetailsEntity.getTestSetSuperSet() != null) {
