@@ -112,9 +112,9 @@ public class TestSetDataSheet extends RomanBase {
 
             labespisodesSpecimen.add(patient.getPk()+","+ pathCare.pathCareScratch.vetCollectiondetailnewEditSpecimen(patient.getPk(),patient.getCollectionTime(),patient.getRequestedLocation(),patient.getTestSet()
                     .toArray(String[]::new),false,dataPatient.getTestSetDetailsList(),dataPatient.getSpecimensArrayList(),dataPatient.getEditTestArrayList(),patient.getSubject_name(),patient.getSpecies()));
-            dataPatient.write(labespisodesSpecimen);
+            //dataPatient.write(labespisodesSpecimen);
 
-            pathCare.pathCareScratch.writeLabEpisodesIntoFile(pathCare.pathCareScratch.labEpisode);
+            //pathCare.pathCareScratch.writeLabEpisodesIntoFile(pathCare.pathCareScratch.labEpisode);
         }
 
     }
