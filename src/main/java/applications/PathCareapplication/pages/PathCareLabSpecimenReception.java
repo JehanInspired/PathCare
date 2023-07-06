@@ -390,7 +390,18 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
         }
         switchToDefaultContext();
     }
+    public void specimensReceiveCreated(ArrayList<String> specimen,HashMap<String,List<String>> specimenDetail,boolean Non_GynaeSpecimen) throws InterruptedException {
+        switchToDefaultContext();
+        switchToMainFrame();
+        int x=1;
 
+        if(specimen.size()==1){
+            mutlipleSpeicmensRecivedOne( x, Non_GynaeSpecimen, specimen,specimenDetail);
+        }else{
+            mutlipleSpeicmensRecived( x, Non_GynaeSpecimen, specimen,specimenDetail);
+        }
+        switchToDefaultContext();
+    }
     private void mutlipleSpeicmenRecivedOne(int x,boolean Non_GynaeSpecimen,ArrayList<ArrayList<String>> specimen,HashMap<String,List<String>> specimenDetail) throws InterruptedException {
         String num;
         int z=x;
@@ -420,7 +431,35 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
                 click(specimenNumberUpdateButton, timeout);
             }
     }
+    private void mutlipleSpeicmensRecivedOne(int x,boolean Non_GynaeSpecimen,ArrayList<String> specimen,HashMap<String,List<String>> specimenDetail) throws InterruptedException {
+        String num;
+        int z=x;
+        for (String value : specimen) {
+            findOne(specimenNumberText, value);
+            stepPassedWithScreenshot("Successfully Entered Lab Specimen under Lab episode: " + value);
+            if(Non_GynaeSpecimen) {
+                num = "1";
+                if (String.valueOf(x).contentEquals("2")) {
+                    num = "2";
+                } else if (String.valueOf(x).contentEquals("3")) {
+                    num = "2.1";
+                } else if (String.valueOf(x).contentEquals("4")) {
+                    num = "3.1";
+                } else if (String.valueOf(x).contentEquals("5")) {
+                    num = "3.2";
+                }
+            }else{
+                num = "Lab Episode "+z;
+            }
 
+            enteringValueSpecimenDetail(specimenDetail,num,value);
+
+            stepInfoWithScreenshot("Successfully Entered Specimen details: " + value);
+            z++;
+
+            click(specimenNumberUpdateButton, timeout);
+        }
+    }
     private void mutlipleSpeicmenRecived(int x, boolean Non_GynaeSpecimen, ArrayList<ArrayList<String>> specimen, HashMap<String,List<String>> specimenDetail) throws InterruptedException {
 
         for(ArrayList<String> values :specimen) {
@@ -452,7 +491,36 @@ public class PathCareLabSpecimenReception extends AbstractExtension {
             click(specimenNumberUpdateButton, timeout);
         }
     }
+    private void mutlipleSpeicmensRecived(int x, boolean Non_GynaeSpecimen, ArrayList<String> specimen, HashMap<String,List<String>> specimenDetail) throws InterruptedException {
 
+        for(String values :specimen) {
+            String num;
+                findOne(specimenNumberText, values);
+                stepPassedWithScreenshot("Successfully Entered Lab Specimen under Lab episode: " + values);
+                if(Non_GynaeSpecimen) {
+                    num = "1";
+                    if (String.valueOf(x).contentEquals("2")) {
+                        num = "2";
+                    } else if (String.valueOf(x).contentEquals("3")) {
+                        num = "2.1";
+                    } else if (String.valueOf(x).contentEquals("4")) {
+                        num = "3.1";
+                    } else if (String.valueOf(x).contentEquals("5")) {
+                        num = "3.2";
+                    }
+                }else{
+                    num = "Lab Episode "+x;
+                }
+
+                enteringValueSpecimenDetail(specimenDetail,num,values);
+
+                stepInfoWithScreenshot("Successfully Entered Specimen details: " + values);
+                x++;
+
+            awaitElement(specimenNumberUpdateButton,timeout);
+            click(specimenNumberUpdateButton, timeout);
+        }
+    }
     public void enteringValueSpecimenDetail (HashMap<String,List<String>> specimenDetail,String num,String value){
         int y = 0;
         String speicmenvalue1 ="";

@@ -15,7 +15,6 @@ public class Pre_Analytical extends AbstractExtension {
     private final By subregistation = By.xpath("//span[text()='Registration']");
 
 
-
     private final By logisticsMenubutton = By.xpath("//li//span[text()='Transfer Logistics']");
 
     private final By transferbutton = By.xpath("//span[text()='Transfers']");
@@ -109,7 +108,6 @@ public class Pre_Analytical extends AbstractExtension {
         stepPassedWithScreenshot("Logistics page appears");
 
     }
-
 
 
     public void navigateMenu(){

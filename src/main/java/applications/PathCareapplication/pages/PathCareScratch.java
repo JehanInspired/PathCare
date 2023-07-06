@@ -133,7 +133,8 @@ public class PathCareScratch extends AbstractExtension {
     private String dateOfBirth;
     private String surname;
     private String gender;
-    public  ArrayList<String> labEpisodesNumber = new ArrayList<String>();
+    public  ArrayList<String> labEpisodesNumber = new ArrayList<>();
+    public  ArrayList<String> specimenNumber = new ArrayList<>();
     static  String shipmentNumber ="";
     public ArrayList<String> labEpisode = new ArrayList<>();
     public String collectionDetailWithMultipleTestSet(String collectiontime, String[] testsetcollection, Boolean specimenSelect,String petientLocation) {
@@ -1070,6 +1071,51 @@ public class PathCareScratch extends AbstractExtension {
             e.printStackTrace();
         }
     }
+    public static void EnterLabEpisodesIntoFile(ArrayList<String> labEpisodes) {
+        try {
+            FileWriter myWriter = new FileWriter(System.getProperty("user.dir")+"\\src\\main\\resources\\CytologyLabEpisodes.text");
+            for (String labEpisodeNumber : labEpisodes)
+            {
+                myWriter.write(labEpisodeNumber + "\n");
+                System.out.println(labEpisodeNumber);
+            }
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+    public static void EnterSpecimenNumbersIntoFile(ArrayList<ArrayList<String>> labEpisodes) {
+        try {
+            FileWriter myWriter = new FileWriter(System.getProperty("user.dir")+"\\src\\main\\resources\\SpecimenNumbers.text");
+            for (String labEpisodeNumber : labEpisodes.get(0))
+            {
+                myWriter.write(labEpisodeNumber + "\n");
+                System.out.println(labEpisodeNumber);
+            }
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+    public static void EnterSpecimenNumberIntoFile(ArrayList<String> labEpisodes) {
+        try {
+            FileWriter myWriter = new FileWriter(System.getProperty("user.dir")+"\\src\\main\\resources\\SpecimenNumber.text");
+            for (String labEpisodeNumber : labEpisodes)
+            {
+                myWriter.write(labEpisodeNumber + "\n");
+                System.out.println(labEpisodeNumber);
+            }
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
     public static void writeShipmentNumberIntoFile(String shipmentNum) {
         try {
             FileWriter myWriter = new FileWriter(System.getProperty("user.dir")+"\\src\\main\\resources\\shipmentNumbers.text");
@@ -1116,6 +1162,44 @@ public class PathCareScratch extends AbstractExtension {
             e.printStackTrace();
         }
         return  labEpisodesNumber;
+    }
+      public  ArrayList<String> getCytologyLabEpisodesFromFile() {
+        try {
+            File file = new File(System.getProperty("user.dir")+"\\src\\main\\resources\\CytologyLabEpisodes.text");
+            FileReader fr = new FileReader(file);
+            BufferedReader BR = new BufferedReader(fr);
+            String Content = "";
+
+            //Loop to read all lines one by one from file and print It.
+            while((Content = BR.readLine())!= null) {
+                labEpisodesNumber.add(Content);
+                System.out.println(Content);
+            }
+
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        return  labEpisodesNumber;
+    }
+    public  ArrayList<String> getSpecimenNumberFromFile() {
+        try {
+            File file = new File(System.getProperty("user.dir")+"\\src\\main\\resources\\SpecimenNumber.text");
+            FileReader fr = new FileReader(file);
+            BufferedReader BR = new BufferedReader(fr);
+            String Content = "";
+
+            //Loop to read all lines one by one from file and print It.
+            while((Content = BR.readLine())!= null) {
+                specimenNumber.add(Content);
+                System.out.println(Content);
+            }
+
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        return  specimenNumber;
     }
     public  String getShipmentNumberFromFile() {
         try {
