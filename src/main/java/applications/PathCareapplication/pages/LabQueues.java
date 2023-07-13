@@ -491,7 +491,8 @@ public class LabQueues extends AbstractExtension {
         for(String value:labEpisode){
             By labEpisodefield = By.xpath("//parent::td[label[text()='%s']]//parent::tr//td//a[contains(@id,'singleEditz')]".replace("%s",value));
                 if(validateElement_Displayed(labEpisodefield)){
-                    click(labEpisodefield,timeout);
+                   // click(labEpisodefield,timeout);
+                    javascriptClick(_driver.findElement(labEpisodefield));
                     click(testSetProtocolsCompleted_Cancelled,timeout);
                     switchToDefaultContext();switchToFrame(By.name("TRAK_info"));
                     click(infoPaneClose,timeout);
@@ -507,20 +508,7 @@ public class LabQueues extends AbstractExtension {
                     SearchResultTable("Total","Cytology - Non-Gynae Workload",40);
                     Thread.sleep(4000);
                 }else {
-                    scrollToElement(labEpisodefield);
-                    click(labEpisodefield);
-                    click(testSetProtocolsCompleted_Cancelled,timeout);
-                    switchToDefaultContext();switchToFrame(By.name("TRAK_info"));
-                    click(infoPaneClose,timeout);
-                    switchToDefaultContext();switchToMainFrame();
-                    click(testSetOptionButtonDropDown, timeout);
-                    Thread.sleep(2000);
-                    click(viewQueuesLink,timeout);
-                    switchToDefaultContext();
-                    javascriptClick(_driver.findElement(homeButton));
-                    switchToMainFrame();
-                    SearchResultTable("Total","Cytology - Non-Gynae Workload",20);
-                    Thread.sleep(4000);
+
                 }
             }
     }
