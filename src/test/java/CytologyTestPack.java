@@ -106,7 +106,6 @@ public class CytologyTestPack extends RomanBase {
             specimenNumber.add(x.get(3));
             Assert.assertTrue(!(specimenNumbers.isEmpty()));
         }
-
         @Test
         @Order(3)
         public void TP_145() throws Exception{
@@ -132,7 +131,6 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pathCareScratch.EnterLabEpisodesIntoFile(labEpisode);
             Assert.assertNotEquals("",specimenNumbers);
         }
-
 
         @Test
         @Order(4)
@@ -254,7 +252,7 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pathCareLabTransferList.createShipment(specimenNumbers,false );
             pathCare.pathCareLabTransferList.closePackage();
             pathCare.pre_analytical.switchtoMainiFrame();
-           // pathCare.pathCareLabTransferList.checkPackItem(labEpisode,specimenNumbers);
+            pathCare.pathCareLabTransferList.checkPackItem(labEpisode,specimenNumbers);
 
             //transfer pick up
             pathCare.pre_analytical.switchtoMainiFrame();

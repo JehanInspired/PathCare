@@ -504,6 +504,7 @@ public class LabQueues extends AbstractExtension {
                     Thread.sleep(2000);
                     click(viewQueuesLink, timeout);
                     switchToDefaultContext();
+                    Thread.sleep(2000);
                     javascriptClick(_driver.findElement(homeButton));
                     Thread.sleep(2000);
                     switchToMainFrame();
