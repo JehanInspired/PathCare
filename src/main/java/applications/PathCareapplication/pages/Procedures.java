@@ -99,10 +99,12 @@ public class Procedures extends AbstractExtension {
     }
 
     public void savedSearches(String saveSearchesText) throws InterruptedException {
+        Thread.sleep(4000);
+       // switchToDefaultContext();
         awaitElement(saveSearches,timeout);
         javascriptClick(_driver.findElement(saveSearches));
         _driver.navigate().refresh();
-        Thread.sleep(2000);
+        Thread.sleep(4000);
         javascriptClick(_driver.findElement(By.xpath("//a[contains(text(),'"+saveSearchesText+"')]")));
         loadingBarChecker();
     }
