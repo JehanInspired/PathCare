@@ -20,7 +20,7 @@ public class Procedures extends AbstractExtension {
 
     private final By workList = By.xpath("//button[text()='Work List']");
 
-    private final By allCheckboxticked = By.xpath("//*[@id='LBProtocolProcedure_List_0-misc-selectAll']");
+    private final By allCheckboxticked = By.xpath("//md-checkbox[@id='LBProtocolProcedure_List_0-misc-selectAll']");
     private final By bulkCompleteButton =  By.xpath("//button[text()='Bulk Complete']");
 
     private final By spcimennumberTexts = By.xpath("//span[contains(@ng-bind,'LBPT_OriginMaterialACN')]");
@@ -47,12 +47,15 @@ public class Procedures extends AbstractExtension {
 
     public void searchLabEpisode(String labEpisode, ArrayList<String> specimenNumber,String procedureSavedSearch) throws InterruptedException {
         savedSearches(procedureSavedSearch);
+        sendKeys(labEpisodeTextBox,"");
+        Thread.sleep(3000);
         sendKeys(labEpisodeTextBox,labEpisode);
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate todaydate = LocalDate.now();
         sendKeys(dateFrom,dtf.format(todaydate));
+        sendKeys(labEpisodeTextBox,"");
+        Thread.sleep(3000);
         sendKeys(labEpisodeTextBox,labEpisode,true,false,timeout);
-        sendKeys(dateFrom,dtf.format(todaydate));
         javascriptClick(findOne(findButton));
         javascriptClick(findOne(By.xpath("//div[@class='componentBlock flex'][2]")));
        if(validateElement_Displayed(spcimennumberTexts, timeout)) {
@@ -66,16 +69,15 @@ public class Procedures extends AbstractExtension {
         click(workList,timeout);
     }
     public void saveSearchAndUpdate(String description) throws InterruptedException {
-        Thread.sleep(2000);
-        javascriptClick(findOne(saveSearch,timeout));
-        Thread.sleep(2000);
-        sendKeysAndTab(savedSearchDescription,description,timeout);
         Thread.sleep(1000);
+        click(saveSearch,timeout);
+        Thread.sleep(1000);
+        sendKeysAndTab(savedSearchDescription,description,timeout);
         awaitClickableElement(updateSavedSearch,timeout,10);
         click(updateSavedSearch,timeout);
     }
     public void selectAllAndBulkComplete() throws InterruptedException{
-           //click(tLBProtocolProcedure_List,timeout);
+           click(tLBProtocolProcedure_List);
            while(validateElement_Displayed(procedureRecord,timeout)){
                click(allCheckboxticked, timeout);
                click(bulkCompleteButton);
@@ -100,13 +102,17 @@ public class Procedures extends AbstractExtension {
     }
 
     public void savedSearches(String saveSearchesText) throws InterruptedException {
-        Thread.sleep(2000);
+        Thread.sleep(4000);
+       // switchToDefaultContext();
+         var el = By.xpath("//td//a[contains(text(),'"+saveSearchesText+"')]");
         awaitElement(saveSearches,timeout);
         javascriptClick(_driver.findElement(saveSearches));
-        Thread.sleep(2000);
+        if(!validateElement_Displayed(el)){
+            javascriptClick(_driver.findElement(saveSearches));
+        }
         _driver.navigate().refresh();
-        Thread.sleep(3000);
-        javascriptClick(_driver.findElement(By.xpath("//a[contains(text(),'"+saveSearchesText+"')]")));
+        Thread.sleep(4000);
+        javascriptClick(_driver.findElement(el));
         loadingBarChecker();
     }
 
@@ -167,7 +173,7 @@ public class Procedures extends AbstractExtension {
         click(By.xpath("//a[@ng-click='navBack();']"),timeout);
     }
 
-  public void searchSelectionMultiple(String[] procedures) throws InterruptedException {
+  public void searchSelectionMultiple(String[] procedures){
 
         awaitElement(clearButton,timeout);
         click(clearButton);
@@ -205,12 +211,9 @@ public class Procedures extends AbstractExtension {
         }
     }
 
-    public void findOne(By by,String input) throws InterruptedException {
-            Thread.sleep(2000);
+    public void findOne(By by,String input) {
             super.findOne(by,timeout).clear();
-            Thread.sleep(1000);
             super.findOne(by,timeout).sendKeys("");
-            Thread.sleep(1000);
             super.findOne(by,timeout).sendKeys(input);
             super.findOne(by,timeout).sendKeys(Keys.TAB);
     }

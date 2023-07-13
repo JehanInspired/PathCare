@@ -5,8 +5,6 @@ import applications.PathCareapplication.PathCareApplication;
 import applications.PathCareapplication.models.*;
 
 import com.github.javafaker.Faker;
-import com.microsoft.schemas.vml.CTImageData;
-import org.apache.xmlbeans.impl.xb.xsdschema.impl.AttributeDocumentImpl;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.*;
@@ -18,8 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static applications.PathCareapplication.tool.ExcelExtractorList.patientData;
-import static applications.PathCareapplication.tool.ExcelExtractorList.userProfile;
 import static reporting.ExtentReport.get_reportDir;
 import static applications.PathCareapplication.tool.ExcelExtractorList.*;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -31,6 +27,7 @@ public class CytologyTestPack extends RomanBase {
     static ArrayList<String> labEpisode = new ArrayList<>();
     static String[] testcollection = new String[]{"ANCYTONG"};
     static ArrayList<ArrayList<String>> specimenNumbers = new ArrayList<>();
+    static ArrayList<String> specimenNumber = new ArrayList<>();
     private final LabespideData dataPatient = new LabespideData();
     static String shipmentNumber ="";
     static
@@ -66,37 +63,6 @@ public class CytologyTestPack extends RomanBase {
         pathCare.interSystemloginPage.logoff();
         roman.Dispose();
     }
-    public void registerPatients() throws Exception {
-
-        // AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
-        // pathCare.interSystemloginPage.login(model.username, model.password);
-        for (PatientModel patient : dataPatient.getPatientModelList()) {
-
-            if (pathCare.interSystemloginPage.getLocation().isEmpty()) {
-                pathCare.interSystemloginPage.setLocation(patient.getUserprofile());
-                pathCare.interSystemloginPage.userselection();
-                pathCare.pre_analytical.navigateRegistration();
-            } else if (!pathCare.interSystemloginPage.getLocation().contentEquals(patient.getUserprofile())) {
-                pathCare.interSystemloginPage.setLocation(patient.getUserprofile());
-                pathCare.interSystemloginPage.changelocation();
-                pathCare.interSystemloginPage.userselection();
-                pathCare.pre_analytical.navigateRegistration();
-            }
-            if (patient.getURN() != null) {
-                pathCare.pathCareScratch.searchPatientURN(patient.getURN());
-                pathCare.pathCareScratch.createdSamePatient();
-            } else {
-                pathCare.pathCareScratch.patientdetails(patient.getGivenName(), patient.getSurname(), patient.getDateOfBirth(), patient.getSex());
-            }
-            pathCare.pathCareScratch.doctorSelection(patient.getReferringDoctor());
-
-            labespisodesSpecimen.add(patient.getPk() + "," + pathCare.pathCareScratch.collectiondetailnewEditSpecimen(patient.getPk(), patient.getCollectionTime(), patient.getPatientLocation(), patient.getTestSet()
-                    .toArray(String[]::new), !patient.getReceivedDate().isBlank(), dataPatient.getTestSetDetailsList(), dataPatient.getSpecimensArrayList(), dataPatient.getEditTestArrayList()));
-            dataPatient.write(labespisodesSpecimen);
-
-            pathCare.pathCareScratch.writeLabEpisodesIntoFile(pathCare.pathCareScratch.labEpisode);
-        }
-    }
 
     @Nested
     class Non_GynaeSpecimen {
@@ -113,6 +79,7 @@ public class CytologyTestPack extends RomanBase {
             labEpisode.addAll(pathCare.pathCareScratch.mutiplePatientEditSpecimen(faker,"Female",testcollection,true,false,1,"Cytology Non-Gynae","Non-Gynae Specimen","Slide(s)",true)) ;
             pathCare.pathCareScratch.searchPatient(labEpisode.get(0));
             specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtract(true));
+            specimenNumber.add(pathCare.pathCareScratch.specimenNumberExtract(true).get(0));
             Assert.assertTrue(!(specimenNumbers.isEmpty()));
             value=false;
 
@@ -133,10 +100,12 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pathCareScratch.editTestSetSingle("Number of FNA Slides","4");
             labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
             pathCare.pathCareScratch.searchPatient(labEpisode.get(1));
-            specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtract(true));
+            ArrayList<String> x =pathCare.pathCareScratch.specimenNumberExtract(true);
+            specimenNumbers.add(x);
+            specimenNumber.add(x.get(0));
+            specimenNumber.add(x.get(3));
             Assert.assertTrue(!(specimenNumbers.isEmpty()));
         }
-
         @Test
         @Order(3)
         public void TP_145() throws Exception{
@@ -154,51 +123,15 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pathCareScratch.editTestSetSingle("Number of FNA Slides","4");
             labEpisode.add(pathCare.pathCareScratch.updateClientDetails());
             pathCare.pathCareScratch.searchPatient(labEpisode.get(2));
-            specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtracts(true));
+            ArrayList<String> x =pathCare.pathCareScratch.specimenNumberExtract(true);
+            specimenNumbers.add(x);
+            specimenNumber.add(x.get(0));
+            specimenNumber.add(x.get(3));
+            pathCare.pathCareScratch.EnterSpecimenNumberIntoFile(specimenNumber);
+            pathCare.pathCareScratch.EnterLabEpisodesIntoFile(labEpisode);
             Assert.assertNotEquals("",specimenNumbers);
         }
 
-
-   /*     @Test
-        @Order(4)
-        public void TP_146() throws Exception {
-
-            AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
-            pathCare.interSystemloginPage.login(model.username,model.password);
-            pathCare.interSystemloginPage.setLocation("Lab Assistant PANORAMA");
-            pathCare.interSystemloginPage.userselection();
-
-            //Transfer
-            String location = dataPatient.getTransferArrayList().get(0).getUserprofile_FK();
-            pathCare.interSystemloginPage.setLocation(location);
-            pathCare.interSystemloginPage.userselection();
-            pathCare.labQueues.switchToDefaultContext();
-            pathCare.pre_analytical.navigateTransfer();
-            pathCare.pathCareLabTransferList.statChangeWaitingLinkFind(dataPatient.getTransferArrayList().get(0).getFrom_lab_site(),
-                    dataPatient.getTransferArrayList().get(0).getTo_lab_site());
-            pathCare.pathCareLabTransferList.selectlistlabespido(labEpisode);
-            pathCare.pathCareLabTransferList.tranferSpecimenIntoShipmentContainer();
-            pathCare.pathCareLabTransferList.closePackage();
-            shipmentNumber=pathCare.pathCareLabTransferList.shipmentNumber;
-            pathCare.pathCareScratch.writeShipmentNumberIntoFile(shipmentNumber);
-
-            pathCare.pathCareLabTransferList.enterPackNumberAndFind(shipmentNumber);
-            value= pathCare.pathCareLabTransferList.shipmentPackageIsPacked();
-
-            //transfer pick up
-            location = dataPatient.getLogisticsEntityArrayList().get(0).getUserprofile_FK();
-            pathCare.interSystemloginPage.setLocation(location);
-            pathCare.interSystemloginPage.userselection();
-            pathCare.labQueues.switchToDefaultContext();
-            pathCare.pre_analytical.navigateLogistics();
-
-            pathCare.transferLogistics.EnterShipmentNumberInPickUpShipment(shipmentNumber);
-            pathCare.pre_analytical.switchtoMainiFrame();
-            pathCare.pre_analytical.navigateTransfer();
-            pathCare.pathCareLabTransferList.enterPackNumberAndFind(shipmentNumber);
-            value= pathCare.pathCareLabTransferList.shipmentPackageIsInTransit();
-            Assertions.assertTrue(value,"Update to status is not In Transit");
-        }*/
         @Test
         @Order(4)
         public void TP_146() throws Exception {
@@ -207,79 +140,56 @@ public class CytologyTestPack extends RomanBase {
             pathCare.interSystemloginPage.login(model.username,model.password);
             pathCare.interSystemloginPage.setLocation("Lab Assistant PANORAMA");
             pathCare.interSystemloginPage.userselection();
-            registerPatients();
-            labEpisode= pathCare.pathCareScratch.getLabEpisodesFromFile();
+            labEpisode= pathCare.pathCareScratch.getCytologyLabEpisodesFromFile();
+             ArrayList<String> specimen = pathCare.pathCareScratch.getSpecimenNumberFromFile();
 
-            //receive specimen
-            pathCare.analytical.switchToDefaultContext();
-            pathCare.interSystemloginPage.changelocation();
-            String location = dataPatient.getPatientModelList().get(0).getUserprofile();
-            pathCare.interSystemloginPage.setLocation(location);
-            pathCare.interSystemloginPage.userselection();
-            pathCare.pre_analytical.navigateRegistration();
-            HashMap<String, ArrayList<String>> labespisodesSpecimen = pathCare.pathCareScratch.searchMutliplePatientKeys(dataPatient.readerList());
-            location = dataPatient.getSpecimenReceiveArrayList().get(0).getUserprofile_FK();
-            pathCare.interSystemloginPage.setLocation(location);
-            pathCare.interSystemloginPage.changelocation();
-            pathCare.interSystemloginPage.userselection();
-            pathCare.pre_analytical.navigatespecimenRecived();
-            pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingle(pathCare.pre_analytical, pathCare.interSystemloginPage, labespisodesSpecimen, location, dataPatient.getSpecimenReceiveArrayList(), dataPatient.getWorkAreaReceives(), dataPatient.getTestCodeList());
-            if (!pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList.isEmpty()){
-                for (WorkAreaReceiveEntity workAreaReceiveEntity : pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList) {
-                    dataPatient.write(workAreaReceiveEntity.toString().replace("[","").replace("]",""),"WorkRecieve.txt");
-                }
-            }
-            if (!pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList.isEmpty()){
-                for (SpecimenReceiveEntity specimenReceiveEntity : pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList) {
-                    dataPatient.write(specimenReceiveEntity.ToString().replace("[","").replace("]",""),"SpecimenRecieve.txt");
-                }
-            }
             //Transfer
-            pathCare.analytical.switchToDefaultContext();
-            pathCare.interSystemloginPage.changelocation();
-            pathCare.interSystemloginPage.setLocation(dataPatient.getTransferArrayList().get(0).getUserprofile_FK());
-            pathCare.interSystemloginPage.userselection();
-            pathCare.labQueues.switchToDefaultContext();
             pathCare.pre_analytical.navigateTransfer();
-            pathCare.pathCareLabTransferList.statChangeWaitingLinkFind(dataPatient.getTransferArrayList().get(0).getFrom_lab_site(),
-                    dataPatient.getTransferArrayList().get(0).getTo_lab_site());
+            pathCare.pathCareLabTransferList.testSetfield("Cytology Non-Gynae");
+            pathCare.pathCareLabTransferList.statChangeWaitingLinkFind("Panorama Laboratory","PCP  - Histology Laboratory");
             pathCare.pathCareLabTransferList.selectlistlabespido(labEpisode);
-            pathCare.pathCareLabTransferList.tranferSpecimenIntoShipmentContainer();
+            pathCare.pathCareLabTransferList.createShipment(specimen,false );
             pathCare.pathCareLabTransferList.closePackage();
-            shipmentNumber=pathCare.pathCareLabTransferList.shipmentNumber;
-            pathCare.pathCareScratch.writeShipmentNumberIntoFile(shipmentNumber);
-            shipmentNumber=  pathCare.pathCareScratch.getShipmentNumberFromFile();
-            pathCare.pathCareLabTransferList.enterPackNumberAndFind(shipmentNumber);
+            pathCare.pathCareLabTransferList.enterPackNumberAndFind(pathCare.pathCareLabTransferList.shipmentNumber);
             pathCare.pathCareLabTransferList.shipmentPackageIsPacked();
 
-           // shipmentNumber=  pathCare.pathCareScratch.getShipmentNumberFromFile();
             //transfer pick up
             pathCare.pre_analytical.switchtoMainiFrame();
-            pathCare.interSystemloginPage.changelocation();
-            pathCare.interSystemloginPage.setLocation(dataPatient.getLogisticsEntityArrayList().get(0).getUserprofile_FK());
-            pathCare.interSystemloginPage.userselection();
-            pathCare.labQueues.switchToDefaultContext();
             pathCare.pre_analytical.navigateLogistics();
-            pathCare.transferLogistics.EnterShipmentNumberInPickUpShipment(shipmentNumber);
+            pathCare.transferLogistics.pickUpShipmentValid(pathCare.pathCareLabTransferList.shipmentNumber);
 
             //transfer In transit
-            pathCare.labQueues.switchToDefaultContext();
+            pathCare.pre_analytical.switchtoMainiFrame();
             pathCare.pre_analytical.navigateTransfer();
-            pathCare.pathCareLabTransferList.enterPackNumbersAndFind(shipmentNumber);
-            value= pathCare.pathCareLabTransferList.shipmentPackageIsInTransit();
-
-            Assertions.assertTrue(value,"Update to status is not In Transit");
+            pathCare.pathCareLabTransferList.checknumbersTransferMultiple(labEpisode,specimenNumbers);
         }
+
         @Test
         @Order(5)
         public void TP_147() throws Exception {
             CytologyNon_GynaeSpecimen specimenDetails =new CytologyNon_GynaeSpecimen();
             AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
+            labEpisode = pathCare.pathCareScratch.getCytologyLabEpisodesFromFile();
+            ArrayList<String> specimen = pathCare.pathCareScratch.getSpecimenNumberFromFile();
             pathCare.interSystemloginPage.login(model.username,model.password);
             pathCare.interSystemloginPage.setLocation("Pathcare Lab Assistant Histo N1");
             pathCare.interSystemloginPage.userselection();
             pathCare.pre_analytical.navigatespecimenRecived();
-            pathCare.pathCareLabSpecimenReception.specimenReceiveCreated(specimenNumbers,specimenDetails.value, true);
+            pathCare.pathCareLabSpecimenReception.specimensReceiveCreated(specimen,specimenDetails.value, true);
+            pathCare.labEnquiry.navigatelabEnquiry();
+            pathCare.labEnquiry.labResultsEntry(labEpisode.get(0)); //First lab Episode
+            pathCare.labEnquiry.testSetListSingle(labEpisode.get(0));
+            pathCare.pathCareProcessingPage.testSetOption();
+            pathCare.interSystemloginPage.switchToDefaultContext();
+            pathCare.labEnquiry.backtoTestSetList();
+            pathCare.labEnquiry.labResultsEntry(labEpisode.get(1)); //Second lab Episode
+            pathCare.labEnquiry.testSetListSingle(labEpisode.get(1));
+            pathCare.pathCareProcessingPage.testSetOption();
+            pathCare.interSystemloginPage.switchToDefaultContext();
+            pathCare.labEnquiry.backtoTestSetList();
+            pathCare.labEnquiry.labResultsEntry(labEpisode.get(2)); //3rd lab Episode
+            pathCare.labEnquiry.testSetListSingle(labEpisode.get(2));
+            pathCare.pathCareProcessingPage.testSetOption();
         }
 
         @Test
@@ -324,24 +234,25 @@ public class CytologyTestPack extends RomanBase {
             pathCare.pathCareScratch.searchPatient(labEpisode.get(2));
             specimenNumbers.add(pathCare.pathCareScratch.specimenNumberExtracts(true));
 
-
+            pathCare.pathCareScratch. EnterLabEpisodesIntoFile(labEpisode);
             //Change user Profile
             pathCare.pathCareScratch.loadingBarChecker();
             pathCare.analytical.switchToDefaultContext();
             pathCare.interSystemloginPage.changelocation();
             pathCare.pathCareScratch.loadingBarChecker();
-            pathCare.interSystemloginPage.setLocation("PC Lab Assistant PANORAMA");
+            pathCare.interSystemloginPage.setLocation("Lab Assistant PANORAMA");
             pathCare.interSystemloginPage.userselection();
 
             //Transfer
             pathCare.pre_analytical.navigateTransfer();
             pathCare.pathCareLabTransferList.testSetfield("Cytology Non-Gynae");
-            pathCare.pathCareLabTransferList.clickFindButton();
+            pathCare.pathCareLabTransferList.statChangeWaitingLinkFind("Panorama Laboratory","PCP  - Histology Laboratory");
+           // pathCare.pathCareLabTransferList.clickFindButton();
             pathCare.pathCareLabTransferList.selectlistlabespido(labEpisode);
             pathCare.pathCareLabTransferList.createShipment(specimenNumbers,false );
             pathCare.pathCareLabTransferList.closePackage();
             pathCare.pre_analytical.switchtoMainiFrame();
-           // pathCare.pathCareLabTransferList.checkPackItem(labEpisode,specimenNumbers);
+            pathCare.pathCareLabTransferList.checkPackItem(labEpisode,specimenNumbers);
 
             //transfer pick up
             pathCare.pre_analytical.switchtoMainiFrame();
@@ -467,7 +378,8 @@ public class CytologyTestPack extends RomanBase {
             pathCare.interSystemloginPage.userselection();
             pathCare.analytical.navigateProcedures();
             pathCare.procedures.searchSelectionMultiple(new String[]{"PAP Staining","Giemsa Cyto","Rapid Diff"});
-           labEpisode = new ArrayList<>(List.of(new String[]{"23002163","23002164", "23002165"}));
+          // labEpisode = new ArrayList<>(List.of(new String[]{"23004086","23004087", "23004088"}));
+            labEpisode = pathCare.pathCareScratch.getCytologyLabEpisodesFromFile();
             pathCare.procedures.multipleSearch(labEpisode);
             pathCare.labEnquiry.navigatelabEnquiry();
             pathCare.labEnquiry.labResultsEntry(labEpisode.get(0)); //First lab Episode
@@ -495,12 +407,13 @@ public class CytologyTestPack extends RomanBase {
         public void TP_169() throws Exception {
             AutomationUserModel model = AutomationUserModel.getExampleModel("PCLABAssistantGeorge");
             pathCare.interSystemloginPage.login(model.username,model.password);
+            labEpisode = pathCare.pathCareScratch.getCytologyLabEpisodesFromFile();
             pathCare.interSystemloginPage.setLocation("Pathcare Lab Assistant Histo N1");
             pathCare.interSystemloginPage.userselection();
             pathCare.labQueues.switchToMainFrame();
             pathCare.labQueues.SearchResultTable("Total","Cytology - Non-Gynae Workload",20);
-            pathCare.labQueues.selectSingleEpisode();
-            pathCare.labQueues.selectALL3SingleEpisode();
+            pathCare.labQueues.selectlistlabespido(labEpisode);
+            pathCare.labQueues.tickeEpisodeAndClickReferSelected(labEpisode);
 
         }
 

@@ -471,7 +471,7 @@ public class LabQueues extends AbstractExtension {
         }
     }
     public void selectSingleEpisode(){
-        for(int x=1;x<=2;++x) {
+        for(int x=1;x<=3;++x) {
             final By firstSingleTestSet=  By.xpath("//a[@id='singleEditz"+"%s']".replace("%s",Integer.toString(x)));
             click(firstSingleTestSet,timeout);
             click(testSetProtocolsCompleted_Cancelled,timeout);
@@ -486,10 +486,38 @@ public class LabQueues extends AbstractExtension {
             SearchResultTable("Total","Cytology - Non-Gynae Workload",20);
         }
     }
-    public void selectALL3SingleEpisode(){
-        for(int x=1;x<=3;++x) {
-            final By SingleTestSet=  By.xpath("//input[@id='selectz"+"%s']".replace("%s",Integer.toString(x)));
-            javascriptClick(_driver.findElement(SingleTestSet));
+    public void selectlistlabespido(ArrayList<String> labEpisode) throws InterruptedException {
+
+        for(String value:labEpisode){
+            By labEpisodefield = By.xpath("//parent::td[label[text()='%s']]//parent::tr//td//a[contains(@id,'singleEditz')]".replace("%s",value));
+                if(validateElement_Displayed(labEpisodefield)) {
+                    // click(labEpisodefield,timeout);
+                    javascriptClick(_driver.findElement(labEpisodefield));
+                    click(testSetProtocolsCompleted_Cancelled, timeout);
+                    switchToDefaultContext();
+                    switchToFrame(By.name("TRAK_info"));
+                    click(infoPaneClose, timeout);
+                    Thread.sleep(2000);
+                    switchToDefaultContext();
+                    switchToMainFrame();
+                    click(testSetOptionButtonDropDown, timeout);
+                    Thread.sleep(2000);
+                    click(viewQueuesLink, timeout);
+                    switchToDefaultContext();
+                    Thread.sleep(2000);
+                    javascriptClick(_driver.findElement(homeButton));
+                    Thread.sleep(2000);
+                    switchToMainFrame();
+                    SearchResultTable("Total", "Cytology - Non-Gynae Workload", 40);
+                    Thread.sleep(4000);
+                }
+            }
+    }
+    public void tickeEpisodeAndClickReferSelected(ArrayList<String> labEpisode) throws InterruptedException {
+        for(String value:labEpisode){
+            By labEpisodefield = By.xpath("//parent::td[label[text()='%s']]//parent::tr//td//input[contains(@id,'selectz')]".replace("%s",value));
+            javascriptClick(_driver.findElement(labEpisodefield));
+            Thread.sleep(2000);
         }
         click(referSelected);
     }
