@@ -24,6 +24,8 @@ public class TestSetDataSheet extends RomanBase {
     static String shipmentNumber ="";
     static boolean value = false;
      ArrayList<String> labespisodesSpecimen = new ArrayList<>();
+    public ArrayList<String> specimenReceive = new ArrayList<>();
+    public ArrayList<String> workAreaSpecimen = new ArrayList<>();
     @BeforeEach
     public void startup() {
         dir = get_reportDir();
@@ -173,13 +175,16 @@ public class TestSetDataSheet extends RomanBase {
         pathCare.pathCareLabSpecimenReception.entryMultipleLabspecimenSingle(pathCare.pre_analytical, pathCare.interSystemloginPage, labespisodesSpecimen, location, dataPatient.getSpecimenReceiveArrayList(), dataPatient.getWorkAreaReceives(), dataPatient.getTestCodeList());
         if (!pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList.isEmpty()){
             for (WorkAreaReceiveEntity workAreaReceiveEntity : pathCare.pathCareLabSpecimenReception.workAreaReceiveEntityArrayList) {
-                dataPatient.write(workAreaReceiveEntity.toString().replace("[","").replace("]",""),"WorkRecieve.txt");
+                workAreaSpecimen.add(workAreaReceiveEntity.toString().replace("[","").replace("]",""));
             }
+            dataPatient.write(workAreaSpecimen,"WorkRecieve.txt");
         }
         if (!pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList.isEmpty()){
             for (SpecimenReceiveEntity specimenReceiveEntity : pathCare.pathCareLabSpecimenReception.specimenReceiveEntityArrayList) {
-                dataPatient.write(specimenReceiveEntity.ToString().replace("[","").replace("]",""),"SpecimenRecieve.txt");
-            }
+                var a=   specimenReceiveEntity.ToString().replace("[","").replace("]","");
+                specimenReceive.add(a);
+                }
+            dataPatient.write(specimenReceive,"SpecimenRecieve.txt");
         }
     }
     public void speciemenReceives() throws Exception {

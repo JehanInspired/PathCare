@@ -2,6 +2,7 @@ package applications.PathCareapplication.models;
 
 import applications.PathCareapplication.tool.ExcelExtractorList;
 import java.io.*;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 import static applications.PathCareapplication.tool.ExcelExtractorList.*;
@@ -469,8 +470,9 @@ public  class LabespideData  {
 
         File file = new File("src/main/resources/"+fileName);
 
-        FileWriter fr = new FileWriter(file ,true );
+        FileWriter fr = new FileWriter(file , false );
         BufferedWriter br  = new BufferedWriter(fr);
+        fr.write("");
         br.write("");
         br.flush();
         br.write(values+System.getProperty("line.separator"));
@@ -478,7 +480,22 @@ public  class LabespideData  {
         fr.close();
     }
 
+    public void write(ArrayList<String> values,String fileName) throws IOException {
 
+        try {
+            FileWriter myWriter = new FileWriter(System.getProperty("user.dir")+"\\src\\main\\resources\\"+fileName);
+            for (String labEpisodeNumber : values)
+            {
+                myWriter.write(labEpisodeNumber + "\n");
+                System.out.println(labEpisodeNumber);
+            }
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
 
 
     public void patientInform() {
