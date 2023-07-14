@@ -25,6 +25,12 @@ public class PathCareScratch extends AbstractExtension {
     private final By switchiFrame = By.xpath("//iframe[@name='TRAK_main']");
     private final By surnametextbox = By.xpath("//input[@name='PAPERName']");
     private final By givennametextbox = By.xpath("//input[@name='PAPERName2']");
+    private final By vetGivennametextbox = By.xpath("//input[@name='LBEPContactFirstName']");
+    private final By vetNametextbox = By.xpath("//input[@name='LBSUBName']");
+    private final By speciesTextbox = By.xpath("//input[@name='LBSUBSpecies']");
+    private final By speciesText = By.xpath("//input[@name='LBEPSpeciesDR' ]");
+    private final By vetGendertextbox = By.xpath("//input[@name='LBEPSexDR']");
+    private final By requestingLocation = By.xpath("//input[@name='LBEPRequestingLocationDR']");
     private final By findbutton = By.xpath("//button[text()='Find']");
     private final By newbutton = By.xpath("//a[text()='New']");
     private final By newbutton2 = By.xpath("//button[text()='New']");
