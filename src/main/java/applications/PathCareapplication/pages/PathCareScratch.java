@@ -1345,6 +1345,23 @@ public class PathCareScratch extends AbstractExtension {
         return updateVetClientDetails(vetPatientName,species);
 
     }
+    public String updateVetClientDetails(String name,String species) throws InterruptedException {
+        if(validateElement_Enabled_Displayed(updatebuton,timeout)) {
+            awaitElement(updatebuton,timeout);
+            click(updatebuton, timeout);
+            stepInfo("Successfully clicked Update button "+updatebuton);
+
+        } else {
+            Assert.fail("Unable to receive Lap Episode Number");
+        }
+        Thread.sleep(2000);
+        searchVetPatientName(name,species);
+        String lab_episode = getText(labEspiodeNumber, timeout);
+        stepPassedWithScreenshot("Label printed successfully " + lab_episode);
+        labEpisode.add(lab_episode);
+        click(By.xpath("//a[@id='tc_Breadcrumbs-back' and @aria-label='Back to: Veterinary Episode Search']"));
+        return lab_episode;
+    }
     public void doctorSelection(String doctor,String requestLocation,String species) throws InterruptedException {
         if(doctor.isBlank()) {
             doctorSelection();
