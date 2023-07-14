@@ -1319,6 +1319,32 @@ public class PathCareScratch extends AbstractExtension {
         stepPassedWithScreenshot("Successfully User is directed to Patient Registration screen" );
 
     }
+    public String vetCollectiondetailnewEditSpecimen(String patientKey, String collectiontime, String patienLocation , String[] testsetcollection, Boolean receiveDate, ArrayList<TestSetDetailsEntity> testSetlist, ArrayList<SpecimensEntity> specimensEntityList, ArrayList<EditTestSetEntity> editTestSetEntityArrayList,String vetPatientName,String species) throws InterruptedException {
+        ///Thread.sleep(1000);
+        if (findOne(requestingLocation).getAttribute("value").isBlank()) {
+            sendKeys(requestingLocation, patienLocation.isBlank() ? "2100" : patienLocation);
+            super._driver.findElement(requestingLocation).sendKeys(Keys.TAB);
+        }
+
+        for (String testset:testsetcollection) {
+            setTestset(testset);
+            testCode = By.xpath("//span[text()='%s']".replace("%s",testset));
+            sendKeys(testSetCollection,testset);
+            super._driver.findElement(testSetCollection).sendKeys(Keys.TAB);
+            stepPassedWithScreenshot("Entered test set "+testset);
+            if (validateElement_Displayed(supersetItemSelection)) {
+                stepInfoWithScreenshot("Reach to Superset Item Selection");
+                click(buttonSupersetItemSelectionAccept,timeout);
+                loadingBarChecker();
+            }
+            testSetDetails(testSetlist,testset,patientKey);
+            specimens(specimensEntityList,testset,patientKey);
+            editTestList(testset,patientKey, editTestSetEntityArrayList);
+            stepPassedWithScreenshot("The correct Test Set appears under Tests : "+testset);
+        }
+        return updateVetClientDetails(vetPatientName,species);
+
+    }
     public void doctorSelection(String doctor,String requestLocation,String species) throws InterruptedException {
         if(doctor.isBlank()) {
             doctorSelection();
