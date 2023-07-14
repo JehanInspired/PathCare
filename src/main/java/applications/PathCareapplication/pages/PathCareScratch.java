@@ -1273,4 +1273,59 @@ public class PathCareScratch extends AbstractExtension {
     public void setNewPatient(boolean newPatient) {
         this.newPatient = newPatient;
     }
+    public void searchVetPatientName(String name, String species) throws InterruptedException {
+        findOne(vetNametextbox).clear();
+        findOne(speciesTextbox).clear();
+        sendKeys(vetNametextbox, name);
+        Thread.sleep(1000);
+        sendKeys(speciesTextbox, species);
+        stepInfoWithScreenshot("Entered subject name "+ name);
+
+        click(findButton);
+
+    }
+    public void clickNew() {
+        loadingBarChecker();
+        click(newbutton2,timeout);
+    }
+
+    public void vetPatientdetails(String name, String species) {
+        //setClientdetails(name,surname,dateOfBirth,gender);
+        sendKeys(vetNametextbox,name,timeout);
+        sendKeys(speciesTextbox,species,timeout);
+        click(findbutton);
+        loadingBarChecker();
+        if(!newPatient){
+            awaitElement(newbutton2,timeout);
+            click(newbutton2,timeout);
+            loadingBarChecker();
+        }else if(validateElement_Enabled_Displayed(newbutton2,timeout)) {
+            stepPassedWithScreenshot("The Patient list screen appears with no list");
+            click(newbutton2,timeout);
+        }
+
+        if(newPatient) {
+            findEnterTab(vetNametextbox, name);
+            findEnterTab(speciesTextbox, species);
+            click(DateofBirth,timeout);
+            stepPassedWithScreenshot("User is directed to Lab Episode screen");
+        }
+        stepPassedWithScreenshot("Successfully User is directed to Patient Registration screen" );
+
+    }
+    public void doctorSelection(String doctor,String requestLocation,String species) throws InterruptedException {
+        if(doctor.isBlank()) {
+            doctorSelection();
+        }else{
+            awaitElement(nameofDoctor, timeout);
+            sendKeys(speciesText, species,timeout);
+            Thread.sleep(2000);
+            super._driver.findElement(speciesText).sendKeys(Keys.TAB);
+            sendKeys(nameofDoctor, doctor);
+            Thread.sleep(2000);
+            super._driver.findElement(nameofDoctor).sendKeys(Keys.TAB);
+            sendKeys(requestingLocation, requestLocation);
+            super._driver.findElement(requestingLocation).sendKeys(Keys.TAB);
+        }
+    }
 }
